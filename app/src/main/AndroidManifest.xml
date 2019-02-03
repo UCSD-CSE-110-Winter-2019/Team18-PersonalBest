@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.personalbest">
+
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -22,6 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" />
+        <activity
+            android:name=".HomeBtmNavActivity"
+            android:label="@string/title_activity_home_btm_nav" />
+        <activity
+            android:name=".GraphBtmNavActivity"
+            android:label="@string/title_activity_graph_btm_nav" />
+        <activity
+            android:name=".ProfileBtmNavActivity"
+            android:label="@string/title_activity_profile_btm_nav" />
+        <activity android:name=".trackerActivity"></activity>
     </application>
 
 </manifest>
