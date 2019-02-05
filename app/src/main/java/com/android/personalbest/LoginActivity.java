@@ -3,6 +3,7 @@ package com.android.personalbest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -87,12 +88,40 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 attemptLogin();
+                //launchHomeScreenAcitivity();
+            }
+        });
+
+        Button createAccountButton = (Button) findViewById(R.id.create_account_button);
+        createAccountButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                //Switches to the get personal info activity
+                //TODO: Uncomment launch activity once the personal data UI class has been made
+                //launchPActivity();
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
+
+    //This method switches to the Home UI
+    //TODO: Add the real name of the personal data UI class to create the Intent object and uncomment method below
+    public void launchHomeScreenAcitivity()
+    {
+       Intent intent = new Intent (this, HomeBtmNavActivity.class);
+       startActivity(intent);
+    }
+
+    //This method switches to the get personal data UI
+    //TODO: Add the real name of the personal data UI class to create the Intent object and uncomment method below
+    /*public void launchPersnalDataActivity()
+    {
+       Intent intent = new Intent (this, nameOfPersonalDataUIClass.class);
+       startActivity(intent);
+    }*/
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -198,6 +227,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
+
     }
 
     /**
@@ -333,6 +363,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                launchHomeScreenAcitivity();
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
