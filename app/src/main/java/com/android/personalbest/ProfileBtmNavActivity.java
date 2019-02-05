@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -35,7 +36,11 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
-
+        SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
+        String name=sharedPreferences.getString("name", "");
+        int height=sharedPreferences.getInt("height", 0);
+        TextView heightext=(TextView)findViewById(R.id.current_height);
+        heightext.setText(String.valueOf(height));
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
