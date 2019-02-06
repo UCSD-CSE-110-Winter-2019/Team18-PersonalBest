@@ -3,6 +3,7 @@ package com.android.personalbest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -87,13 +88,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 attemptLogin();
+                launchAct();
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
+public void launchAct()
+{
+    Intent intent = new Intent(this, MainActivity.class);
+    startActivity(intent);
+}
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -347,4 +353,3 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
-
