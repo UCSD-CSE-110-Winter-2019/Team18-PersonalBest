@@ -3,6 +3,8 @@ package com.android.personalbest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+
+import android.app.LauncherActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -87,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                //attemptLogin();
                 launchActivity();
             }
         });
@@ -94,9 +97,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
-    private void launchActivity() {
-        Intent intent = new Intent(this, Home.class);
+    public void launchActivity(){
+        Intent intent=new Intent(this, GetToKnowUActivity.class);
         startActivity(intent);
     }
 

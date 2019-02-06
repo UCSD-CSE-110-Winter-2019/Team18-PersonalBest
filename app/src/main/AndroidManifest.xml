@@ -34,7 +34,12 @@
         <activity
             android:name=".ProfileBtmNavActivity"
             android:label="@string/title_activity_profile_btm_nav" />
-        <activity android:name=".TrackerActivity" />
+
+        <activity
+            android:name=".TrackerActivity"
+            android:label="TrackerActivity" />
+        <activity android:name=".GetToKnowUActivity"></activity>
+
     </application>
 
 </manifest>
