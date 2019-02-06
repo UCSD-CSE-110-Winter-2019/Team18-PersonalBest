@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class HomeBtmNavActivity extends AppCompatActivity {
+public class Home extends AppCompatActivity {
 
     private TextView mTextMessage;
 
@@ -53,7 +53,7 @@ public class HomeBtmNavActivity extends AppCompatActivity {
     }
 
     private void launchActivity() {
-        Intent intent = new Intent(this, trackerActivity.class);
+        Intent intent = new Intent(this, TrackerActivity.class);
         startActivity(intent);
     }
 
