@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,8 +18,14 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
     private TextView mTextMessage;
     SharedPreferences sharedPreferences;
     TextView heightext;
-    Button edit_height;
+    TextView current_goal;
     EditText height_edit;
+    EditText goal_edit;
+    Button edit_height;
+    Button edit_goal;
+    Button logout;
+
+    SharedPreferences.Editor editor;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -49,34 +56,70 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         TextView nametext=(TextView)findViewById(R.id.user_txt);
         heightext=(TextView)findViewById(R.id.current_height);
         height_edit=(EditText) findViewById(R.id.height_edit);
+        current_goal=(TextView) findViewById(R.id.current_goal);
+        goal_edit=(EditText) findViewById(R.id.goal_edit);
         nametext.setText(name);
         heightext.setText(String.valueOf(height));
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        editor=sharedPreferences.edit();
         edit_height=findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("my_tag", edit_height.getText().toString());
-                if(edit_height.getText().toString()=="save"){
-                    Log.d("my_tag", edit_height.getText().toString());
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                if(edit_height.getText().toString().equals("save")){
+                    //Log.d("my_tag", edit_height.getText().toString());
                     editor.putInt("height", Integer.parseInt((height_edit.getText()).toString()));
                     edit_height.setText("edit");
                     height_edit.setVisibility(View.GONE);
+                    heightext.setVisibility(View.VISIBLE);
+                    heightext.setText(height_edit.getText());
                 }
-                if(edit_height.getText().toString()=="edit"){
-                    Log.d("my_tag", edit_height.getText().toString());
-
+                else if(edit_height.getText().toString().equals("edit")){
+                    //Log.d("my_tag", edit_height.getText().toString());
                     edit_height.setText("save");
+                    height_edit.setText(String.valueOf(sharedPreferences.getInt("height", 0)));
                     height_edit.setVisibility(View.VISIBLE);
                     heightext.setVisibility(View.GONE);
                 }
             }
         });
+        edit_goal=findViewById(R.id.edit_goal_btn);
+        edit_goal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(edit_goal.getText().toString().equals("save")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
+                    edit_goal.setText("edit");
+                    goal_edit.setVisibility(View.GONE);
+                    current_goal.setVisibility(View.VISIBLE);
+                    current_goal.setText(goal_edit.getText());
+                }
+                else if(edit_goal.getText().toString().equals("edit")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    edit_goal.setText("save");
+                    goal_edit.setVisibility(View.VISIBLE);
+                    current_goal.setVisibility(View.GONE);
+                }
+            }
+        });
+        logout=findViewById(R.id.logout_btn);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
 
     }
+    public void logout(){
+        Intent intent=new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
 
 }

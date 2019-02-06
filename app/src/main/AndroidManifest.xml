@@ -34,7 +34,7 @@
             android:label="@string/title_activity_graph_btm_nav" />
         <activity
             android:name=".ProfileBtmNavActivity"
-            android:label="@string/title_activity_profile_btm_nav" />
+            android:label="@string/title_activity_profile_btm_nav"/>
         <activity android:name=".trackerActivity" />
         <activity android:name=".GetToKnowUActivity"></activity>
     </application>
