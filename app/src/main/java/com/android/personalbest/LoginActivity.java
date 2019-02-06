@@ -30,11 +30,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,15 +83,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -113,45 +99,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             {
                 //Switches to the get personal info activity
                 //TODO: Uncomment launch activity once the personal data UI class has been made
-                //launchPActivity();
+                launchGetToKnowYouActivity();
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
-    //On start is called just after onCreate is called
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
+    public void launchGetToKnowYouActivity() {
+        Intent intent = new Intent(this, GetToKnowUActivity.class);
+        startActivity(intent);
     }
 
+
     //This method switches to the Home UI
-    //TODO: Add the real name of the personal data UI class to create the Intent object and uncomment method below
-    public void launchHomeScreenAcitivity()
+    public void launchHomeScreenActivity()
     {
        Intent intent = new Intent (this, HomeBtmNavActivity.class);
        startActivity(intent);
     }
 
-    //This method switches to the get personal data UI
-    //TODO: Add the real name of the personal data UI class to create the Intent object and uncomment method below
-    /*public void launchPersnalDataActivity()
-    {
-       Intent intent = new Intent (this, nameOfPersonalDataUIClass.class);
-       startActivity(intent);
-    }*/
-
-    private void updateUI(GoogleSignInAccount acc)
-    {
-        //TODO: login and go to homescreen
-    }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -396,7 +363,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                launchHomeScreenAcitivity();
+                launchHomeScreenActivity();
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
