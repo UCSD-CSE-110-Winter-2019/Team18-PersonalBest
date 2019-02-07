@@ -98,7 +98,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void onClick(View view)
             {
                 //Switches to the get personal info activity
-                //TODO: Uncomment launch activity once the personal data UI class has been made
                 launchGetToKnowYouActivity();
             }
         });
@@ -109,13 +108,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void launchGetToKnowYouActivity() {
         Intent intent = new Intent(this, GetToKnowUActivity.class);
         startActivity(intent);
+
     }
 
 
     //This method switches to the Home UI
     public void launchHomeScreenActivity()
     {
-       Intent intent = new Intent (this, HomeBtmNavActivity.class);
+       Intent intent = new Intent (this, Home.class);
        startActivity(intent);
     }
 
