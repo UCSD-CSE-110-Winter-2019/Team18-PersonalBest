@@ -43,6 +43,7 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
+
         sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
         String name=sharedPreferences.getString("name", "");
         int height=sharedPreferences.getInt("height", 0);
