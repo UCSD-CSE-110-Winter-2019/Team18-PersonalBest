@@ -18,9 +18,11 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
     SharedPreferences sharedPreferences;
-    TextView heightext;
+    TextView heightft;
+    TextView heightin;
     TextView current_goal;
-    EditText height_edit;
+    EditText feet_edit;
+    EditText inch_edit;
     EditText goal_edit;
     Button edit_height;
     Button edit_goal;
@@ -52,16 +54,26 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
+
+        //update height and name
         sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
         String name=sharedPreferences.getString("name", "");
-        int height=sharedPreferences.getInt("height", 0);
+        int heightfeet=sharedPreferences.getInt("heightft", 0);
+        int heightinch=sharedPreferences.getInt("heightin", 0);
         TextView nametext=(TextView)findViewById(R.id.user_txt);
-        heightext=(TextView)findViewById(R.id.current_height);
-        height_edit=(EditText) findViewById(R.id.height_edit);
+        nametext.setText(name);
+
+        //edit height and goal
+        heightft=(TextView)findViewById(R.id.current_ft);
+        heightin=(TextView)findViewById(R.id.current_in);
+        feet_edit=(EditText) findViewById(R.id.ft_edit);
+        inch_edit=(EditText) findViewById(R.id.in_edit);
         current_goal=(TextView) findViewById(R.id.current_goal);
         goal_edit=(EditText) findViewById(R.id.goal_edit);
-        nametext.setText(name);
-        heightext.setText(String.valueOf(height));
+        heightft.setText(String.valueOf(heightfeet));
+        heightin.setText(String.valueOf(heightinch));
+
+
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -75,24 +87,33 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                 if(edit_height.getText().toString().equals("save")){
                     //Log.d("my_tag", edit_height.getText().toString());
                     try{
-                    editor.putInt("height", Integer.parseInt((height_edit.getText()).toString()));}
+                    editor.putInt("heightft", Integer.parseInt((feet_edit.getText()).toString()));
+                    editor.putInt("heightin", Integer.parseInt((inch_edit.getText()).toString()));
+                    }
                     catch (Throwable e){
                         Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
                         invalid=true;
                     }
                     if(!invalid){
                         edit_height.setText("edit");
-                        height_edit.setVisibility(View.GONE);
-                        heightext.setVisibility(View.VISIBLE);
-                        heightext.setText(height_edit.getText());
+                        feet_edit.setVisibility(View.GONE);
+                        inch_edit.setVisibility(View.GONE);
+                        heightft.setVisibility(View.VISIBLE);
+                        heightft.setText(feet_edit.getText());
+                        heightin.setVisibility(View.VISIBLE);
+                        heightin.setText(inch_edit.getText());
+
                     }
                 }
                 else if(edit_height.getText().toString().equals("edit")){
                     //Log.d("my_tag", edit_height.getText().toString());
                     edit_height.setText("save");
-                    height_edit.setText(String.valueOf(sharedPreferences.getInt("height", 0)));
-                    height_edit.setVisibility(View.VISIBLE);
-                    heightext.setVisibility(View.GONE);
+                    feet_edit.setText(String.valueOf(sharedPreferences.getInt("heightft", 0)));
+                    feet_edit.setVisibility(View.VISIBLE);
+                    heightft.setVisibility(View.GONE);
+                    inch_edit.setText(String.valueOf(sharedPreferences.getInt("heightin", 0)));
+                    inch_edit.setVisibility(View.VISIBLE);
+                    heightin.setVisibility(View.GONE);
                 }
             }
         });

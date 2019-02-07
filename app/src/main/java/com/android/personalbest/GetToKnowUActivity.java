@@ -11,7 +11,8 @@ import android.widget.Toast;
 
 public class GetToKnowUActivity extends AppCompatActivity {
     String name="";
-    int height;
+    int heightft;
+    int heightin;
     boolean invalid=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,8 @@ public class GetToKnowUActivity extends AppCompatActivity {
                 invalid=false;
                 name=((EditText)findViewById(R.id.name_input)).getText().toString();
                 try{
-                height=Integer.parseInt(((EditText)findViewById(R.id.height_input)).getText().toString());
+                heightft=Integer.parseInt(((EditText)findViewById(R.id.heightft_input)).getText().toString());
+                heightin=Integer.parseInt(((EditText)findViewById(R.id.heightin_input)).getText().toString());
                 }
                 catch(Throwable e){
                     Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
@@ -38,7 +40,8 @@ public class GetToKnowUActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     editor.putString("name", name);
-                    editor.putInt("height", height);
+                    editor.putInt("heightft", heightft);
+                    editor.putInt("heightin", heightin);
                     editor.commit();
                     Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
                     launchActivity();}
@@ -46,6 +49,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
         });
     }
     public void launchActivity(){
+
         Intent intent=new Intent(this, ProfileBtmNavActivity.class);
         startActivity(intent);
 
