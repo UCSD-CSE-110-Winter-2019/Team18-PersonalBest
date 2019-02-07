@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileBtmNavActivity extends AppCompatActivity {
 
@@ -24,6 +25,7 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
     Button edit_height;
     Button edit_goal;
     Button logout;
+    Boolean invalid=false;
 
     SharedPreferences.Editor editor;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -69,13 +71,21 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         edit_height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                invalid=false;
                 if(edit_height.getText().toString().equals("save")){
                     //Log.d("my_tag", edit_height.getText().toString());
-                    editor.putInt("height", Integer.parseInt((height_edit.getText()).toString()));
-                    edit_height.setText("edit");
-                    height_edit.setVisibility(View.GONE);
-                    heightext.setVisibility(View.VISIBLE);
-                    heightext.setText(height_edit.getText());
+                    try{
+                    editor.putInt("height", Integer.parseInt((height_edit.getText()).toString()));}
+                    catch (Throwable e){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                        invalid=true;
+                    }
+                    if(!invalid){
+                        edit_height.setText("edit");
+                        height_edit.setVisibility(View.GONE);
+                        heightext.setVisibility(View.VISIBLE);
+                        heightext.setText(height_edit.getText());
+                    }
                 }
                 else if(edit_height.getText().toString().equals("edit")){
                     //Log.d("my_tag", edit_height.getText().toString());
@@ -90,14 +100,23 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         edit_goal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                invalid=false;
                 if(edit_goal.getText().toString().equals("save")){
                     //Log.d("my_tag", edit_height.getText().toString());
                     SharedPreferences.Editor editor=sharedPreferences.edit();
+                    try{
                     editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
-                    edit_goal.setText("edit");
-                    goal_edit.setVisibility(View.GONE);
-                    current_goal.setVisibility(View.VISIBLE);
-                    current_goal.setText(goal_edit.getText());
+                    }
+                    catch (Throwable e){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                        invalid=true;
+                    }
+                    if(!invalid){
+                        edit_goal.setText("edit");
+                        goal_edit.setVisibility(View.GONE);
+                        current_goal.setVisibility(View.VISIBLE);
+                        current_goal.setText(goal_edit.getText());
+                    }
                 }
                 else if(edit_goal.getText().toString().equals("edit")){
                     //Log.d("my_tag", edit_height.getText().toString());

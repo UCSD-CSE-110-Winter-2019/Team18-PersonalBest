@@ -12,6 +12,7 @@ import android.widget.Toast;
 public class GetToKnowUActivity extends AppCompatActivity {
     String name="";
     int height;
+    boolean invalid=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,20 +21,32 @@ public class GetToKnowUActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                invalid=false;
                 name=((EditText)findViewById(R.id.name_input)).getText().toString();
+                try{
                 height=Integer.parseInt(((EditText)findViewById(R.id.height_input)).getText().toString());
-                SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString("name", name);
-                editor.putInt("height", height);
-                editor.commit();
-                Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
-                launchActivity();
+                }
+                catch(Throwable e){
+                    Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                    invalid=true;
+                }
+                if(name.isEmpty()){
+                    invalid=true;
+                    Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                }
+                if(!invalid){
+                    SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString("name", name);
+                    editor.putInt("height", height);
+                    editor.commit();
+                    Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
+                    launchActivity();}
             }
         });
     }
     public void launchActivity(){
-        Intent intent=new Intent(this, HomeBtmNavActivity.class);
+        Intent intent=new Intent(this, ProfileBtmNavActivity.class);
         startActivity(intent);
 
     }
