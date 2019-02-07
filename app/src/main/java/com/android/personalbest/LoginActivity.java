@@ -119,7 +119,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
        startActivity(intent);
     }
 
-
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
