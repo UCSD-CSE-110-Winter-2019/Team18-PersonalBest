@@ -105,7 +105,8 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                     //Log.d("my_tag", edit_height.getText().toString());
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     try{
-                    editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
+                        editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
+
                     }
                     catch (Throwable e){
                         Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
