@@ -50,7 +50,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
     }
     public void launchActivity(){
 
-        Intent intent=new Intent(this, ProfileBtmNavActivity.class);
+        Intent intent=new Intent(this, Home.class);
         startActivity(intent);
 
     }

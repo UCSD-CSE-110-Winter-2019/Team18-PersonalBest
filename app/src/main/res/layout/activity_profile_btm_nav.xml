@@ -205,7 +205,6 @@
         app:layout_constraintStart_toStartOf="@+id/height_txt"
         app:layout_constraintTop_toBottomOf="@+id/goal_txt"
         app:layout_constraintVertical_bias="0.003" />
-
     <TextView
         android:id="@+id/inch_text"
         android:layout_width="wrap_content"
