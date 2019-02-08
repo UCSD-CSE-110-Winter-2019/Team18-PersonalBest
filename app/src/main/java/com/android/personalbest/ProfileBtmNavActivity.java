@@ -139,6 +139,9 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                         if(goal<0)
                             invalid=true;
                     }
+                    if(invalid){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                    }
                     if(!invalid){
                         edit_goal.setText("edit");
                         goal_edit.setVisibility(View.GONE);
