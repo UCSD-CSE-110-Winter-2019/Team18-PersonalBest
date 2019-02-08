@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 public class ProfileBtmNavActivity extends AppCompatActivity {
 
+    private static final String TAG = LoginActivity.class.getName();
+
+    LogInAndOut gSignInAndOut;
+
     private TextView mTextMessage;
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -55,7 +59,11 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
 
+
+        gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+
         //update height and name
+
         sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
         String name=sharedPreferences.getString("name", "");
         int heightfeet=sharedPreferences.getInt("heightft", 0);
@@ -125,13 +133,22 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                 if(edit_goal.getText().toString().equals("save")){
                     //Log.d("my_tag", edit_height.getText().toString());
                     SharedPreferences.Editor editor=sharedPreferences.edit();
+                    int goal=0;
                     try{
+                        goal=Integer.parseInt((goal_edit.getText()).toString());
                         editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
 
                     }
-                    catch (Throwable e){
+                    catch (Throwable e) {
                         Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                        invalid=true;
+                        invalid = true;
+                    }
+                    if(!invalid){
+                        if(goal<0)
+                            invalid=true;
+                    }
+                    if(invalid){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
                     }
                     if(!invalid){
                         edit_goal.setText("edit");
@@ -156,6 +173,24 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
             }
         });
 
+        Button logOutButton = findViewById(R.id.logout_btn);
+        logOutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                gSignInAndOut.signOut();
+                launchLoginScreenActivity();
+            }
+        });
+
+    }
+
+    //This method switches to the Login UI
+    public void launchLoginScreenActivity()
+    {
+        Intent intent = new Intent (this, LoginActivity.class);
+        startActivity(intent);
     }
     public void logout(){
         Intent intent=new Intent(this, LoginActivity.class);
