@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 public class ProfileBtmNavActivity extends AppCompatActivity {
 
+    private static final String TAG = LoginActivity.class.getName();
+
+    LogInAndOut gSignInAndOut;
+
     private TextView mTextMessage;
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -55,7 +59,11 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
 
+
+        gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+
         //update height and name
+
         sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
         String name=sharedPreferences.getString("name", "");
         int heightfeet=sharedPreferences.getInt("heightft", 0);
@@ -165,6 +173,24 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
             }
         });
 
+        Button logOutButton = findViewById(R.id.logout_btn);
+        logOutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                gSignInAndOut.signOut();
+                launchLoginScreenActivity();
+            }
+        });
+
+    }
+
+    //This method switches to the Login UI
+    public void launchLoginScreenActivity()
+    {
+        Intent intent = new Intent (this, LoginActivity.class);
+        startActivity(intent);
     }
     public void logout(){
         Intent intent=new Intent(this, LoginActivity.class);
