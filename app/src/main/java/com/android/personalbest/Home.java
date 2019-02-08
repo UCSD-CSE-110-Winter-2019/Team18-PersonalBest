@@ -12,9 +12,6 @@ import android.widget.TextView;
 
 public class Home extends AppCompatActivity {
     private TextView mTextMessage;
-    private int curr_steps;
-    private int goal;
-    protected int intentional_steps = 0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -29,7 +26,7 @@ public class Home extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.action_sign_in);
+                    mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
             return false;
@@ -39,27 +36,10 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // temp value
-        goal = 5500;
-        curr_steps = 2000;
-
-        Intent intent = getIntent();
-        if (intent.getStringExtra("intentional_steps") != null) {
-            intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
-            curr_steps = curr_steps + intentional_steps;
-        }
         setContentView(R.layout.activity_home_btm_nav);
 
-
-        // display goal and current steps
-        ((TextView)findViewById(R.id.goal)).setText(Integer.toString(goal));
-        ((TextView)findViewById(R.id.curr_steps)).setText(Integer.toString(curr_steps));
-
-
-
-        mTextMessage = findViewById(R.id.message);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Button start_btn = (Button) findViewById(R.id.start);
