@@ -57,6 +57,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
                     Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
                     gSignInAndOut.signIn();}
             }
+
         });
     }
 
