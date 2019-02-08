@@ -125,13 +125,19 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                 if(edit_goal.getText().toString().equals("save")){
                     //Log.d("my_tag", edit_height.getText().toString());
                     SharedPreferences.Editor editor=sharedPreferences.edit();
+                    int goal=0;
                     try{
+                        goal=Integer.parseInt((goal_edit.getText()).toString());
                         editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
 
                     }
-                    catch (Throwable e){
+                    catch (Throwable e) {
                         Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                        invalid=true;
+                        invalid = true;
+                    }
+                    if(!invalid){
+                        if(goal<0)
+                            invalid=true;
                     }
                     if(!invalid){
                         edit_goal.setText("edit");
