@@ -15,6 +15,7 @@ public class Home extends AppCompatActivity {
     private int curr_steps;
     private int goal;
     protected int intentional_steps = 0;
+    int i = 0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
