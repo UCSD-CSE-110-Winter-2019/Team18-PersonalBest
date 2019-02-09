@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
-    private TextView mTextMessage;
 
     @Nullable
     @Override
