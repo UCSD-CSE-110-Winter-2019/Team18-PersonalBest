@@ -33,7 +33,6 @@
             android:label="TrackerActivity" />
 
         <activity android:name=".GetToKnowUActivity"/>
-
     </application>
 
 </manifest>

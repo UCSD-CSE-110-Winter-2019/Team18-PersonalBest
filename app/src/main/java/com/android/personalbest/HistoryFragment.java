@@ -36,7 +36,6 @@ public class HistoryFragment extends Fragment {
     private static final int TEST_STEP_GOAL = 5000;
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,14 +47,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //getActivity().setContentView(R.layout.fragment_history);
-
         this.stepChart = (BarChart) getView().findViewById(R.id.chart);
         createChart();
-
-        //mTextMessage = getView().findViewById(R.id.message);
-        //BottomNavigationView navigation = findViewById(R.id.navigation);
-        //navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     // Create the BarEntry objects for the stacked bars

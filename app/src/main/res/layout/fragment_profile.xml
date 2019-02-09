@@ -9,37 +9,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!--tools:context=".ProfileBtmNavActivity">-->
-
-        <Button
-            android:id="@+id/edit_height_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="edit"
-            app:layout_constraintBottom_toTopOf="@+id/navigation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.8"
-            app:layout_constraintStart_toEndOf="@+id/current_height"
-            app:layout_constraintTop_toBottomOf="@+id/edit_goal_btn"
-            app:layout_constraintVertical_bias="0.014" />
-
-        <!--<android.support.design.widget.BottomNavigationView
-            android:id="@+id/navigation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:background="?android:attr/windowBackground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:menu="@menu/navigation" />-->
 
         <TextView
             android:id="@+id/hello_txt"
@@ -51,98 +20,6 @@
             android:textSize="30sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/goal_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Goal:"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.796"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="@+id/hello_txt"
-            app:layout_constraintTop_toTopOf="@+id/hello_txt"
-            app:layout_constraintVertical_bias="0.179" />
-
-        <TextView
-            android:id="@+id/current_goal"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="5000"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.407"
-            app:layout_constraintLeft_toLeftOf="@+id/goal_txt"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/hello_txt"
-            app:layout_constraintVertical_bias="0.181" />
-
-        <TextView
-            android:id="@+id/height_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginLeft="64dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="13dp"
-            android:text="Height:"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
-            app:layout_constraintVertical_bias="0.036" />
-
-        <TextView
-            android:id="@+id/current_height"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="0"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.457"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/height_txt"
-            app:layout_constraintTop_toBottomOf="@+id/current_goal"
-            app:layout_constraintVertical_bias="0.032" />
-        <EditText
-            android:id="@+id/height_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint=""
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.457"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/height_txt"
-            app:layout_constraintTop_toBottomOf="@+id/current_goal"
-            app:layout_constraintVertical_bias="0.032"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/logout_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Logout"
-            app:layout_constraintBottom_toTopOf="@+id/navigation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/current_height" />
 
         <TextView
             android:id="@+id/user_txt"
@@ -158,16 +35,215 @@
             app:layout_constraintStart_toStartOf="@+id/hello_txt"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/goal_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal:"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.584"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/hello_txt"
+            app:layout_constraintTop_toTopOf="@+id/hello_txt"
+            app:layout_constraintVertical_bias="0.179" />
+
+        <TextView
+            android:id="@+id/current_goal"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginBottom="1dp"
+            android:text="5000"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.442"
+            app:layout_constraintLeft_toLeftOf="@+id/goal_txt"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/hello_txt"
+            app:layout_constraintVertical_bias="0.183" />
+
+        <EditText
+            android:id="@+id/goal_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:text="5000"
+            android:textSize="30sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.442"
+            app:layout_constraintLeft_toLeftOf="@+id/goal_txt"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/hello_txt"
+            app:layout_constraintVertical_bias="0.183" />
+
         <Button
             android:id="@+id/edit_goal_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="128dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="136dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:text="edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.652"
             app:layout_constraintStart_toEndOf="@+id/user_txt"
             app:layout_constraintTop_toTopOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/height_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="13dp"
+            android:text="Height:"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.033" />
+
+        <TextView
+            android:id="@+id/current_ft"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="0"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.313"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/height_txt"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.032" />
+
+        <EditText
+            android:id="@+id/ft_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="30sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.318"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/height_txt"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.007" />
+
+        <TextView
+            android:id="@+id/feet_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="180dp"
+            android:layout_marginRight="180dp"
+            android:layout_marginBottom="8dp"
+            android:text="ft"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.028" />
+
+        <TextView
+            android:id="@+id/current_in"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="0"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.526"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/height_txt"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.028" />
+
+        <EditText
+            android:id="@+id/in_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="30sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.535"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/height_txt"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.003" />
+        <TextView
+            android:id="@+id/inch_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="112dp"
+            android:layout_marginRight="112dp"
+            android:layout_marginBottom="8dp"
+            android:text="in"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/goal_txt"
+            app:layout_constraintVertical_bias="0.028" />
+
+        <Button
+            android:id="@+id/edit_height_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="edit"
+            app:layout_constraintBottom_toTopOf="@+id/navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.652"
+            app:layout_constraintStart_toEndOf="@+id/user_txt"
+            app:layout_constraintTop_toBottomOf="@+id/edit_goal_btn"
+            app:layout_constraintVertical_bias="0.014" />
+
+        <Button
+            android:id="@+id/logout_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Logout"
+            app:layout_constraintBottom_toTopOf="@+id/navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/height_txt" />
+
+
+    </android.support.constraint.ConstraintLayout>
 </RelativeLayout>
