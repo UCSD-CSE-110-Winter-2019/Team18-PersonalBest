@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,14 +12,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileBtmNavActivity extends AppCompatActivity {
 
+    private static final String TAG = LoginActivity.class.getName();
+
+    LogInAndOut gSignInAndOut;
+
     private TextView mTextMessage;
     SharedPreferences sharedPreferences;
-    TextView heightext;
+    TextView heightft;
+    TextView heightin;
+    TextView current_goal;
+    EditText feet_edit;
+    EditText inch_edit;
+    EditText goal_edit;
     Button edit_height;
-    EditText height_edit;
+    Button edit_goal;
+    Button logout;
+    Boolean invalid=false;
+
+    SharedPreferences.Editor editor;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -44,40 +59,143 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_btm_nav);
 
+
+        gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+
+        //update height and name
+
         sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
         String name=sharedPreferences.getString("name", "");
-        int height=sharedPreferences.getInt("height", 0);
+        int heightfeet=sharedPreferences.getInt("heightft", 0);
+        int heightinch=sharedPreferences.getInt("heightin", 0);
         TextView nametext=(TextView)findViewById(R.id.user_txt);
-        heightext=(TextView)findViewById(R.id.current_height);
-        height_edit=(EditText) findViewById(R.id.height_edit);
         nametext.setText(name);
-        heightext.setText(String.valueOf(height));
+
+        //edit height and goal
+        heightft=(TextView)findViewById(R.id.current_ft);
+        heightin=(TextView)findViewById(R.id.current_in);
+        feet_edit=(EditText) findViewById(R.id.ft_edit);
+        inch_edit=(EditText) findViewById(R.id.in_edit);
+        current_goal=(TextView) findViewById(R.id.current_goal);
+        goal_edit=(EditText) findViewById(R.id.goal_edit);
+        heightft.setText(String.valueOf(heightfeet));
+        heightin.setText(String.valueOf(heightinch));
+
+
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        editor=sharedPreferences.edit();
         edit_height=findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("my_tag", edit_height.getText().toString());
-                if(edit_height.getText().toString()=="save"){
-                    Log.d("my_tag", edit_height.getText().toString());
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.putInt("height", Integer.parseInt((height_edit.getText()).toString()));
-                    edit_height.setText("edit");
-                    height_edit.setVisibility(View.GONE);
-                }
-                if(edit_height.getText().toString()=="edit"){
-                    Log.d("my_tag", edit_height.getText().toString());
+                invalid=false;
+                if(edit_height.getText().toString().equals("save")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    try{
+                    editor.putInt("heightft", Integer.parseInt((feet_edit.getText()).toString()));
+                    editor.putInt("heightin", Integer.parseInt((inch_edit.getText()).toString()));
+                    }
+                    catch (Throwable e){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                        invalid=true;
+                    }
+                    if(!invalid){
+                        edit_height.setText("edit");
+                        feet_edit.setVisibility(View.GONE);
+                        inch_edit.setVisibility(View.GONE);
+                        heightft.setVisibility(View.VISIBLE);
+                        heightft.setText(feet_edit.getText());
+                        heightin.setVisibility(View.VISIBLE);
+                        heightin.setText(inch_edit.getText());
 
-                    edit_height.setText("save");
-                    height_edit.setVisibility(View.VISIBLE);
-                    heightext.setVisibility(View.GONE);
+                    }
                 }
+                else if(edit_height.getText().toString().equals("edit")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    edit_height.setText("save");
+                    feet_edit.setText(String.valueOf(sharedPreferences.getInt("heightft", 0)));
+                    feet_edit.setVisibility(View.VISIBLE);
+                    heightft.setVisibility(View.GONE);
+                    inch_edit.setText(String.valueOf(sharedPreferences.getInt("heightin", 0)));
+                    inch_edit.setVisibility(View.VISIBLE);
+                    heightin.setVisibility(View.GONE);
+                }
+            }
+        });
+        edit_goal=findViewById(R.id.edit_goal_btn);
+        edit_goal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invalid=false;
+                if(edit_goal.getText().toString().equals("save")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    int goal=0;
+                    try{
+                        goal=Integer.parseInt((goal_edit.getText()).toString());
+                        editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
+
+                    }
+                    catch (Throwable e) {
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                        invalid = true;
+                    }
+                    if(!invalid){
+                        if(goal<0)
+                            invalid=true;
+                    }
+                    if(invalid){
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                    }
+                    if(!invalid){
+                        edit_goal.setText("edit");
+                        goal_edit.setVisibility(View.GONE);
+                        current_goal.setVisibility(View.VISIBLE);
+                        current_goal.setText(goal_edit.getText());
+                    }
+                }
+                else if(edit_goal.getText().toString().equals("edit")){
+                    //Log.d("my_tag", edit_height.getText().toString());
+                    edit_goal.setText("save");
+                    goal_edit.setVisibility(View.VISIBLE);
+                    current_goal.setVisibility(View.GONE);
+                }
+            }
+        });
+        logout=findViewById(R.id.logout_btn);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+
+        Button logOutButton = findViewById(R.id.logout_btn);
+        logOutButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                gSignInAndOut.signOut();
+                launchLoginScreenActivity();
             }
         });
 
     }
+
+    //This method switches to the Login UI
+    public void launchLoginScreenActivity()
+    {
+        Intent intent = new Intent (this, LoginActivity.class);
+        startActivity(intent);
+    }
+    public void logout(){
+        Intent intent=new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
 
 }

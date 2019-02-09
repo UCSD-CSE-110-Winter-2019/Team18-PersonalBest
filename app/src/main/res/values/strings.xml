@@ -17,7 +17,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_activity_home_btm_nav">HomeBtmNavActivity</string>
+    <string name="title_activity_home_btm_nav">Home</string>
     <string name="title_activity_graph_btm_nav">GraphBtmNavActivity</string>
     <string name="title_activity_profile_btm_nav">ProfileBtmNavActivity</string>
     <string name="title_activity_summary">SummaryActivity</string>
