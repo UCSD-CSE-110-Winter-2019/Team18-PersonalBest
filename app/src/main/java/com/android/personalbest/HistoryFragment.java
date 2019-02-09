@@ -47,7 +47,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.stepChart = (BarChart) getView().findViewById(R.id.chart);
+        this.stepChart = getView().findViewById(R.id.chart);
         createChart();
     }
 

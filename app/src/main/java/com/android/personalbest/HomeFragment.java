@@ -12,11 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
-    //private TextView mTextMessage;
     private int curr_steps;
     private int goal;
     protected int intentional_steps = 0;
-    int i = 0;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+      
         // temp value
         goal = 5500;
         curr_steps = 2000;
@@ -41,9 +40,9 @@ public class HomeFragment extends Fragment {
 
         // display goal and current steps
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
-        ((TextView)getView().findViewById(R.id.curr_steps)).setText(Integer.toString(curr_steps));
+        ((TextView)getView().findViewById(R.id.display)).setText(Integer.toString(curr_steps));
 
-        Button start_btn = (Button) getView().findViewById(R.id.start);
+        Button start_btn = getView().findViewById(R.id.start);
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
