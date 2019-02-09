@@ -26,21 +26,12 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" />
-        <activity
-            android:name=".Home"
-            android:label="@string/title_activity_home_btm_nav" />
-        <activity
-            android:name=".GraphBtmNavActivity"
-            android:label="@string/title_activity_graph_btm_nav" />
-        <activity
-            android:name=".ProfileBtmNavActivity"/>
-
 
         <activity
             android:name=".TrackerActivity"
             android:label="TrackerActivity" />
 
-        <activity android:name=".GetToKnowUActivity"></activity>
+        <activity android:name=".GetToKnowUActivity"/>
     </application>
 
 </manifest>

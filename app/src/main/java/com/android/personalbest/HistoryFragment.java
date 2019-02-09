@@ -3,9 +3,12 @@ package com.android.personalbest;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -19,8 +22,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphBtmNavActivity extends AppCompatActivity {
-
+public class HistoryFragment extends Fragment {
     private TextView mTextMessage;
 
     BarChart stepChart;
@@ -34,40 +36,20 @@ public class GraphBtmNavActivity extends AppCompatActivity {
     private static final int TEST_STEP_GOAL = 5000;
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
-            }
-            return false;
-        }
-    };
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_graph_btm_nav);
-
-        this.stepChart = (BarChart) findViewById(R.id.chart);
-        createChart();
-
-        mTextMessage = findViewById(R.id.message);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        return inflater.inflate(R.layout.fragment_history, null);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        this.stepChart = getView().findViewById(R.id.chart);
+        createChart();
+    }
 
     // Create the BarEntry objects for the stacked bars
     public void createBarEntries(int[] incidentalSteps, int[] intentionalSteps) {
@@ -134,5 +116,4 @@ public class GraphBtmNavActivity extends AppCompatActivity {
         createLineForStepGoal(TEST_STEP_GOAL);
         configureStepChart();
     }
-
 }
