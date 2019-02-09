@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
     //This method switches to the Home UI
     public void launchHomeScreenActivity()
     {
-       Intent intent = new Intent (this, Home .class);
+       Intent intent = new Intent (this, ProfileBtmNavActivity.class);
        startActivity(intent);
     }
 
