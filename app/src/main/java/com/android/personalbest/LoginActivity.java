@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart()
     {
-       super.onStart();
+        super.onStart();
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-   }
+    }
 
     public void launchGetToKnowYouActivity() {
         Intent intent = new Intent(this, GetToKnowUActivity.class);
@@ -93,9 +94,8 @@ public class LoginActivity extends AppCompatActivity {
     //This method switches to the Home UI
     public void launchHomeScreenActivity()
     {
-       Intent intent = new Intent (this, Home.class);
-       startActivity(intent);
+        Intent intent = new Intent (this, MainActivity.class);
+        startActivity(intent);
     }
 
 }
-
