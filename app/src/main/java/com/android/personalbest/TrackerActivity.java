@@ -82,7 +82,8 @@ public class TrackerActivity extends AppCompatActivity {
     }
 
     private void launchActivity() {
-        Intent intent = new Intent(this, Home.class);
+
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("intentional_steps", Integer.toString(curr_step));
         startActivity(intent);
     }
