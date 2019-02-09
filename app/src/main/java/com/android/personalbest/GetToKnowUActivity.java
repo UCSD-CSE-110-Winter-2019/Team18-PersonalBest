@@ -18,7 +18,9 @@ public class GetToKnowUActivity extends AppCompatActivity {
     private static int RC_SIGN_IN = 100;
     LogInAndOut gSignInAndOut;
     String name="";
-    int height;
+    int heightft;
+    int heightin;
+    boolean invalid=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,20 +32,37 @@ public class GetToKnowUActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                invalid=false;
                 name=((EditText)findViewById(R.id.name_input)).getText().toString();
-                height=Integer.parseInt(((EditText)findViewById(R.id.height_input)).getText().toString());
-                SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString("name", name);
-                editor.putInt("height", height);
-                editor.commit();
-                Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
-                gSignInAndOut.signIn();
+
+                try{
+                heightft=Integer.parseInt(((EditText)findViewById(R.id.heightft_input)).getText().toString());
+                heightin=Integer.parseInt(((EditText)findViewById(R.id.heightin_input)).getText().toString());
+                }
+                catch(Throwable e){
+                    Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                    invalid=true;
+                }
+                if(name.isEmpty()){
+                    invalid=true;
+                    Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
+                }
+                if(!invalid){
+                    SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString("name", name);
+                    editor.putInt("heightft", heightft);
+                    editor.putInt("heightin", heightin);
+                    editor.commit();
+                    Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
+                    gSignInAndOut.signIn();}
             }
+
         });
     }
 
     public void launchActivity(){
+
         Intent intent=new Intent(this, Home.class);
         startActivity(intent);
 
