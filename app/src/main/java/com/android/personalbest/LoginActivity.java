@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
+
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(gSignInAndOut.updateUI(account))
         {
@@ -94,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
     //This method switches to the Home UI
     public void launchHomeScreenActivity()
     {
+
         Intent intent = new Intent (this, MainActivity.class);
         startActivity(intent);
     }
