@@ -68,10 +68,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -83,16 +83,40 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                //attemptLogin();
+                launchHomeScreenActivity();
+            }
+        });
+
+        Button createAccountButton = findViewById(R.id.create_account_button);
+        createAccountButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                //Switches to the get personal info activity
+                launchGetToKnowYouActivity();
             }
         });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+    public void launchGetToKnowYouActivity() {
+        Intent intent = new Intent(this, GetToKnowUActivity.class);
+        startActivity(intent);
+
+    }
+
+
+    //This method switches to the HomeFragment UI
+    public void launchHomeScreenActivity()
+    {
+       Intent intent = new Intent (this, MainActivity.class);
+       startActivity(intent);
     }
 
     private void populateAutoComplete() {
@@ -199,11 +223,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
+
     }
 
     /**
      * Shows the progress UI and hides the login form.
      */
+    @SuppressWarnings("all")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -288,6 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         };
 
         int ADDRESS = 0;
+        @SuppressWarnings("all")
         int IS_PRIMARY = 1;
     }
 
@@ -295,6 +322,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    @SuppressWarnings("all")
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
@@ -334,6 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                launchHomeScreenActivity();
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
