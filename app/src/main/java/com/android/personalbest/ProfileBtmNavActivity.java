@@ -93,16 +93,12 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
             public void onClick(View v) {
                 invalid=false;
                 if(edit_height.getText().toString().equals("save")){
-                    //Log.d("my_tag", edit_height.getText().toString());
-                    try{
-                    editor.putInt("heightft", Integer.parseInt((feet_edit.getText()).toString()));
-                    editor.putInt("heightin", Integer.parseInt((inch_edit.getText()).toString()));
-                    }
-                    catch (Throwable e){
-                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                        invalid=true;
-                    }
-                    if(!invalid){
+
+                    int ft=CheckInvalid.checkForHeightft(feet_edit.getText());
+                    int in=CheckInvalid.checkForHeightin(inch_edit.getText());
+                    if(ft<0||in<0)
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid height", Toast.LENGTH_SHORT).show();
+                    else{
                         edit_height.setText("edit");
                         feet_edit.setVisibility(View.GONE);
                         inch_edit.setVisibility(View.GONE);
@@ -114,7 +110,6 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
                     }
                 }
                 else if(edit_height.getText().toString().equals("edit")){
-                    //Log.d("my_tag", edit_height.getText().toString());
                     edit_height.setText("save");
                     feet_edit.setText(String.valueOf(sharedPreferences.getInt("heightft", 0)));
                     feet_edit.setVisibility(View.VISIBLE);
@@ -131,26 +126,13 @@ public class ProfileBtmNavActivity extends AppCompatActivity {
             public void onClick(View v) {
                 invalid=false;
                 if(edit_goal.getText().toString().equals("save")){
-                    //Log.d("my_tag", edit_height.getText().toString());
                     SharedPreferences.Editor editor=sharedPreferences.edit();
-                    int goal=0;
-                    try{
-                        goal=Integer.parseInt((goal_edit.getText()).toString());
-                        editor.putInt("goal", Integer.parseInt((goal_edit.getText()).toString()));
 
-                    }
-                    catch (Throwable e) {
-                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                        invalid = true;
-                    }
-                    if(!invalid){
-                        if(goal<0)
-                            invalid=true;
-                    }
-                    if(invalid){
-                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();
-                    }
-                    if(!invalid){
+                    int goal=CheckInvalid.checkForGoal(goal_edit.getText());
+                    if(goal<0)
+                        Toast.makeText(ProfileBtmNavActivity.this, "Invalid Goal", Toast.LENGTH_SHORT).show();
+                    else{
+                        editor.putInt("goal", goal);
                         edit_goal.setText("edit");
                         goal_edit.setVisibility(View.GONE);
                         current_goal.setVisibility(View.VISIBLE);
