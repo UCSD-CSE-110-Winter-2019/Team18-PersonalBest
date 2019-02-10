@@ -21,15 +21,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //mTextMessage = getView().findViewById(R.id.message);
-        //getActivity().getContentView(R.layout.fragment_home);
-
         return inflater.inflate(R.layout.fragment_home, null);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+      
         // temp value
         goal = 5500;
         curr_steps = 2000;

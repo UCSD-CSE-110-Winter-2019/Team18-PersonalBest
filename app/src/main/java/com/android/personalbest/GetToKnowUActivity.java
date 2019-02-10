@@ -17,9 +17,11 @@ public class GetToKnowUActivity extends AppCompatActivity {
     String TAG = GetToKnowUActivity.class.getName();
     private static int RC_SIGN_IN = 100;
     LogInAndOut gSignInAndOut;
+
     EditText name;
     EditText heightft;
     EditText heightin;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

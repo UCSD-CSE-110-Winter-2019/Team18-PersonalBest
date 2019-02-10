@@ -79,6 +79,7 @@ public class ProfileFragment extends Fragment {
                 invalid=false;
                 if(edit_height.getText().toString().equals("save")){
 
+
                     int ft=CheckInvalid.checkForHeightft(feet_edit.getText());
                     int in=CheckInvalid.checkForHeightin(inch_edit.getText());
                     if(ft<0||in<0)
