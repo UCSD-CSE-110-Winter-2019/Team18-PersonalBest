@@ -23,4 +23,6 @@
     <string name="title_activity_graph_btm_nav">GraphBtmNavActivity</string>
     <string name="title_activity_profile_btm_nav">ProfileBtmNavActivity</string>
     <string name="title_activity_summary">SummaryActivity</string>
+    <string name="step_goal_header">Step Goal</string>
+    <string name="intentional_steps_header">Intentional Steps This Week</string>
 </resources>
