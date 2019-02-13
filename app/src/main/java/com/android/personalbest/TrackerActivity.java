@@ -1,7 +1,9 @@
 package com.android.personalbest;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 public class TrackerActivity extends AppCompatActivity {
@@ -43,16 +46,19 @@ public class TrackerActivity extends AppCompatActivity {
         timer = new TrackTime();
         timer.execute("0");
 
+        // TODO Update the number steps with the actual number steps accumulated
         // temp value
         curr_step = 9;
 
         ((TextView)findViewById(R.id.steps)).setText(Integer.toString(curr_step));
 
         Button exit = findViewById(R.id.exit_btn);
+        final Context context = this.getApplicationContext();
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
+                SharedPrefData.saveStepsToSharedPreferences(context, Integer.parseInt(display_total_steps));
                 ShowPopup(view);
             }
         });
@@ -143,6 +149,4 @@ public class TrackerActivity extends AppCompatActivity {
             display_velocity.setText(df.format(curr_velocity));
         }
     }
-
-
 }

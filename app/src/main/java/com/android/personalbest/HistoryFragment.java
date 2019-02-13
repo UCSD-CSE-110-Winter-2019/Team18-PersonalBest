@@ -1,5 +1,7 @@
 package com.android.personalbest;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +22,10 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class HistoryFragment extends Fragment {
 
@@ -34,12 +39,13 @@ public class HistoryFragment extends Fragment {
     BarData data;
 
     private static final int[] TEST_INCIDENTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
-    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
+//    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
     private static final int INCIDENTAL_STEP_COLOR = Color.argb(200, 247, 215, 89);
     private static final int INTENTIONAL_STEP_COLOR = Color.argb(200, 41, 155, 242);
     private static final int TEST_STEP_GOAL = 5000;
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
+
 
     @Nullable
     @Override
@@ -117,11 +123,11 @@ public class HistoryFragment extends Fragment {
 
     // Main driver method that calls other set-up/configure methods
     public void createChart() {
-        createBarEntries(TEST_INCIDENTAL_STEPS, TEST_INTENTIONAL_STEPS);
+        createBarEntries(TEST_INCIDENTAL_STEPS, SharedPrefData.getIntentionalStepsFromSharedPrefs(this.getActivity()));
         configureBarDataSet();
         configureBarData();
         configureXAxisLabels();
-        createLineForStepGoal(TEST_STEP_GOAL);
+        createLineForStepGoal(getStepGoal());
         configureStepChart();
     }
 
@@ -137,12 +143,15 @@ public class HistoryFragment extends Fragment {
         stepGoalView.setText(Integer.toString(getStepGoal()));
     }
 
-    // TODO Eventually will get the week's worth of Intentional Steps from sharedPreferences/History API,
-    // currently just returns the sum of testing instance variable
+
+
+    // Sums all of the values in the intentionalSteps array to get the total for the week
     private int getTotalIntentionalStepsInWeek() {
         int totalIntentionalStepsInWeek = 0;
-        for (int i = 0; i < TEST_INTENTIONAL_STEPS.length; i++) {
-            totalIntentionalStepsInWeek += TEST_INTENTIONAL_STEPS[i];
+        int[] intentionalSteps = SharedPrefData.getIntentionalStepsFromSharedPrefs(this.getActivity());
+
+        for (int i = 0; i < intentionalSteps.length; i++) {
+            totalIntentionalStepsInWeek += intentionalSteps[i];
         }
         return totalIntentionalStepsInWeek;
     }
