@@ -46,8 +46,6 @@ public class HistoryFragment extends Fragment {
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
 
-    private int[] intentionalSteps = new int[NUM_DAYS_IN_WEEK];
-    private static final int NUM_MILLISECONDS_IN_DAY = 86400000;
 
     @Nullable
     @Override
@@ -125,8 +123,7 @@ public class HistoryFragment extends Fragment {
 
     // Main driver method that calls other set-up/configure methods
     public void createChart() {
-        getIntentionalStepsFromSharedPrefs();
-        createBarEntries(TEST_INCIDENTAL_STEPS, this.intentionalSteps);
+        createBarEntries(TEST_INCIDENTAL_STEPS, SharedPrefData.getIntentionalStepsFromSharedPrefs(this.getActivity()));
         configureBarDataSet();
         configureBarData();
         configureXAxisLabels();
@@ -147,41 +144,13 @@ public class HistoryFragment extends Fragment {
     }
 
 
-    private void getIntentionalStepsFromSharedPrefs() {
-        Calendar cal = Calendar.getInstance();
-        // Subtract 1 to match Sunday to 0 (Calendar API has Sunday to 1)
-        int currentDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        long sundayOfThisWeek = getTodayInMilliseconds() - (currentDayOfWeek * NUM_MILLISECONDS_IN_DAY);
-
-        // TODO Ask about Google Accounts & used that as the first parameter instead
-        long curDay = sundayOfThisWeek;
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("user_name", Context.MODE_PRIVATE);
-        for (int i = 0; i < this.intentionalSteps.length; i++) {
-            String curDayKey = Long.toString(curDay);
-            // Default value of 0 will handle later days of the week
-            this.intentionalSteps[i] = sharedPreferences.getInt(curDayKey, 0);
-            curDay += NUM_MILLISECONDS_IN_DAY;
-        }
-    }
-
-
-
-    // Retrieves the timestamp of the current day at 12:00am in milliseconds
-    private long getTodayInMilliseconds() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
-    }
-
 
     // Sums all of the values in the intentionalSteps array to get the total for the week
     private int getTotalIntentionalStepsInWeek() {
         int totalIntentionalStepsInWeek = 0;
-        for (int i = 0; i < this.intentionalSteps.length; i++) {
+        int[] intentionalSteps = SharedPrefData.getIntentionalStepsFromSharedPrefs(this.getActivity());
+
+        for (int i = 0; i < intentionalSteps.length; i++) {
             totalIntentionalStepsInWeek += intentionalSteps[i];
         }
         return totalIntentionalStepsInWeek;

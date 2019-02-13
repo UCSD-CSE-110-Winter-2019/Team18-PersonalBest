@@ -1,6 +1,7 @@
 package com.android.personalbest;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -52,11 +53,12 @@ public class TrackerActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.steps)).setText(Integer.toString(curr_step));
 
         Button exit = findViewById(R.id.exit_btn);
+        final Context context = this.getApplicationContext();
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
-                saveStepsToSharedPreferences();
+                SharedPrefData.saveStepsToSharedPreferences(context, Integer.parseInt(display_total_steps));
                 ShowPopup(view);
             }
         });
@@ -146,41 +148,5 @@ public class TrackerActivity extends AppCompatActivity {
             real_time.setText(time);
             display_velocity.setText(df.format(curr_velocity));
         }
-    }
-
-
-    // When the user presses the End Activity button, save the steps to SharedPreferences
-    private void saveStepsToSharedPreferences() {
-        // Uses the current day at 12:00am as a key in SharedPreferences to keep track of all
-        // intentional steps taken on this specific day
-        String currentDayKey = Long.toString(getTodayInMilliseconds());
-
-        // TODO update what int to parse once real-time step tracking is implementing
-        int numSteps = Integer.parseInt(display_total_steps);
-
-        // TODO Ask about Google Accounts & used that as the first parameter instead
-        SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // If user has already had activities today, we need to get the previous total and sum
-        if (sharedPreferences.contains(currentDayKey)) {
-            int prevSteps = sharedPreferences.getInt(currentDayKey, 0);
-            numSteps += prevSteps;
-        }
-
-        editor.putInt(currentDayKey, numSteps);
-        editor.apply();
-    }
-
-
-    // Retrieves the timestamp of the current day at 12:00am in milliseconds
-    private long getTodayInMilliseconds() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
     }
 }
