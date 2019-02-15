@@ -28,15 +28,17 @@ public class MainActivity extends AppCompatActivity
 
         loadFragment(new HomeFragment());
 
+
 //        ActivityManager am = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
 //        ComponentName cn = am.getRunningTasks(1).get(0).topActivity.getClassName();
 
 
 
-        Dialog myDialog = new Dialog(this);
-        myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        myDialog.show();
+//        Dialog myDialog = new Dialog(this);
+//        myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
+//        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        myDialog.show();
+
     }
 
     private boolean loadFragment(Fragment fragment) {
