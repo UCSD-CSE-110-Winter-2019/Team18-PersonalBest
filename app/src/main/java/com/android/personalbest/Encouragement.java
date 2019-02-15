@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
-<<<<<<< HEAD
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-=======
+
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,7 +19,7 @@ import java.util.Calendar;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static java.lang.System.out;
 import static java.security.AccessController.getContext;
->>>>>>> 37ab564feed73572a3a89122c65c83fd9ca4a81e
+
 
 public class Encouragement {
     private String time = null;
