@@ -1,29 +1,12 @@
 package com.android.personalbest;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static java.lang.System.out;
 
 public class Encouragement {
     private String time = null;
@@ -73,6 +56,7 @@ public class Encouragement {
          myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
          myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
          myDialog.show();
+
      }
 
 

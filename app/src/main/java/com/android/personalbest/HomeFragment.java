@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute("0");
+
         // temp value
         goal = 5500;
         curr_steps = 2000;

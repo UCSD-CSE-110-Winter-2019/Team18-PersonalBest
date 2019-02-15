@@ -30,6 +30,7 @@ public class TrackerActivity extends AppCompatActivity {
     private int curr_time = 0;
 
 
+    // create the tracker page for planned activities
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +40,17 @@ public class TrackerActivity extends AppCompatActivity {
         real_time = findViewById(R.id.time_elapsed);
         display_velocity = findViewById(R.id.velocity);
 
+        // start the timer for intentional activities
         timer = new TrackTime();
         timer.execute("0");
 
         // temp value
+        //TODO
         curr_step = 9;
 
         ((TextView)findViewById(R.id.steps)).setText(Integer.toString(curr_step));
 
+        // show the summary page when clicking on the "end walk/run" button
         Button exit = findViewById(R.id.exit_btn);
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +61,7 @@ public class TrackerActivity extends AppCompatActivity {
         });
     }
 
+    // function to show the summary popup
     public void ShowPopup(View v) {
         Button btnClose;
         myDialog.setContentView(R.layout.activity_summary);
@@ -65,9 +70,11 @@ public class TrackerActivity extends AppCompatActivity {
         display_avg_velocity = myDialog.findViewById(R.id.avg_velocity);
         stopTimer = true;
 
+        // show the total steps from this planned activity
         TextView total_steps = myDialog.findViewById(R.id.total_steps);
         total_steps.setText(display_total_steps);
 
+        // go back to home page when clicking the close button
         btnClose = myDialog.findViewById(R.id.back_to_home);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,12 +83,15 @@ public class TrackerActivity extends AppCompatActivity {
                 launchActivity();
             }
         });
+
+        // show the popup
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
 
-    private void launchActivity() {
 
+    // activity to go back to home page
+    private void launchActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("intentional_steps", Integer.toString(curr_step));
         startActivity(intent);
@@ -103,6 +113,7 @@ public class TrackerActivity extends AppCompatActivity {
                     publishProgress(Integer.toString(curr_time));
 
                     // temp value
+                    //TODO
                     curr_velocity = r.nextDouble()*2;
 
                     Thread.sleep(1000);
