@@ -9,6 +9,23 @@
     android:orientation="vertical"
     android:padding="5dp">
 
+    <Button
+        android:id="@+id/back_home_btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginRight="128dp"
+        android:layout_marginBottom="36dp"
+        android:background="@android:color/darker_gray"
+        android:onClick="setNewGoal"
+        android:text="New Goal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.976"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/summary_title"
         android:layout_width="wrap_content"
@@ -38,7 +55,7 @@
         app:layout_constraintTop_toBottomOf="@+id/summary_title" />
 
     <TextView
-        android:id="@+id/total_step_today"
+        android:id="@+id/current_goal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="110dp"
@@ -66,16 +83,16 @@
 
     <TextView
         android:id="@+id/textView11"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginLeft="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="140dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Do you want to set a new goal?"
+        android:text="Do you want to increase your goal"
         android:textColor="@android:color/black"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/summary_title" />
@@ -83,12 +100,13 @@
 
     <Button
         android:id="@+id/change_btn"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="36dp"
         android:background="@android:color/darker_gray"
+        android:onClick="increaseGoal"
         android:text="Yes"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -96,15 +114,33 @@
 
     <Button
         android:id="@+id/back_home_btn"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="36dp"
         android:background="@android:color/darker_gray"
+        android:onClick="dismiss"
         android:text="Next Time"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="by 500 steps"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/back_home_btn2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -1,9 +1,12 @@
 package com.android.personalbest;
 
+import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.widget.EditText;
 
-public class CheckInvalid {
+public class CheckInvalid extends AppCompatActivity {
+
     public static boolean checkForName(Editable name){
         if(name.toString().isEmpty()){
             return false;
