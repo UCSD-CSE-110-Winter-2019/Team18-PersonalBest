@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.text.DecimalFormat;
 import java.util.Random;
 
@@ -87,6 +86,7 @@ public class TrackerActivity extends AppCompatActivity {
         intent.putExtra("intentional_steps", Integer.toString(curr_step));
         startActivity(intent);
     }
+
 
     // class to track time elapsed
     private class TrackTime extends AsyncTask<String, String, String> {

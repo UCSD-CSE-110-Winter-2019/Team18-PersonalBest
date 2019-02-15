@@ -49,6 +49,7 @@ public class HistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.stepChart = getView().findViewById(R.id.chart);
         createChart();
+
     }
 
     // Create the BarEntry objects for the stacked bars
