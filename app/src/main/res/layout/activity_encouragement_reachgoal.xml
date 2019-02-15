@@ -13,8 +13,6 @@
         android:id="@+id/back_home_btn2"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="128dp"
         android:layout_marginRight="128dp"
         android:layout_marginBottom="36dp"
