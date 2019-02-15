@@ -2,47 +2,52 @@ package com.android.personalbest;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 
 
-public class DisplayEncouragement extends AsyncTask<String, String, String> {
+public class DisplayEncouragement {
     private Encouragement encouragement;
-    //private GoogleFit googlefit;
+    private Boolean isCancelled;
+    private AsyncTaskRunner runner;
 
     public DisplayEncouragement(Activity activity) {
         encouragement = new Encouragement(activity);
+        Log.d("msg","reach");
+        runner=new AsyncTaskRunner();
+        runner.execute("0");
     }
+    public void show(){
+        runner.cancel(true);
+        encouragement.showChangeGoal();
+    }
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+    //boolean isCancelled = false;
 
     @Override
     protected String doInBackground(String... params) {
-        while (true) {
+        for (int i = 0; i < 10; i++) {
+
             try {
-                //int steps = googlefit.getDailySteps();
-                // int goal = get from shared preference
-
-                //temp value
-                int steps = 5593;
-                int goal = 5000;
-
-                int difference = steps - encouragement.getPreviousDayStep();
-
-                if (steps > goal) {
-                    encouragement.showChangeGoal();
-                }
-
-
-                if (encouragement.getTime() == "20:00" && difference >= 1000) {
-                    encouragement.displayImprovement();
-                }
-
-
-            } catch (Exception e) {
+                publishProgress(Integer.toString(i));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(i==5){
+                return("5");
+            }
+            if(isCancelled){
+                return(Integer.toString(i));
+            }
+            if(isCancelled()){break;}
         }
+        return ("10");
     }
 
     @Override
     protected void onPostExecute(String result) {
+        show();
+
     }
 
     @Override
@@ -51,7 +56,9 @@ public class DisplayEncouragement extends AsyncTask<String, String, String> {
 
     @Override
     protected void onProgressUpdate(String... count) {
-
+        Log.d("msg",String.valueOf(count[0]));
     }
-
 }
+}
+
+

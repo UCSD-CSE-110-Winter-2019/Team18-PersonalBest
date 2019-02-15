@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,10 @@ public class HomeFragment extends Fragment {
     private DisplayEncouragement encouragement;
     Dialog myDialog;
     Button btn;
+    static boolean isCancelled = false;
+    FakeApi api;
+    AsyncTaskRunner runner;
+
 
     @Nullable
     @Override
@@ -42,10 +47,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        AsyncTaskRunner runner = new AsyncTaskRunner();
+        //DisplayEncouragement displayEncouragement=new DisplayEncouragement(getActivity());
+        api=new FakeApi();
+        runner = new AsyncTaskRunner();
         runner.execute("0");
         // temp value
-        goal = 5500;
+        goal = 5000;
         curr_steps = 2000;
 
         Intent intent = getActivity().getIntent();
@@ -63,12 +70,13 @@ public class HomeFragment extends Fragment {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isCancelled=true;
                 launchActivity();
             }
         });
 
-        encouragement = new DisplayEncouragement(this.getActivity());
-        encouragement.execute();
+//        encouragement = new DisplayEncouragement(this.getActivity());
+//        encouragement.execute();
 
 
 //        myDialog = new Dialog(this.getActivity());
@@ -91,26 +99,32 @@ public class HomeFragment extends Fragment {
     public void show(){
         Encouragement e =new Encouragement(getActivity());
         e.showChangeGoal();
+        goal=e.getGoal();
+        Log.d("goal", String.valueOf(goal));
     }
+
 private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-    private boolean isCancelled = false;
+    //boolean isCancelled = false;
 
     @Override
     protected String doInBackground(String... params) {
-        for (int i = 0; i < 10; i++) {
-
+        int i=0;
+        while(true) {
+            i++;
+            int step=api.getStep();
             try {
-                publishProgress(Integer.toString(i));
+                publishProgress(Integer.toString(step));
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(i==5){
+            if(isCancelled){
+                return("10");
+            }
+            if(step>goal){
                 return("5");
             }
-            if(isCancelled){
-                return(Integer.toString(i));
-            }
+
             if(isCancelled()){break;}
         }
         return ("10");
@@ -118,8 +132,8 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String result) {
-
-        show();
+        if(Integer.parseInt(result)==5)
+            show();
     }
 
     @Override
