@@ -24,10 +24,10 @@ public class HomeFragment extends Fragment {
     private int curr_steps;
     private static int goal;
     protected int intentional_steps = 0;
-    private DisplayEncouragement encouragement;
+    //private DisplayEncouragement encouragement;
     Dialog myDialog;
     Button btn;
-    static boolean isCancelled = false;
+    boolean ishown=false;
     FakeApi api;
     static AsyncTaskRunner runner;
     Activity activity;
@@ -89,8 +89,8 @@ public class HomeFragment extends Fragment {
     }
     @Override
     public void onPause(){
-
-        runner.cancel(true);
+        Log.d("msg:", "pause");
+        //runner.cancel(true);
         Log.d("status",runner.getStatus().toString());
         super.onPause();
     }
@@ -99,8 +99,8 @@ public class HomeFragment extends Fragment {
         Log.d("reach", "yes");
         goal=Encouragement.getGoal();
         //runner.cancel(true);
-        runner=new AsyncTaskRunner();
-        runner.execute("0");
+        //runner=new AsyncTaskRunner();
+        //runner.execute("0");
         super.onResume();
     }
     private void launchActivity() {
@@ -108,13 +108,6 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-//    @Override
-//    public void update(Observable observable, Object a) {
-//        this.reachGoal = (boolean) a;
-//        this.showImprovement = (boolean) b;
-//
-//
-//    }
     public static void  async(){
         goal=Encouragement.getGoal();
 
@@ -122,8 +115,10 @@ public class HomeFragment extends Fragment {
     }
     public void show(){
         Log.wtf("value",activity.toString());
+
         Encouragement e =new Encouragement(activity);
         e.showChangeGoal();
+
         runner.cancel(true);
         runner=new AsyncTaskRunner();
         Log.d("goal", String.valueOf(goal));
@@ -145,9 +140,6 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
                 e.printStackTrace();
             }
             if(isCancelled()){break;}
-            if(isCancelled){
-                return("10");
-            }
             if(step>=goal){
                 return("5");
             }
@@ -171,6 +163,7 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
     protected void onProgressUpdate(String... count) {
         btn.findViewById(R.id.button);
         btn.setText(String.valueOf(count[0]));
+        Log.d("button value", String.valueOf(count[0]));
     }
 }
 }
