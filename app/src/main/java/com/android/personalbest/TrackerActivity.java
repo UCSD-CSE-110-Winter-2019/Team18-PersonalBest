@@ -3,7 +3,6 @@ package com.android.personalbest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Random;
 
 public class TrackerActivity extends AppCompatActivity {
@@ -58,7 +56,7 @@ public class TrackerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
-                SharedPrefData.saveStepsToSharedPreferences(context, Integer.parseInt(display_total_steps));
+                SharedPrefData.saveIntentionalSteps(context, Integer.parseInt(display_total_steps));
                 ShowPopup(view);
             }
         });

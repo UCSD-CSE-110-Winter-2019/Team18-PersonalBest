@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 public class HomeFragment extends Fragment {
     private int curr_steps;
     private int goal;
@@ -27,9 +30,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-      
+
+        goal = SharedPrefData.getGoal(this.getContext());
         // temp value
-        goal = 5500;
         curr_steps = 2000;
 
         Intent intent = getActivity().getIntent();
