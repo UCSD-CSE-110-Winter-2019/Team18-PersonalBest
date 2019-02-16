@@ -77,7 +77,6 @@ public class Encouragement {
          myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
          myDialog.show();
          Button incGoal=myDialog.findViewById(R.id.inc_goal_btn);
-         Button newGoal=myDialog.findViewById(R.id.new_goal_btn);
          Button back=myDialog.findViewById(R.id.back_home_btn);
          incGoal.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -87,16 +86,11 @@ public class Encouragement {
                  HomeFragment.async();
              }
          });
-         newGoal.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 myDialog.dismiss();
-             }
-         });
          back.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
+                 HomeFragment.async();
              }
          });
      }
