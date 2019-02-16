@@ -31,12 +31,12 @@ public class HomeFragment extends Fragment {
     FakeApi api;
     static AsyncTaskRunner runner;
     Activity activity;
-
-
+    static boolean first=true;
+    static LayoutInflater temp;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        temp=inflater;
         super.onCreate(savedInstanceState);
         //mTextMessage = getView().findViewById(R.id.message);
         //getActivity().getContentView(R.layout.fragment_home);
@@ -51,8 +51,10 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //DisplayEncouragement displayEncouragement=new DisplayEncouragement(getActivity());
         api=new FakeApi();
-        runner = new AsyncTaskRunner();
-        runner.execute("0");
+        if(first){
+            runner = new AsyncTaskRunner();
+            runner.execute("0");
+            first=false;}
         // temp value
         goal = 5000;
         curr_steps = 2000;
@@ -102,6 +104,7 @@ public class HomeFragment extends Fragment {
         //runner=new AsyncTaskRunner();
         //runner.execute("0");
         super.onResume();
+        temp.inflate(R.layout.fragment_home, null);
     }
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
