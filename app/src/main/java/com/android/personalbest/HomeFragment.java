@@ -24,12 +24,18 @@ public class HomeFragment extends Fragment {
     private int curr_steps;
     private static int goal;
     protected int intentional_steps = 0;
-    private DisplayEncouragement encouragement;
+    //private DisplayEncouragement encouragement;
     Dialog myDialog;
     Button btn;
-    static boolean isCancelled = false;
+
+//    static boolean isCancelled = false;
 //    FakeApi api;
     //static AsyncTaskRunner runner;
+
+    boolean ishown=false;
+    FakeApi api;
+    static AsyncTaskRunner runner;
+
     Activity activity;
 
 
@@ -95,8 +101,10 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause(){
 
+        Log.d("msg:", "pause");
         //runner.cancel(true);
-        //Log.d("status",runner.getStatus().toString());
+        Log.d("status",runner.getStatus().toString());
+
         super.onPause();
     }
 
@@ -104,8 +112,11 @@ public class HomeFragment extends Fragment {
     public void onResume(){
         Log.d("reach", "yes");
         goal=Encouragement.getGoal();
-//        runner=new AsyncTaskRunner();
-//        runner.execute("0");
+
+        //runner.cancel(true);
+        //runner=new AsyncTaskRunner();
+        //runner.execute("0");
+
         super.onResume();
     }
     private void launchActivity() {
@@ -113,65 +124,64 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-//
-//    public static void async(){
-//        goal=Encouragement.getGoal();
-//        runner.execute("0");
-//    }
+
+    public static void  async(){
+        goal=Encouragement.getGoal();
+
+        runner.execute("0");
+    }
+    public void show(){
+        Log.wtf("value",activity.toString());
+
+        Encouragement e =new Encouragement(activity);
+        e.showChangeGoal();
+
+        runner.cancel(true);
+        runner=new AsyncTaskRunner();
+        Log.d("goal", String.valueOf(goal));
+    }
+
+private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+    //boolean isCancelled = false;
+
+    @Override
+    protected String doInBackground(String... params) {
+        int i=0;
+        while(true) {
+            i++;
+            int step=api.getStep();
+            try {
+                publishProgress(Integer.toString(step));
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(isCancelled()){break;}
+            if(step>=goal){
+                return("5");
+            }
 
 
-//    public void show(){
-//        Log.wtf("value",activity.toString());
-//        Encouragement e =new Encouragement(activity);
-//        e.showChangeGoal();
-//        //e.displayImprovement();
-//        runner.cancel(true);
-//        runner=new AsyncTaskRunner();
-//        Log.d("goal", String.valueOf(goal));
-//    }
+        }
+        return ("10");
+    }
 
-    //private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-    //    //boolean isCancelled = false;
-    //
-    //    @Override
-    //    protected String doInBackground(String... params) {
-    //        int i=0;
-    //        while(true) {
-    //            i++;
-    //            int step=api.getStep();
-    //            try {
-    //                publishProgress(Integer.toString(step));
-    //                Thread.sleep(1000);
-    //            } catch (InterruptedException e) {
-    //                e.printStackTrace();
-    //            }
-    //            if(isCancelled()){break;}
-    //            if(isCancelled){
-    //                return("10");
-    //            }
-    //            if(step>=goal){
-    //                return("5");
-    //            }
-    //
-    //
-    //        }
-    //        return ("10");
-    //    }
-    //
-    //    @Override
-    //    protected void onPostExecute(String result) {
-    //        if(Integer.parseInt(result)==5)
-    //            show();
-    //    }
-    //
-    //    @Override
-    //    protected void onPreExecute() {
-    //    }
-    //
-    //    @Override
-    //    protected void onProgressUpdate(String... count) {
-    //        btn.findViewById(R.id.button);
-    //        btn.setText(String.valueOf(count[0]));
-    //    }
-    //}
+    @Override
+    protected void onPostExecute(String result) {
+        if(Integer.parseInt(result)==5)
+            show();
+    }
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    @Override
+    protected void onProgressUpdate(String... count) {
+        btn.findViewById(R.id.button);
+        btn.setText(String.valueOf(count[0]));
+        Log.d("button value", String.valueOf(count[0]));
+    }
+}
+
 }

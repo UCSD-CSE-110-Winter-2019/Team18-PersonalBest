@@ -3,18 +3,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
+
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-
-import android.widget.Button;
-
-import static com.android.personalbest.HomeFragment.isCancelled;
-
 
 public class Encouragement {
 
@@ -41,24 +37,12 @@ public class Encouragement {
     }
 
 
-//    // call the set goal function from GoogleFit class
+    // call the set goal function from GoogleFit class
     public static void incGoal(int inc) {
         goal=goal+inc;
         Log.d("inc goal", String.valueOf(goal));
     }
-//
-//    //go to profile to set new goal
-//    public void setNewGoal(){
-//
-//        Intent intent= new Intent(activity, ProfileFragment.class);
-//        startActivity(intent);
-//    }
-//
-//    //if dismiss, go to home page
-//    public void dismiss(){
-//
-//        Intent intent= new Intent(activity, HomeFragment.class);
-//    }
+
     public static int getGoal(){
         Log.d("ec goal",String.valueOf(goal));
         return goal;
