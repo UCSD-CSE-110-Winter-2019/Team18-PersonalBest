@@ -18,7 +18,8 @@ public class DisplayEncouragement {
     }
     public void show(){
         runner.cancel(true);
-        encouragement.showChangeGoal();
+        //encouragement.showChangeGoal();
+        encouragement.displayImprovement();
     }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
     //boolean isCancelled = false;

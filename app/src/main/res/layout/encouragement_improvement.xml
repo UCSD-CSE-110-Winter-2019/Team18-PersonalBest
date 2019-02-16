@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="BRAVO"
+        android:text="BRAVO!"
         android:textColor="@android:color/black"
         android:textSize="30sp"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
@@ -11,17 +12,13 @@ import java.util.Calendar;
 
 
 import android.widget.Button;
-import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static java.lang.System.out;
-import static java.security.AccessController.getContext;
+import static com.android.personalbest.HomeFragment.isCancelled;
 
 
 public class Encouragement {
+
+
     private String time = null;
     Dialog myDialog;
     Activity activity;
@@ -35,6 +32,7 @@ public class Encouragement {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         time = sdf.format(cal.getTime());
+        Log.wtf("time", time);
         return time;
     }
 
@@ -65,6 +63,8 @@ public class Encouragement {
         Log.d("ec goal",String.valueOf(goal));
         return goal;
     }
+
+
      public void showChangeGoal () {
          myDialog = new Dialog(activity);
          myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
@@ -98,7 +98,14 @@ public class Encouragement {
          myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
          myDialog.show();
 
-     }
+         Button getHome = myDialog.findViewById(R.id.back_home_btn);
+         getHome.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 myDialog.dismiss();
+             }
+         });
 
+     }
 
 }
