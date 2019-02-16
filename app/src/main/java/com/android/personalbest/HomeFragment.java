@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,14 +22,15 @@ import java.util.Observer;
 
 public class HomeFragment extends Fragment {
     private int curr_steps;
-    private int goal;
+    private static int goal;
     protected int intentional_steps = 0;
     private DisplayEncouragement encouragement;
     Dialog myDialog;
     Button btn;
     static boolean isCancelled = false;
     FakeApi api;
-    AsyncTaskRunner runner;
+    static AsyncTaskRunner runner;
+    Activity activity;
 
 
     @Nullable
@@ -55,8 +57,9 @@ public class HomeFragment extends Fragment {
         // temp value
         goal = 5000;
         curr_steps = 2000;
-
+        activity=getActivity();
         Intent intent = getActivity().getIntent();
+        //Log.wtf("value",this.getActivity().toString());
         if (intent.getStringExtra("intentional_steps") != null) {
             intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
             curr_steps = curr_steps + intentional_steps;
@@ -71,7 +74,7 @@ public class HomeFragment extends Fragment {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isCancelled=true;
+                runner.cancel(true);
                 launchActivity();
             }
         });
@@ -85,6 +88,22 @@ public class HomeFragment extends Fragment {
 //        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 //        myDialog.show();
     }
+    @Override
+    public void onPause(){
+
+        runner.cancel(true);
+        Log.d("status",runner.getStatus().toString());
+        super.onPause();
+    }
+    @Override
+    public void onResume(){
+        Log.d("reach", "yes");
+        goal=Encouragement.getGoal();
+        //runner.cancel(true);
+        runner=new AsyncTaskRunner();
+        runner.execute("0");
+        super.onResume();
+    }
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
         startActivity(intent);
@@ -97,10 +116,17 @@ public class HomeFragment extends Fragment {
 //
 //
 //    }
+    public static void  async(){
+        goal=Encouragement.getGoal();
+
+        runner.execute("0");
+    }
     public void show(){
-        Encouragement e =new Encouragement(getActivity());
+        Log.wtf("value",activity.toString());
+        Encouragement e =new Encouragement(activity);
         e.showChangeGoal();
-        goal=e.getGoal();
+        runner.cancel(true);
+        runner=new AsyncTaskRunner();
         Log.d("goal", String.valueOf(goal));
     }
 
@@ -119,14 +145,15 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(isCancelled()){break;}
             if(isCancelled){
                 return("10");
             }
-            if(step>goal){
+            if(step>=goal){
                 return("5");
             }
 
-            if(isCancelled()){break;}
+
         }
         return ("10");
     }
@@ -143,6 +170,7 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
     @Override
     protected void onProgressUpdate(String... count) {
+        btn.findViewById(R.id.button);
         btn.setText(String.valueOf(count[0]));
     }
 }

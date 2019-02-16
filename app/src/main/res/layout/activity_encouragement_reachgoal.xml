@@ -9,20 +9,6 @@
     android:orientation="vertical"
     android:padding="5dp">
 
-    <Button
-        android:id="@+id/new_goal_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="55dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginRight="128dp"
-        android:layout_marginBottom="36dp"
-        android:background="@android:color/darker_gray"
-        android:text="New Goal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.977"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/summary_title"
         android:layout_width="wrap_content"
@@ -99,9 +85,9 @@
         android:id="@+id/inc_goal_btn"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginLeft="68dp"
+        android:layout_marginBottom="40dp"
         android:background="@android:color/darker_gray"
         android:text="Yes"
         android:textColor="@android:color/black"
@@ -112,9 +98,9 @@
         android:id="@+id/back_home_btn"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
+        android:layout_marginBottom="40dp"
         android:background="@android:color/darker_gray"
         android:text="Next Time"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -129,10 +115,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="by 500 steps"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/new_goal_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
