@@ -31,11 +31,10 @@ public class Encouragement {
     private String time = null;
     Dialog myDialog;
     Activity activity;
-    int goal=5000;
-
+    static int goal=5000;
+    public Encouragement(){};
     public Encouragement(Activity activity) {
         this.activity = activity;
-        HomeFragment.isCancelled=true;
     }
 
     public String getTime() {
@@ -51,8 +50,8 @@ public class Encouragement {
 
 
 //    // call the set goal function from GoogleFit class
-    public void incGoal(int inc) {
-        this.goal=this.goal+inc;
+    public static void incGoal(int inc) {
+        goal=goal+inc;
         Log.d("inc goal", String.valueOf(goal));
     }
 //
@@ -68,7 +67,7 @@ public class Encouragement {
 //
 //        Intent intent= new Intent(activity, HomeFragment.class);
 //    }
-    public int getGoal(){
+    public static int getGoal(){
         Log.d("ec goal",String.valueOf(goal));
         return goal;
     }
@@ -84,8 +83,8 @@ public class Encouragement {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 HomeFragment.isCancelled=false;
                  incGoal(2000);
+                 HomeFragment.async();
              }
          });
          newGoal.setOnClickListener(new View.OnClickListener() {

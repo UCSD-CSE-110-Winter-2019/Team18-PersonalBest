@@ -1,7 +1,6 @@
 package com.android.personalbest;
 
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -21,7 +20,6 @@ public class MainActivity extends AppCompatActivity
         navigation.setOnNavigationItemSelectedListener(this);
 
         loadFragment(new HomeFragment());
-
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -51,5 +49,4 @@ public class MainActivity extends AppCompatActivity
         }
         return loadFragment(fragment);
     }
-
 }
