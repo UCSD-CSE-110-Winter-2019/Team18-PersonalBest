@@ -1,31 +1,14 @@
 package com.android.personalbest;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static java.lang.System.out;
-import static java.security.AccessController.getContext;
 
 public class Encouragement {
     private String time = null;
@@ -49,24 +32,12 @@ public class Encouragement {
     }
 
 
-//    // call the set goal function from GoogleFit class
+    // call the set goal function from GoogleFit class
     public static void incGoal(int inc) {
         goal=goal+inc;
         Log.d("inc goal", String.valueOf(goal));
     }
-//
-//    //go to profile to set new goal
-//    public void setNewGoal(){
-//
-//        Intent intent= new Intent(activity, ProfileFragment.class);
-//        startActivity(intent);
-//    }
-//
-//    //if dismiss, go to home page
-//    public void dismiss(){
-//
-//        Intent intent= new Intent(activity, HomeFragment.class);
-//    }
+
     public static int getGoal(){
         Log.d("ec goal",String.valueOf(goal));
         return goal;
