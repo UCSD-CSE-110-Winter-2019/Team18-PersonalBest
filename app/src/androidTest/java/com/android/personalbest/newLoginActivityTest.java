@@ -28,13 +28,13 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class NewUserLoginActivityTest {
+public class newLoginActivityTest {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     @Test
-    public void newUserLoginActivityTest() {
+    public void newLoginActivityTest() {
         ViewInteraction button = onView(
                 allOf(withId(R.id.create_account_button),
                         childAtPosition(
