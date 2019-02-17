@@ -37,12 +37,12 @@ public class HomeFragment extends Fragment {
     static AsyncTaskRunner runner;
 
     Activity activity;
-
-
+    static boolean first=true;
+    static LayoutInflater temp;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        temp=inflater;
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -55,10 +55,12 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //DisplayEncouragement displayEncouragement=new DisplayEncouragement(getActivity());
-//        api=new FakeApi();
-//        runner = new AsyncTaskRunner();
-//        runner.execute("0");
 
+        api=new FakeApi();
+        if(first){
+            runner = new AsyncTaskRunner();
+            runner.execute("0");
+            first=false;}
         // temp value
         goal = 5000;
         curr_steps = 2000;
@@ -118,6 +120,7 @@ public class HomeFragment extends Fragment {
         //runner.execute("0");
 
         super.onResume();
+        temp.inflate(R.layout.fragment_home, null);
     }
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
@@ -141,30 +144,30 @@ public class HomeFragment extends Fragment {
         Log.d("goal", String.valueOf(goal));
     }
 
-private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-    //boolean isCancelled = false;
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+        //boolean isCancelled = false;
 
-    @Override
-    protected String doInBackground(String... params) {
-        int i=0;
-        while(true) {
-            i++;
-            int step=api.getStep();
-            try {
-                publishProgress(Integer.toString(step));
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        @Override
+        protected String doInBackground(String... params) {
+            int i=0;
+            while(true) {
+                i++;
+                int step=api.getStep();
+                try {
+                    publishProgress(Integer.toString(step));
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(isCancelled()){break;}
+                if(step>=goal){
+                    return("5");
+                }
+
+
             }
-            if(isCancelled()){break;}
-            if(step>=goal){
-                return("5");
-            }
-
-
+            return ("10");
         }
-        return ("10");
-    }
 
     @Override
     protected void onPostExecute(String result) {
