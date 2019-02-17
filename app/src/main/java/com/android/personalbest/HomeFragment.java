@@ -214,9 +214,9 @@ public class HomeFragment extends Fragment {
             display_goal.setText(Integer.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
 
-            for(int i = 0; i < GoogleFit.stepData.length; i++)
+            for(int i = 0; i < GoogleFit.weekSteps.length; i++)
             {
-                HistoryFragment.TOTAL_STEPS[i] = GoogleFit.stepData[i];
+                HistoryFragment.TOTAL_STEPS[i] = GoogleFit.weekSteps[i];
             }
         }
     }
