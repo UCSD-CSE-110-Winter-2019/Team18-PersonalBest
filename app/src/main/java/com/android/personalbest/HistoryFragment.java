@@ -128,7 +128,7 @@ public class HistoryFragment extends Fragment {
 
     // Main driver method that calls other set-up/configure methods
     public void createChart() {
-        createBarEntries(TEST_INCIDENTAL_STEPS, SharedPrefData.getIntentionalSteps(this.getActivity()));
+        createBarEntries(calculateIncidentalSteps(), SharedPrefData.getIntentionalSteps(this.getActivity()));
         configureBarDataSet();
         configureBarData();
         configureXAxisLabels();
@@ -162,5 +162,21 @@ public class HistoryFragment extends Fragment {
     public void displayIntentionalSteps() {
         intentionalStepsCountView = getView().findViewById(R.id.intentionalStepsCount);
         intentionalStepsCountView.setText(Integer.toString(getTotalIntentionalStepsInWeek()));
+    }
+
+
+    // Subtracts intentional steps from total steps to be able to calculate the incidental steps
+    public int[] calculateIncidentalSteps() {
+        int[] incidentalSteps = new int[NUM_DAYS_IN_WEEK];
+        int[] intentionalSteps = SharedPrefData.getIntentionalSteps(this.getActivity());
+
+        for (int i = 0; i < NUM_DAYS_IN_WEEK; i++) {
+            int numIncidentalSteps = TOTAL_STEPS[i] - intentionalSteps[i];
+            if (numIncidentalSteps < 0) {
+                numIncidentalSteps = 0;
+            }
+            incidentalSteps[i] = numIncidentalSteps;
+        }
+        return incidentalSteps;
     }
 }

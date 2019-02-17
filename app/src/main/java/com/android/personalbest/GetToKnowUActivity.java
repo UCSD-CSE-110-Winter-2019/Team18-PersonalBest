@@ -30,6 +30,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_to_know_u);
         gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+        gSignInAndOut.signIn();
 
         Button finish=(Button) findViewById(R.id.finish_btn);
         final Context context = GetToKnowUActivity.this;
@@ -47,10 +48,13 @@ public class GetToKnowUActivity extends AppCompatActivity {
                     Log.d("invalid", String.valueOf(CheckInvalid.checkForName(name.getText())));
                     Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();}
                 else{
-                    gSignInAndOut.signIn();
-                    SharedPrefData.setInfoFromCreateAccount(context, name.getText().toString(), ft, in);
+                    SharedPrefData.setName(context, name.getText().toString());
+                    SharedPrefData.setHeightFt(context, ft);
+                    SharedPrefData.setHeightIn(context, in);
+                    SharedPrefData.setGoal(context, 5000);
 
                     Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
+                    launchActivity();
                     }
             }
 
@@ -76,7 +80,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
             //If sign in was successful then launchActivity
             if ( gSignInAndOut.handleSignInResult(task) == true )
             {
-                launchActivity();
+                // No longer need to launch activity, taken care of by finish button
             }
         }
     }

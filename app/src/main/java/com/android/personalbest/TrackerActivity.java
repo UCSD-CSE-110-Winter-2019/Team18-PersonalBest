@@ -33,6 +33,7 @@ public class TrackerActivity extends AppCompatActivity {
     private double sum_velocity = 0;
     private double curr_velocity = 0;
     private int curr_time = 0;
+    public long difference = 0;
 
     static int height_inch;
     GoogleFit gFit;
@@ -69,8 +70,8 @@ public class TrackerActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
-                SharedPrefData.saveIntentionalSteps(context, Integer.parseInt(display_total_steps));
+//                display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
+                SharedPrefData.saveIntentionalSteps(context, (int) difference);
                 ShowPopup(view);
             }
         });
@@ -122,7 +123,6 @@ public class TrackerActivity extends AppCompatActivity {
         int min = 0;
         int sec = 0;
         String time;
-        public long difference = 0;
         private DecimalFormat df = new DecimalFormat("#.00");
 
         @Override
