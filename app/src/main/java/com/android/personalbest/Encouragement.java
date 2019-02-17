@@ -1,6 +1,7 @@
 package com.android.personalbest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
@@ -18,15 +19,18 @@ public class Encouragement {
     private String time = null;
     Dialog myDialog;
     Activity activity;
-    static int goal=5000;
+    static boolean first_pg=true;
+    static boolean first_pi=true;
+
     public Encouragement(){};
+    SharedPreferences sharedPreferences;
     public Encouragement(Activity activity) {
         this.activity = activity;
     }
 
     public String getTime() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         time = sdf.format(cal.getTime());
         Log.wtf("time", time);
         return time;
@@ -35,25 +39,28 @@ public class Encouragement {
     public int getPreviousDayStep() {
         return 1000;
     }
-
+    public void setGoal(int goal){
+        SharedPrefData.setGoal(HomeFragment.ct, goal);
+    }
 
     // call the set goal function from GoogleFit class
-    public static void incGoal(int inc) {
-        goal=goal+inc;
-        Log.d("inc goal", String.valueOf(goal));
-    }
-
-    public static int getGoal(){
-        Log.d("ec goal",String.valueOf(goal));
-        return goal;
-    }
+//    public static void incGoal(int inc) {
+//        goal=goal+inc;
+//        this.setGoal(goal);
+//        Log.d("inc goal", String.valueOf(goal));
+//    }
 
 
      public void showChangeGoal () {
+
          myDialog = new Dialog(activity);
          myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
-         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-         myDialog.show();
+
+         if(first_pg){
+            myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            myDialog.show();
+            first_pg=false;
+         }
 
          Button incGoal=myDialog.findViewById(R.id.inc_goal_btn);
          Button back=myDialog.findViewById(R.id.back_home_btn);
@@ -61,7 +68,7 @@ public class Encouragement {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 incGoal(2000);
+                 setGoal(500+SharedPrefData.getGoal(HomeFragment.ct));
                  HomeFragment.async();
              }
          });
@@ -76,19 +83,25 @@ public class Encouragement {
      }
 
 
-     public void displayImprovement() {
-         myDialog = new Dialog(activity);
-         myDialog.setContentView(R.layout.encouragement_improvement);
-         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-         myDialog.show();
+    public void displayImprovement() {
+        myDialog = new Dialog(activity);
+        myDialog.setContentView(R.layout.encouragement_improvement);
+        if(first_pi){
+            myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            myDialog.show();
+            first_pi=false;
+        }
 
-         Button getHome = myDialog.findViewById(R.id.back_home_btn);
-         getHome.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 myDialog.dismiss();
-             }
-         });
+        Button getHome = myDialog.findViewById(R.id.back_home_btn);
+        getHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+                HomeFragment.async();
+            }
+        });
+
+    }
 
      }
 

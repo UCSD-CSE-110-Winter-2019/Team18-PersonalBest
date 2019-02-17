@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,19 +22,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryFragment extends Fragment {
-    private TextView mTextMessage;
+
+    private TextView stepGoalView;
+    private TextView intentionalStepsCountView;
+
 
     BarChart stepChart;
     List<BarEntry> entries = new ArrayList<>();
     BarDataSet set;
     BarData data;
-    private static final int[] TEST_INCIDENTAL_STEPS = new int[] {1234, 123, 42, 4325, 0 , 0, 0};
-    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 12, 567, 1234, 0, 0, 0};
+
+    private static final int[] TEST_INCIDENTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
+//    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
     private static final int INCIDENTAL_STEP_COLOR = Color.argb(200, 247, 215, 89);
     private static final int INTENTIONAL_STEP_COLOR = Color.argb(200, 41, 155, 242);
     private static final int TEST_STEP_GOAL = 5000;
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
+    private static final int Y_AXIS_MAX_PADDING = 500;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,7 +55,8 @@ public class HistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         this.stepChart = getView().findViewById(R.id.chart);
         createChart();
-
+        displayStepGoal();
+        displayIntentionalSteps();
     }
 
     // Create the BarEntry objects for the stacked bars
@@ -61,9 +68,9 @@ public class HistoryFragment extends Fragment {
 
     // Creates the BarDataSet from the BarEntries with the right colors and labels
     public void configureBarDataSet() {
-        this.set = new BarDataSet(this.entries, "BarDataSet");
+        this.set = new BarDataSet(this.entries, "");
         set.setColors(new int[] {INCIDENTAL_STEP_COLOR, INTENTIONAL_STEP_COLOR });
-        set.setStackLabels(new String[]{"Incidental", "Intentional"});
+        set.setStackLabels(new String[]{"Incidental Steps", "Intentional Steps"});
     }
 
 
@@ -97,12 +104,14 @@ public class HistoryFragment extends Fragment {
     // Configures the chart, disabling unnecessary function and minor UI features
     public void configureStepChart() {
         stepChart.getAxisRight().setEnabled(false);
+        stepChart.getAxisLeft().setAxisMaximum(SharedPrefData.getGoal(this.getActivity()) + Y_AXIS_MAX_PADDING);
         stepChart.setData(data);
         stepChart.setFitBars(true);
         stepChart.setHighlightPerDragEnabled(false);
         stepChart.setHighlightPerTapEnabled(false);
         stepChart.setPinchZoom(false);
         stepChart.setDoubleTapToZoomEnabled(false);
+        stepChart.getDescription().setEnabled(false);
         stepChart.invalidate();
     }
 
@@ -110,11 +119,40 @@ public class HistoryFragment extends Fragment {
 
     // Main driver method that calls other set-up/configure methods
     public void createChart() {
-        createBarEntries(TEST_INCIDENTAL_STEPS, TEST_INTENTIONAL_STEPS);
+        createBarEntries(TEST_INCIDENTAL_STEPS, SharedPrefData.getIntentionalSteps(this.getActivity()));
         configureBarDataSet();
         configureBarData();
         configureXAxisLabels();
-        createLineForStepGoal(TEST_STEP_GOAL);
+        createLineForStepGoal(SharedPrefData.getGoal(this.getActivity()));
         configureStepChart();
     }
+
+
+    // Display the Step Goal on the History Fragment
+    public void displayStepGoal() {
+        stepGoalView = getView().findViewById(R.id.stepGoal);
+        stepGoalView.setText(Integer.toString(SharedPrefData.getGoal(this.getActivity())));
+    }
+
+
+
+    // Sums all of the values in the intentionalSteps array to get the total for the week
+    private int getTotalIntentionalStepsInWeek() {
+        int totalIntentionalStepsInWeek = 0;
+        int[] intentionalSteps = SharedPrefData.getIntentionalSteps(this.getActivity());
+
+        for (int i = 0; i < intentionalSteps.length; i++) {
+            totalIntentionalStepsInWeek += intentionalSteps[i];
+        }
+
+        return totalIntentionalStepsInWeek;
+    }
+
+
+    // Display the current week's worth of intentional step goals on the History Fragment
+    public void displayIntentionalSteps() {
+        intentionalStepsCountView = getView().findViewById(R.id.intentionalStepsCount);
+        intentionalStepsCountView.setText(Integer.toString(getTotalIntentionalStepsInWeek()));
+    }
+
 }
