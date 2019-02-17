@@ -168,6 +168,7 @@ public class HomeFragment extends Fragment {
                 }
 
                 updated_steps=gFit.getTotalDailySteps();
+                gFit.readWeeklyStepData();
 
                 try {
                     publishProgress();
@@ -212,9 +213,10 @@ public class HomeFragment extends Fragment {
             display_goal.setText(Integer.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
 
-    //        btn.findViewById(R.id.button);
-    //        btn.setText(String.valueOf(count[0]));
-    //        Log.d("button value", String.valueOf(count[0]));
+            for(int i = 0; i < GoogleFit.stepData.length; i++)
+            {
+                HistoryFragment.TOTAL_STEPS[i] = GoogleFit.stepData[i];
+            }
         }
     }
 }

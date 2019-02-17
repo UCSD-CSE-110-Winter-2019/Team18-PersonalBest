@@ -36,7 +36,6 @@ public class HistoryFragment extends Fragment {
     BarDataSet set;
     BarData data;
 
-    private static final int[] TOTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
     private static final int[] TEST_INCIDENTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
     private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
     private static final int INCIDENTAL_STEP_COLOR = Color.argb(200, 247, 215, 89);
@@ -45,6 +44,7 @@ public class HistoryFragment extends Fragment {
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final String[] DAYS_OF_WEEK = new String[] {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
     private static final int Y_AXIS_MAX_PADDING = 500;
+    public static int[] TOTAL_STEPS = new int[NUM_DAYS_IN_WEEK];
 
 
     @Nullable
@@ -66,10 +66,6 @@ public class HistoryFragment extends Fragment {
         Activity activity = this.getActivity();
         gFit = new GoogleFit(activity);
         gFit.subscribeForWeeklySteps();
-
-        AsyncGetWeeklySteps runner = new AsyncGetWeeklySteps();
-        String something = "something";
-        runner.execute(something);
     }
 
     // Create the BarEntry objects for the stacked bars
@@ -166,31 +162,5 @@ public class HistoryFragment extends Fragment {
     public void displayIntentionalSteps() {
         intentionalStepsCountView = getView().findViewById(R.id.intentionalStepsCount);
         intentionalStepsCountView.setText(Integer.toString(getTotalIntentionalStepsInWeek()));
-    }
-
-    private class AsyncGetWeeklySteps extends AsyncTask<String, String, String>
-    {
-        @Override
-        protected String doInBackground(String... params)
-        {
-            publishProgress("Updating...");
-                try {
-                    gFit.readWeeklyStepData();
-
-                } catch (Exception e) {
-                    Log.wtf("exception", "" + e.getMessage());
-                }
-                return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... text)
-        {
-            for(int i = 0; i < GoogleFit.stepData.length; i++)
-            {
-                TOTAL_STEPS[i] = GoogleFit.stepData[i];
-                Log.wtf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", "" + GoogleFit.stepData[i]);
-            }
-        }
     }
 }
