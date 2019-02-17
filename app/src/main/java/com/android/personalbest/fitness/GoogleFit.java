@@ -1,23 +1,11 @@
-package com.android.personalbest;
+package com.android.personalbest.fitness;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
+import com.android.personalbest.TrackerActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.Bucket;
@@ -26,19 +14,15 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
-import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,18 +32,22 @@ import java.util.concurrent.TimeUnit;
 import static java.text.DateFormat.getDateInstance;
 import static java.text.DateFormat.getTimeInstance;
 
-public class GoogleFit
-{
+public class GoogleFit implements FitnessService {
     Activity activity;
+
     public static final String TAG = "GoogleFitTag";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 0x1001;
     public long total;
     public static int stepData[] = new int[7];
 
-    public GoogleFit(Activity activity)
-    {
+
+    public GoogleFit(Activity activity) {
         this.activity = activity;
     }
+
+//    public GoogleFit(TrackerActivity trackerActivity) {
+//        this.activity = trackerActivity;
+//    }
 
     //Asks user for permission to access data if it hasn't been asked for before.
     public void setup()
@@ -316,7 +304,7 @@ public class GoogleFit
     }
 
     // [START parse_dataset]
-    private void dumpDataSet(DataSet dataSet, int counter) {
+    public void dumpDataSet(DataSet dataSet, int counter) {
         Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
@@ -385,7 +373,7 @@ public class GoogleFit
 //    }
 
     /** Creates and returns a {@link DataSet} of step count data to update. */
-    private DataSet updateFitnessData() {
+    public DataSet updateFitnessData() {
         Log.i(TAG, "Creating a new data update request.");
 
         // [START build_update_data_request]

@@ -1,11 +1,8 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,8 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Observable;
-import java.util.Observer;
+import com.android.personalbest.fitness.GoogleFit;
 
 public class HomeFragment extends Fragment {
     private static int goal;
@@ -34,6 +30,8 @@ public class HomeFragment extends Fragment {
     static Context ct;
     static TextView display_goal;
     static TextView display_steps;
+
+    private String fitnessServiceKey = "GOOGLE_FIT";
 
     @Nullable
     @Override
@@ -50,6 +48,11 @@ public class HomeFragment extends Fragment {
 
         GoogleFit gFit = new GoogleFit(this.getActivity());
         gFit.setup();
+
+        ct=getContext();
+        activity=getActivity();
+
+
         display_goal = ((TextView)getView().findViewById(R.id.goal));
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -62,14 +65,11 @@ public class HomeFragment extends Fragment {
 
 
         goal = SharedPrefData.getGoal(getContext());
-
-        ct=getContext();
-
         curr_steps = gFit.getTotalDailySteps();
-        activity=getActivity();
 
 
-        Intent intent = getActivity().getIntent();
+
+//        Intent intent = getActivity().getIntent();
 //        if (intent.getStringExtra("intentional_steps") != null) {
 //            intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
 //            curr_steps = curr_steps + intentional_steps;
@@ -119,7 +119,12 @@ public class HomeFragment extends Fragment {
     }
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
+        intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
+    }
+
+    public void setFitnessServiceKey(String fitnessServiceKey) {
+        this.fitnessServiceKey = fitnessServiceKey;
     }
 
 
