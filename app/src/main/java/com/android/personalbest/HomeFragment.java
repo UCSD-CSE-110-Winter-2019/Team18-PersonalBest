@@ -48,6 +48,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        GoogleFit gFit = new GoogleFit(this.getActivity());
+        gFit.setup();
         display_goal = ((TextView)getView().findViewById(R.id.goal));
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -65,12 +67,6 @@ public class HomeFragment extends Fragment {
 
         curr_steps = gFit.getTotalDailySteps();
         activity=getActivity();
-
-        gFit = new GoogleFit(this.getActivity());
-//        gFit.setup();
-//        gFit.updateData();
-//        gFit.readYesterdayStepData();
-//        gFit.printArray();
 
 
         Intent intent = getActivity().getIntent();
