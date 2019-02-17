@@ -54,7 +54,8 @@ public class GoogleFit
     public static final String TAG = "GoogleFitTag";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 0x1001;
     public long total;
-    public static int stepData[] = new int[7];
+    public static int weekSteps[] = new int[7];
+    public static int recentSteps[] = new int[2];
 
     public GoogleFit(Activity activity)
     {
@@ -162,7 +163,7 @@ public class GoogleFit
                                 // For the sake of the sample, we'll print the data so we can see what we just
                                 // added. In general, logging fitness information should be avoided for privacy
                                 // reasons.
-                                printData(dataReadResponse);
+                                printRecentData(dataReadResponse);
                             }
                         })
                 .addOnFailureListener(
@@ -191,7 +192,7 @@ public class GoogleFit
                                 // For the sake of the sample, we'll print the data so we can see what we just
                                 // added. In general, logging fitness information should be avoided for privacy
                                 // reasons.
-                                printData(dataReadResponse);
+                                printWeekData(dataReadResponse);
                             }
                         })
                 .addOnFailureListener(
@@ -290,7 +291,7 @@ public class GoogleFit
      * better option would be to dump the data you receive to a local data directory to avoid exposing
      * it to other applications.
      */
-    public void printData(DataReadResponse dataReadResult) {
+    public void printWeekData(DataReadResponse dataReadResult) {
         // [START parse_read_data_result]
         // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
         // as buckets containing DataSets, instead of just DataSets.
@@ -301,14 +302,39 @@ public class GoogleFit
             for (Bucket bucket : dataReadResult.getBuckets()) {
                 List<DataSet> dataSets = bucket.getDataSets();
                 for (DataSet dataSet : dataSets) {
-                    dumpDataSet(dataSet, counter);
+                    dumpWeekSteps(dataSet, counter);
                     counter++;
                 }
             }
         } else if (dataReadResult.getDataSets().size() > 0) {
             Log.i(TAG, "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
             for (DataSet dataSet : dataReadResult.getDataSets()) {
-                dumpDataSet(dataSet, counter);
+                dumpWeekSteps(dataSet, counter);
+                counter++;
+            }
+        }
+        // [END parse_read_data_result]
+    }
+
+    public void printRecentData(DataReadResponse dataReadResult) {
+        // [START parse_read_data_result]
+        // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
+        // as buckets containing DataSets, instead of just DataSets.
+        int counter = 0;
+        if (dataReadResult.getBuckets().size() > 0) {
+            Log.i(
+                    TAG, "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
+            for (Bucket bucket : dataReadResult.getBuckets()) {
+                List<DataSet> dataSets = bucket.getDataSets();
+                for (DataSet dataSet : dataSets) {
+                    dumpRecentSteps(dataSet, counter);
+                    counter++;
+                }
+            }
+        } else if (dataReadResult.getDataSets().size() > 0) {
+            Log.i(TAG, "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
+            for (DataSet dataSet : dataReadResult.getDataSets()) {
+                dumpRecentSteps(dataSet, counter);
                 counter++;
             }
         }
@@ -316,7 +342,7 @@ public class GoogleFit
     }
 
     // [START parse_dataset]
-    private void dumpDataSet(DataSet dataSet, int counter) {
+    private void dumpWeekSteps(DataSet dataSet, int counter) {
         Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
@@ -328,16 +354,41 @@ public class GoogleFit
             Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
             Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
-                Log.i(TAG, "\tField: " + field.getName() + " Number of steps " + dp.getValue(field));
-                this.stepData[counter] = (dp.getValue(field)).asInt();
+                Log.i(TAG, "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
+                this.weekSteps[counter] = (dp.getValue(field)).asInt();
             }
         }
     }
 
-    public void printArray() {
-        for(int i = 0; i < stepData.length; i++)
+    private void dumpRecentSteps(DataSet dataSet, int counter) {
+        Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        DateFormat timeFormat = DateFormat.getTimeInstance();
+        Log.wtf("size of data set", "" + dataSet.isEmpty());
+
+        for (DataPoint dp : dataSet.getDataPoints()) {
+            Log.i(TAG, "Data point:");
+            Log.i(TAG, "\tType: " + dp.getDataType().getName());
+            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+            for (Field field : dp.getDataType().getFields()) {
+                Log.i(TAG, "\tField: " + field.getName() + " Number of weekly steps " + dp.getValue(field));
+                this.recentSteps[counter] = (dp.getValue(field)).asInt();
+            }
+        }
+    }
+
+    public void printWeekSteps() {
+        for(int i = 0; i < weekSteps.length; i++)
         {
-            Log.wtf("THIS IS ARRAY CONTENTS", "" + stepData[i] );
+            Log.wtf("Weekly step array contents", "" + weekSteps[i] );
+        }
+    }
+
+    public void printRecentSteps() {
+        for(int i = 0; i < recentSteps.length; i++)
+        {
+            Log.wtf("Today + yesterdays step array contents", "" + recentSteps[i] );
         }
     }
 
@@ -345,46 +396,50 @@ public class GoogleFit
     /**
      * Creates a {@link DataSet},then makes a {@link DataUpdateRequest} to update step data. Then
      * invokes the History API with the HistoryClient object and update request.
+     * Used for testing
      */
-//    public Task<Void> updateData() {
-//        // Create a new dataset and update request.
-//        DataSet dataSet = updateFitnessData();
-//        long startTime = 0;
-//        long endTime = 0;
-//
-//        // Get the start and end times from the dataset.
-//        for (DataPoint dataPoint : dataSet.getDataPoints()) {
-//            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
-//            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
-//        }
-//
-//        // [START update_data_request]
-//        Log.i(TAG, "Updating the dataset in the History API.");
-//
-//        DataUpdateRequest request =
-//                new DataUpdateRequest.Builder()
-//                        .setDataSet(dataSet)
-//                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-//                        .build();
-//
-//        // Invoke the History API to update data.
-//        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-//                .updateData(request)
-//                .addOnCompleteListener(
-//                        new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                if (task.isSuccessful()) {
-//                                    // At this point the data has been updated and can be read.
-//                                    Log.i(TAG, "Data update was successful.");
-//                                } else {
-//                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
-//                                }
-//                            }
-//                        });
-//    }
+    public Task<Void> updateData() {
+        // Create a new dataset and update request.
+        DataSet dataSet = updateFitnessData();
+        long startTime = 0;
+        long endTime = 0;
 
-    /** Creates and returns a {@link DataSet} of step count data to update. */
+        // Get the start and end times from the dataset.
+        for (DataPoint dataPoint : dataSet.getDataPoints()) {
+            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
+            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
+        }
+
+        // [START update_data_request]
+        Log.i(TAG, "Updating the dataset in the History API.");
+
+        DataUpdateRequest request =
+                new DataUpdateRequest.Builder()
+                        .setDataSet(dataSet)
+                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .build();
+
+        // Invoke the History API to update data.
+        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .updateData(request)
+                .addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // At this point the data has been updated and can be read.
+                                    Log.i(TAG, "Data update was successful.");
+                                } else {
+                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+                                }
+                            }
+                        });
+    }
+
+    /**
+     * Creates and returns a {@link DataSet} of step count data to update.
+     * Used for testing
+     * */
     private DataSet updateFitnessData() {
         Log.i(TAG, "Creating a new data update request.");
 
@@ -410,49 +465,11 @@ public class GoogleFit
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
-        Random rand = new Random();
-        int n = rand.nextInt(10000);
+//        Random rand = new Random();
+//        int n = rand.nextInt(10000);
+        int n = 4000;
         // Create a data set
         int stepCountDelta = n;
-        DataSet dataSet = DataSet.create(dataSource);
-        // For each data point, specify a start time, end time, and the data value -- in this case,
-        // the number of new steps.
-        DataPoint dataPoint =
-                dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
-        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
-        dataSet.add(dataPoint);
-        // [END build_update_data_request]
-
-        return dataSet;
-    }
-
-    /** Adds 500 steps to today's total */
-    public DataSet addSteps() {
-        Log.i(TAG, "Creating a new data update request.");
-
-        // [START build_update_data_request]
-        // Set a start and end time for the data that fits within the time range
-        // of the original insertion.
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        long startTime = cal.getTimeInMillis();
-
-        // Create a data source
-        DataSource dataSource =
-                new DataSource.Builder()
-                        .setAppPackageName(activity)
-                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                        .setStreamName(TAG + " - step count")
-                        .setType(DataSource.TYPE_RAW)
-                        .build();
-
-        // Create a data set
-        int stepCountDelta = 500;
         DataSet dataSet = DataSet.create(dataSource);
         // For each data point, specify a start time, end time, and the data value -- in this case,
         // the number of new steps.
