@@ -51,8 +51,8 @@ public class ProfileFragment extends Fragment {
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
         final Context context = this.getContext();
 
-        GoogleFit gFit = new GoogleFit(this.getActivity());
-        gFit.updateData();
+//        GoogleFit gFit = new GoogleFit(this.getActivity());
+//        gFit.updateData();
 
         //update height and name
 

@@ -1,13 +1,13 @@
 package com.android.personalbest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ public class Encouragement {
     static boolean first_pi=true;
 
     public Encouragement(){};
-    SharedPreferences sharedPreferences;
+
     public Encouragement(Activity activity) {
         this.activity = activity;
     }
@@ -37,8 +37,10 @@ public class Encouragement {
     }
 
     public int getPreviousDayStep() {
-        return 1000;
+        return GoogleFit.recentSteps[0];
     }
+
+
     public void setGoal(int goal){
         SharedPrefData.setGoal(HomeFragment.ct, goal);
     }
@@ -60,10 +62,17 @@ public class Encouragement {
             myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             myDialog.show();
             first_pg=false;
+         } else {
+             HomeFragment.async();
          }
 
          Button incGoal=myDialog.findViewById(R.id.inc_goal_btn);
          Button back=myDialog.findViewById(R.id.back_home_btn);
+
+         // Displays the correct goal in pop-up
+         TextView currentGoalView = myDialog.findViewById(R.id.current_goal);
+         currentGoalView.setText(Integer.toString(SharedPrefData.getGoal(HomeFragment.ct)));
+
          incGoal.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -83,16 +92,21 @@ public class Encouragement {
      }
 
 
-    public void displayImprovement() {
+    public void displayImprovement(int numStepsOver) {
         myDialog = new Dialog(activity);
         myDialog.setContentView(R.layout.encouragement_improvement);
         if(first_pi){
             myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             myDialog.show();
             first_pi=false;
+        } else {
+            HomeFragment.async();
         }
 
         Button getHome = myDialog.findViewById(R.id.back_home_btn);
+        TextView exceedStepsView = myDialog.findViewById(R.id.exceed_steps);
+        exceedStepsView.setText(Integer.toString(numStepsOver));
+
         getHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
