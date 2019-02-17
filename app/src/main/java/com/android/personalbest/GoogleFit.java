@@ -77,12 +77,12 @@ public class GoogleFit
                     GoogleSignIn.getLastSignedInAccount(activity),
                     fitnessOptions);
         } else {
-            subscribe();
+            subscribeForDailySteps();
         }
     }
 
     /** Records step data by requesting a subscription to background step data. */
-    public void subscribe() {
+    public void subscribeForDailySteps() {
         // To create a subscription, invoke the Recording API. As soon as the subscription is
         // active, fitness data will start recording.
         Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
@@ -98,6 +98,23 @@ public class GoogleFit
                                 }
                             }
                         });
+    }
+
+    /** Asks for permission to access weekly steps */
+    public void subscribeForWeeklySteps()
+    {
+        FitnessOptions fitnessOptions =
+                FitnessOptions.builder()
+                        .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                        .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                        .build();
+        if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(activity), fitnessOptions)) {
+            GoogleSignIn.requestPermissions(
+                    activity,
+                    REQUEST_OAUTH_REQUEST_CODE,
+                    GoogleSignIn.getLastSignedInAccount(activity),
+                    fitnessOptions);
+        }
     }
 
     /**
@@ -329,43 +346,43 @@ public class GoogleFit
      * Creates a {@link DataSet},then makes a {@link DataUpdateRequest} to update step data. Then
      * invokes the History API with the HistoryClient object and update request.
      */
-    public Task<Void> updateData() {
-        // Create a new dataset and update request.
-        DataSet dataSet = updateFitnessData();
-        long startTime = 0;
-        long endTime = 0;
-
-        // Get the start and end times from the dataset.
-        for (DataPoint dataPoint : dataSet.getDataPoints()) {
-            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
-            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
-        }
-
-        // [START update_data_request]
-        Log.i(TAG, "Updating the dataset in the History API.");
-
-        DataUpdateRequest request =
-                new DataUpdateRequest.Builder()
-                        .setDataSet(dataSet)
-                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .build();
-
-        // Invoke the History API to update data.
-        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-                .updateData(request)
-                .addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // At this point the data has been updated and can be read.
-                                    Log.i(TAG, "Data update was successful.");
-                                } else {
-                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
-                                }
-                            }
-                        });
-    }
+//    public Task<Void> updateData() {
+//        // Create a new dataset and update request.
+//        DataSet dataSet = updateFitnessData();
+//        long startTime = 0;
+//        long endTime = 0;
+//
+//        // Get the start and end times from the dataset.
+//        for (DataPoint dataPoint : dataSet.getDataPoints()) {
+//            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
+//            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
+//        }
+//
+//        // [START update_data_request]
+//        Log.i(TAG, "Updating the dataset in the History API.");
+//
+//        DataUpdateRequest request =
+//                new DataUpdateRequest.Builder()
+//                        .setDataSet(dataSet)
+//                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+//                        .build();
+//
+//        // Invoke the History API to update data.
+//        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+//                .updateData(request)
+//                .addOnCompleteListener(
+//                        new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if (task.isSuccessful()) {
+//                                    // At this point the data has been updated and can be read.
+//                                    Log.i(TAG, "Data update was successful.");
+//                                } else {
+//                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+//                                }
+//                            }
+//                        });
+//    }
 
     /** Creates and returns a {@link DataSet} of step count data to update. */
     private DataSet updateFitnessData() {
@@ -393,8 +410,49 @@ public class GoogleFit
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
+        Random rand = new Random();
+        int n = rand.nextInt(10000);
         // Create a data set
-        int stepCountDelta = 10000;
+        int stepCountDelta = n;
+        DataSet dataSet = DataSet.create(dataSource);
+        // For each data point, specify a start time, end time, and the data value -- in this case,
+        // the number of new steps.
+        DataPoint dataPoint =
+                dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
+        dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
+        dataSet.add(dataPoint);
+        // [END build_update_data_request]
+
+        return dataSet;
+    }
+
+    /** Adds 500 steps to today's total */
+    public DataSet addSteps() {
+        Log.i(TAG, "Creating a new data update request.");
+
+        // [START build_update_data_request]
+        // Set a start and end time for the data that fits within the time range
+        // of the original insertion.
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        long endTime = cal.getTimeInMillis();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        long startTime = cal.getTimeInMillis();
+
+        // Create a data source
+        DataSource dataSource =
+                new DataSource.Builder()
+                        .setAppPackageName(activity)
+                        .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                        .setStreamName(TAG + " - step count")
+                        .setType(DataSource.TYPE_RAW)
+                        .build();
+
+        // Create a data set
+        int stepCountDelta = 500;
         DataSet dataSet = DataSet.create(dataSource);
         // For each data point, specify a start time, end time, and the data value -- in this case,
         // the number of new steps.
