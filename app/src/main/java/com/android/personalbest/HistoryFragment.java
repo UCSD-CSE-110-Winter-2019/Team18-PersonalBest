@@ -189,6 +189,7 @@ public class HistoryFragment extends Fragment {
             for(int i = 0; i < GoogleFit.stepData.length; i++)
             {
                 TOTAL_STEPS[i] = GoogleFit.stepData[i];
+                Log.wtf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", "" + GoogleFit.stepData[i]);
             }
         }
     }

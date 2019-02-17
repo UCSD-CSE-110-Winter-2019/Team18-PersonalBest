@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
 
         if(first){
             runner = new AsyncTaskRunner();
-            runner.execute("0");
+            //runner.execute("0");
             first=false;
         }
 
@@ -103,7 +103,7 @@ public class HomeFragment extends Fragment {
         goal=SharedPrefData.getGoal(getContext());
         runner.cancel(true);
         runner=new AsyncTaskRunner();
-        runner.execute("0");
+        //runner.execute("0");
         super.onResume();
         temp.inflate(R.layout.fragment_home, null);
     }
@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment {
 
     public static void  async(){
         goal=SharedPrefData.getGoal(ct);
-        runner.execute("0");
+        //runner.execute("0");
     }
 
     public void show(){

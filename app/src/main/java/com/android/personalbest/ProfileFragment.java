@@ -143,7 +143,7 @@ public class ProfileFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout();
+                //logout();
             }
         });
 
@@ -164,6 +164,7 @@ public class ProfileFragment extends Fragment {
         Intent intent = new Intent (getActivity(), LoginActivity.class);
         startActivity(intent);
     }
+
     public void logout(){
         HomeFragment.killRunner();
         Intent intent=new Intent(getActivity(), LoginActivity.class);
