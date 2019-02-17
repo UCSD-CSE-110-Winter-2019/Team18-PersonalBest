@@ -100,9 +100,9 @@ public class HomeFragment extends Fragment {
     public void onResume(){
         Log.d("reach", "yes");
         goal=Encouragement.getGoal();
-        //runner.cancel(true);
-        //runner=new AsyncTaskRunner();
-        //runner.execute("0");
+        runner.cancel(true);
+        runner=new AsyncTaskRunner();
+        runner.execute("0");
         super.onResume();
         temp.inflate(R.layout.fragment_home, null);
     }
