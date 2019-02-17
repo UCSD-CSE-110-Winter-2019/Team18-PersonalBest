@@ -23,9 +23,11 @@ import java.util.Observer;
 
 public class HomeFragment extends Fragment {
     private static int goal;
+
     static long curr_steps;
     GoogleFit gFit;
     static AsyncTaskRunner runner;
+
     Activity activity;
     static boolean first=true;
     static LayoutInflater temp;
@@ -49,13 +51,14 @@ public class HomeFragment extends Fragment {
         display_goal = ((TextView)getView().findViewById(R.id.goal));
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
+
         if(first){
             runner = new AsyncTaskRunner();
             runner.execute("0");
             first=false;
         }
 
-        // temp value
+
         goal = SharedPrefData.getGoal(getContext());
 
         ct=getContext();
@@ -78,6 +81,7 @@ public class HomeFragment extends Fragment {
 
 
 
+
         // display goal and current steps
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
@@ -87,6 +91,7 @@ public class HomeFragment extends Fragment {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 runner.cancel(true);
 
                 launchActivity();
@@ -94,20 +99,26 @@ public class HomeFragment extends Fragment {
         });
 
     }
+
     @Override
     public void onPause(){
+
         Log.d("msg:", "pause");
         //runner.cancel(true);
         Log.d("status",runner.getStatus().toString());
+
         super.onPause();
     }
+
     @Override
     public void onResume(){
         Log.d("reach", "yes");
+
         goal=SharedPrefData.getGoal(getContext());
         runner.cancel(true);
         runner=new AsyncTaskRunner();
         runner.execute("0");
+
         super.onResume();
         temp.inflate(R.layout.fragment_home, null);
     }
@@ -115,6 +126,7 @@ public class HomeFragment extends Fragment {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
         startActivity(intent);
     }
+
 
     public static void  async(){
         goal=SharedPrefData.getGoal(ct);
@@ -133,6 +145,7 @@ public class HomeFragment extends Fragment {
         Log.d("goal", String.valueOf(goal));
     }
 
+
     public void improve(){
         Encouragement e =new Encouragement(activity);
         e.displayImprovement();
@@ -147,7 +160,6 @@ public class HomeFragment extends Fragment {
 
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = 0;
-
 
         @Override
         protected String doInBackground(String... params) {
@@ -170,6 +182,7 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
                 if(isCancelled()){break;}
+
                 if(updated_steps >=goal){
                     return("5");
                 }
@@ -182,6 +195,7 @@ public class HomeFragment extends Fragment {
             return ("10");
         }
 
+
         @Override
         protected void onPostExecute(String result) {
             display_goal.setText(Long.toString(goal));
@@ -191,6 +205,7 @@ public class HomeFragment extends Fragment {
                 show();
             if(Integer.parseInt(result)==6)
                 improve();
+
         }
 
         @Override
@@ -208,3 +223,4 @@ public class HomeFragment extends Fragment {
         }
     }
 }
+

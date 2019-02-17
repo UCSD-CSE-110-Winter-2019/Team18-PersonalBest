@@ -4,14 +4,18 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Encouragement {
+
+
     private String time = null;
     Dialog myDialog;
     Activity activity;
@@ -28,6 +32,7 @@ public class Encouragement {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         time = sdf.format(cal.getTime());
+        Log.wtf("time", time);
         return time;
     }
 
@@ -56,6 +61,7 @@ public class Encouragement {
             myDialog.show();
             first_pg=false;
          }
+
          Button incGoal=myDialog.findViewById(R.id.inc_goal_btn);
          Button back=myDialog.findViewById(R.id.back_home_btn);
          incGoal.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +79,7 @@ public class Encouragement {
                  HomeFragment.async();
              }
          });
+
      }
 
 
@@ -96,5 +103,6 @@ public class Encouragement {
 
     }
 
+     }
 
 }

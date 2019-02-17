@@ -38,6 +38,7 @@ public class TrackerActivity extends AppCompatActivity {
     GoogleFit gFit;
 
 
+    // create the tracker page for planned activities
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +54,15 @@ public class TrackerActivity extends AppCompatActivity {
         total_steps = findViewById(R.id.steps);
 
 
+        // start the timer for intentional activities
         timer = new TrackTime();
         timer.execute("0");
 
         height_inch = SharedPrefData.getHeightFt(this)*12 + SharedPrefData.getHeightIn(this);
 
-
         ((TextView)findViewById(R.id.steps)).setText(Long.toString(curr_step));
 
+        // show the summary page when clicking on the "end walk/run" button
         Button exit = findViewById(R.id.exit_btn);
         final Context context = this.getApplicationContext();
         exit.setOnClickListener(new View.OnClickListener() {
@@ -88,9 +90,10 @@ public class TrackerActivity extends AppCompatActivity {
         total_time = myDialog.findViewById(R.id.total_time);
         display_avg_velocity = myDialog.findViewById(R.id.avg_velocity);
         summary_steps = myDialog.findViewById(R.id.total_steps);
-
         stopTimer = true;
 
+
+        // go back to home page when clicking the close button
         btnClose = myDialog.findViewById(R.id.back_to_home);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,9 +102,12 @@ public class TrackerActivity extends AppCompatActivity {
                 launchActivity();
             }
         });
+
+        // show the popup
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+
 
     private void launchActivity() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -134,9 +140,6 @@ public class TrackerActivity extends AppCompatActivity {
                     else
                         curr_velocity = (difference / step_per_mile) / curr_time;
 
-
-                    // temp value
-//                    curr_velocity = r.nextDouble()*2;
 
                     Thread.sleep(1000);
                     curr_time ++;
