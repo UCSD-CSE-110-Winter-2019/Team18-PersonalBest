@@ -15,6 +15,7 @@ public class Encouragement {
     Dialog myDialog;
     Activity activity;
     static int goal=5000;
+    static int count=0;
     public Encouragement(){};
     public Encouragement(Activity activity) {
         this.activity = activity;
@@ -53,7 +54,7 @@ public class Encouragement {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 incGoal(2000);
+                 incGoal(500);
                  HomeFragment.async();
              }
          });
@@ -67,13 +68,22 @@ public class Encouragement {
      }
 
 
-     public void displayImprovement() {
-         myDialog = new Dialog(activity);
-         myDialog.setContentView(R.layout.encouragement_improvement);
-         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-         myDialog.show();
+    public void displayImprovement() {
+        myDialog = new Dialog(activity);
+        myDialog.setContentView(R.layout.encouragement_improvement);
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
 
-     }
+        Button getHome = myDialog.findViewById(R.id.back_home_btn);
+        getHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myDialog.dismiss();
+                HomeFragment.async();
+            }
+        });
+
+    }
 
 
 }

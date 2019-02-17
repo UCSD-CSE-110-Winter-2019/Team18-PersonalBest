@@ -24,9 +24,8 @@ public class HomeFragment extends Fragment {
     private int curr_steps;
     private static int goal;
     protected int intentional_steps = 0;
-    //private DisplayEncouragement encouragement;
     Dialog myDialog;
-    Button btn;
+    //Button btn;
     boolean ishown=false;
     FakeApi api;
     static AsyncTaskRunner runner;
@@ -38,8 +37,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
         super.onCreate(savedInstanceState);
-        //mTextMessage = getView().findViewById(R.id.message);
-        //getActivity().getContentView(R.layout.fragment_home);
 
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -49,7 +46,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //DisplayEncouragement displayEncouragement=new DisplayEncouragement(getActivity());
         api=new FakeApi();
         if(first){
             runner = new AsyncTaskRunner();
@@ -60,7 +56,6 @@ public class HomeFragment extends Fragment {
         curr_steps = 2000;
         activity=getActivity();
         Intent intent = getActivity().getIntent();
-        //Log.wtf("value",this.getActivity().toString());
         if (intent.getStringExtra("intentional_steps") != null) {
             intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
             curr_steps = curr_steps + intentional_steps;
@@ -71,7 +66,7 @@ public class HomeFragment extends Fragment {
         ((TextView)getView().findViewById(R.id.display)).setText(Integer.toString(curr_steps));
 
         Button start_btn = getView().findViewById(R.id.start);
-        btn=getView().findViewById(R.id.button);
+        //btn=getView().findViewById(R.id.button);
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,14 +75,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        encouragement = new DisplayEncouragement(this.getActivity());
-//        encouragement.execute();
-
-
-//        myDialog = new Dialog(this.getActivity());
-//        myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
-//        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        myDialog.show();
     }
     @Override
     public void onPause(){
@@ -127,14 +114,21 @@ public class HomeFragment extends Fragment {
         Log.d("goal", String.valueOf(goal));
     }
 
+    public void improve(){
+        Encouragement e =new Encouragement(activity);
+        e.displayImprovement();
+        runner.cancel(true);
+        runner=new AsyncTaskRunner();
+    }
 private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-    //boolean isCancelled = false;
+
 
     @Override
     protected String doInBackground(String... params) {
         int i=0;
         while(true) {
             i++;
+            Encouragement en=new Encouragement(getActivity());
             int step=api.getStep();
             try {
                 publishProgress(Integer.toString(step));
@@ -146,6 +140,9 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
             if(step>=goal){
                 return("5");
             }
+            Log.d("time", en.getTime());
+            if(en.getTime().equals("20:00")&& step-en.getPreviousDayStep()>1000)
+                return("6");
 
 
         }
@@ -156,6 +153,8 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         if(Integer.parseInt(result)==5)
             show();
+        if(Integer.parseInt(result)==6)
+            improve();
     }
 
     @Override
@@ -164,9 +163,9 @@ private class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
     @Override
     protected void onProgressUpdate(String... count) {
-        btn.findViewById(R.id.button);
-        btn.setText(String.valueOf(count[0]));
-        Log.d("button value", String.valueOf(count[0]));
+//        btn.findViewById(R.id.button);
+//        btn.setText(String.valueOf(count[0]));
+//        Log.d("button value", String.valueOf(count[0]));
     }
 }
 }
