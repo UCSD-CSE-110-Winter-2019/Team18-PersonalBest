@@ -15,7 +15,6 @@ public class SharedPrefData extends AppCompatActivity {
 
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final int NUM_MILLISECONDS_IN_DAY = 86400000;
-    private static boolean infoIsInTemp = true;
     private static final String TAG = "SharedPrefData";
 
     public SharedPrefData() {
@@ -36,6 +35,7 @@ public class SharedPrefData extends AppCompatActivity {
 
     private static String getLoggedInUserId(Context context) {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+        Log.d(TAG, "Current logged-in user: " + account.getDisplayName() + " " + account.getId());
         return account.getId();
     }
 
@@ -105,10 +105,6 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static String getName(Context context) {
-        if (infoIsInTemp) {
-            transferInfoFromTempToAccountId(context);
-        }
-
         String accountId = getLoggedInUserId(context);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
@@ -127,10 +123,6 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static int getHeightFt(Context context) {
-        if (infoIsInTemp) {
-            transferInfoFromTempToAccountId(context);
-        }
-
         String accountId = getLoggedInUserId(context);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
@@ -148,10 +140,6 @@ public class SharedPrefData extends AppCompatActivity {
     }
 
     public static int getHeightIn(Context context) {
-        if (infoIsInTemp) {
-            transferInfoFromTempToAccountId(context);
-        }
-
         String accountId = getLoggedInUserId(context);
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
@@ -166,37 +154,5 @@ public class SharedPrefData extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("heightin", heightIn);
         editor.apply();
-    }
-
-
-    // Because on account creation, we do not have a logged in user's ID to associate their SharedPreferences
-    // due to asynchronous nature, we store it to a temp SharedPreferences, using a flag to transfer
-    // it over once the user is logged in
-    public static void setInfoFromCreateAccount(Context context, String name, int heightFt, int heightIn) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        editor.putString("name", name);
-        editor.putInt("heightft", heightFt);
-        editor.putInt("heightin", heightIn);
-        editor.apply();
-    }
-
-
-    public static void transferInfoFromTempToAccountId(Context context) {
-        Log.d(TAG, "transferInfoFromTempToAccountId: Transferring Info");
-
-        SharedPreferences tempSharedPref = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
-
-        String accountId = getLoggedInUserId(context);
-        SharedPreferences accountSharedPref = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
-        SharedPreferences.Editor accountEditor = accountSharedPref.edit();
-
-        accountEditor.putString("name", tempSharedPref.getString("name", ""));
-        accountEditor.putInt("heightft", tempSharedPref.getInt("heightft",0));
-        accountEditor.putInt("heightin", tempSharedPref.getInt("heightin", 0));
-        accountEditor.apply();
-
-        infoIsInTemp = false;
     }
 }
