@@ -39,7 +39,7 @@
         android:layout_marginStart="240dp"
         android:layout_marginLeft="240dp"
         android:layout_marginTop="40dp"
-        android:text="5:02"
+
         android:textColor="@android:color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
         android:layout_marginStart="240dp"
         android:layout_marginLeft="240dp"
         android:layout_marginTop="30dp"
-        android:text="2.47"
+
         android:textColor="@android:color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
         android:layout_marginStart="240dp"
         android:layout_marginLeft="240dp"
         android:layout_marginTop="30dp"
-        android:text="417"
+
         android:textColor="@android:color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"

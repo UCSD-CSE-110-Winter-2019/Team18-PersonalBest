@@ -45,6 +45,7 @@ public class ProfileFragment extends Fragment {
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -164,6 +165,7 @@ public class ProfileFragment extends Fragment {
         startActivity(intent);
     }
     public void logout(){
+        HomeFragment.killRunner();
         Intent intent=new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
     }
