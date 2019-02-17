@@ -346,43 +346,43 @@ public class GoogleFit
      * Creates a {@link DataSet},then makes a {@link DataUpdateRequest} to update step data. Then
      * invokes the History API with the HistoryClient object and update request.
      */
-//    public Task<Void> updateData() {
-//        // Create a new dataset and update request.
-//        DataSet dataSet = updateFitnessData();
-//        long startTime = 0;
-//        long endTime = 0;
-//
-//        // Get the start and end times from the dataset.
-//        for (DataPoint dataPoint : dataSet.getDataPoints()) {
-//            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
-//            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
-//        }
-//
-//        // [START update_data_request]
-//        Log.i(TAG, "Updating the dataset in the History API.");
-//
-//        DataUpdateRequest request =
-//                new DataUpdateRequest.Builder()
-//                        .setDataSet(dataSet)
-//                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
-//                        .build();
-//
-//        // Invoke the History API to update data.
-//        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-//                .updateData(request)
-//                .addOnCompleteListener(
-//                        new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                if (task.isSuccessful()) {
-//                                    // At this point the data has been updated and can be read.
-//                                    Log.i(TAG, "Data update was successful.");
-//                                } else {
-//                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
-//                                }
-//                            }
-//                        });
-//    }
+    public Task<Void> updateData() {
+        // Create a new dataset and update request.
+        DataSet dataSet = updateFitnessData();
+        long startTime = 0;
+        long endTime = 0;
+
+        // Get the start and end times from the dataset.
+        for (DataPoint dataPoint : dataSet.getDataPoints()) {
+            startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
+            endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
+        }
+
+        // [START update_data_request]
+        Log.i(TAG, "Updating the dataset in the History API.");
+
+        DataUpdateRequest request =
+                new DataUpdateRequest.Builder()
+                        .setDataSet(dataSet)
+                        .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .build();
+
+        // Invoke the History API to update data.
+        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .updateData(request)
+                .addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // At this point the data has been updated and can be read.
+                                    Log.i(TAG, "Data update was successful.");
+                                } else {
+                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+                                }
+                            }
+                        });
+    }
 
     /** Creates and returns a {@link DataSet} of step count data to update. */
     private DataSet updateFitnessData() {

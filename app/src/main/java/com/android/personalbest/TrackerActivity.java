@@ -45,6 +45,7 @@ public class TrackerActivity extends AppCompatActivity {
 
         start_step = HomeFragment.curr_steps;
         gFit = new GoogleFit(this);
+        gFit.readYesterdayStepData();
 
 
         setContentView(R.layout.activity_tracker);
@@ -131,7 +132,10 @@ public class TrackerActivity extends AppCompatActivity {
                     publishProgress(Integer.toString(curr_time));
 
                     curr_step = gFit.getTotalDailySteps();
-                    difference = curr_step - start_step;
+                    start_step = GoogleFit.stepData[1];
+                    if(curr_step > 0) {
+                        difference = curr_step - start_step;
+                    }
 
                     double step_per_mile = 5280/(height_inch * 0.413);
 

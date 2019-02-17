@@ -61,10 +61,12 @@ public class HomeFragment extends Fragment {
         }
 
 
+
         goal = SharedPrefData.getGoal(getContext());
 
         ct=getContext();
 
+        gFit.updateData();
         curr_steps = gFit.getTotalDailySteps();
         activity=getActivity();
 
@@ -117,6 +119,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         temp.inflate(R.layout.fragment_home, null);
     }
+
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
         startActivity(intent);
@@ -206,6 +209,8 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+
+            gFit.subscribeForWeeklySteps();
         }
 
         @Override
