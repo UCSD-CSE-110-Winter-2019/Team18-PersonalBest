@@ -32,7 +32,6 @@ public class ProfileFragment extends Fragment {
     EditText goal_edit;
     Button edit_height;
     Button edit_goal;
-    Button logout;
     Boolean invalid=false;
 
     SharedPreferences.Editor editor;
@@ -139,13 +138,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-        logout=getView().findViewById(R.id.logout_btn);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //logout();
-            }
-        });
 
         Button logOutButton = getView().findViewById(R.id.logout_btn);
         logOutButton.setOnClickListener(new View.OnClickListener()
@@ -153,6 +145,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
+                HomeFragment.killRunner();
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
             }
@@ -162,12 +155,6 @@ public class ProfileFragment extends Fragment {
     public void launchLoginScreenActivity()
     {
         Intent intent = new Intent (getActivity(), LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void logout(){
-        HomeFragment.killRunner();
-        Intent intent=new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
     }
 }
