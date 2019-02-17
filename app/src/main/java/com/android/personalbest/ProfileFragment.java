@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -47,13 +48,13 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
+        final Context context = this.getContext();
 
         //update height and name
 
-        sharedPreferences=getActivity().getSharedPreferences("user_info", MODE_PRIVATE);
-        String name=sharedPreferences.getString("name", "");
-        int heightfeet=sharedPreferences.getInt("heightft", 0);
-        int heightinch=sharedPreferences.getInt("heightin", 0);
+        String name=SharedPrefData.getName(this.getContext());
+        int heightfeet=SharedPrefData.getHeightFt(this.getContext());
+        int heightinch=SharedPrefData.getHeightIn(this.getContext());
         TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
         nametext.setText(name);
 
@@ -63,7 +64,9 @@ public class ProfileFragment extends Fragment {
         feet_edit=(EditText) getView().findViewById(R.id.ft_edit);
         inch_edit=(EditText) getView().findViewById(R.id.in_edit);
         current_goal=(TextView) getView().findViewById(R.id.current_goal);
+        current_goal.setText(Integer.toString(SharedPrefData.getGoal(this.getContext())));
         goal_edit=(EditText) getView().findViewById(R.id.goal_edit);
+        goal_edit.setText(Integer.toString(SharedPrefData.getGoal(this.getContext())));
         heightft.setText(String.valueOf(heightfeet));
         heightin.setText(String.valueOf(heightinch));
 
@@ -71,7 +74,6 @@ public class ProfileFragment extends Fragment {
         //BottomNavigationView navigation = (BottomNavigationView) getView().findViewById(R.id.navigation);
         //navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        editor=sharedPreferences.edit();
         edit_height=getView().findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +87,8 @@ public class ProfileFragment extends Fragment {
                     if(ft<0||in<0)
                         Toast.makeText(getActivity(), "Invalid height", Toast.LENGTH_SHORT).show();
                     else{
+                        SharedPrefData.setHeightFt(context, ft);
+                        SharedPrefData.setHeightIn(context, in);
                         edit_height.setText("edit");
                         feet_edit.setVisibility(View.GONE);
                         inch_edit.setVisibility(View.GONE);
@@ -97,28 +101,28 @@ public class ProfileFragment extends Fragment {
                 }
                 else if(edit_height.getText().toString().equals("edit")){
                     edit_height.setText("save");
-                    feet_edit.setText(String.valueOf(sharedPreferences.getInt("heightft", 0)));
+                    feet_edit.setText(String.valueOf(SharedPrefData.getHeightFt(context)));
                     feet_edit.setVisibility(View.VISIBLE);
                     heightft.setVisibility(View.GONE);
-                    inch_edit.setText(String.valueOf(sharedPreferences.getInt("heightin", 0)));
+                    inch_edit.setText(String.valueOf(SharedPrefData.getHeightIn(context)));
                     inch_edit.setVisibility(View.VISIBLE);
                     heightin.setVisibility(View.GONE);
                 }
             }
         });
         edit_goal=getView().findViewById(R.id.edit_goal_btn);
+
         edit_goal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 invalid=false;
                 if(edit_goal.getText().toString().equals("save")){
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-
                     int goal=CheckInvalid.checkForGoal(goal_edit.getText());
                     if(goal<0)
                         Toast.makeText(getActivity(), "Invalid Goal", Toast.LENGTH_SHORT).show();
                     else{
-                        editor.putInt("goal", goal);
+                        SharedPrefData.setGoal(context, goal);
+
                         edit_goal.setText("edit");
                         goal_edit.setVisibility(View.GONE);
                         current_goal.setVisibility(View.VISIBLE);

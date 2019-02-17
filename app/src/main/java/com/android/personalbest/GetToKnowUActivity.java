@@ -1,5 +1,6 @@
 package com.android.personalbest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ public class GetToKnowUActivity extends AppCompatActivity {
         gSignInAndOut = new GoogleSignInAndOut(this, TAG);
 
         Button finish=(Button) findViewById(R.id.finish_btn);
+        final Context context = GetToKnowUActivity.this;
 
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,14 +46,11 @@ public class GetToKnowUActivity extends AppCompatActivity {
                     Log.d("invalid", String.valueOf(CheckInvalid.checkForName(name.getText())));
                     Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();}
                 else{
-                    SharedPreferences sharedPreferences=getSharedPreferences("user_info", MODE_PRIVATE);
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.putString("name", name.getText().toString());
-                    editor.putInt("heightft", ft);
-                    editor.putInt("heightin", in);
-                    editor.commit();
+                    gSignInAndOut.signIn();
+                    SharedPrefData.setInfoFromCreateAccount(context, name.getText().toString(), ft, in);
+
                     Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
-                    gSignInAndOut.signIn();}
+                    }
             }
 
         });

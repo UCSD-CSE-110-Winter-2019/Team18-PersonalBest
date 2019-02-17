@@ -115,8 +115,7 @@ public class GoogleFit
                                         dataSet.isEmpty()
                                                 ? 0
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
-                                Log.i(TAG, "Total steps: " + total);
-                                Log.wtf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##", Long.toString(total));
+                                Log.i(TAG, "Total daily steps: " + total);
                                 setTotalDailySteps(total);
                             }
                         })
@@ -312,7 +311,7 @@ public class GoogleFit
             Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
             Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
-                Log.i(TAG, "\tField: " + field.getName() + " Value of Week steps " + dp.getValue(field));
+                Log.i(TAG, "\tField: " + field.getName() + " Number of steps " + dp.getValue(field));
                 this.stepData[counter] = (dp.getValue(field)).asInt();
             }
         }
