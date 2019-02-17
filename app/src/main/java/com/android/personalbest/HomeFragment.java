@@ -206,6 +206,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
+            gFit.subscribeForWeeklySteps();
         }
 
         @Override
