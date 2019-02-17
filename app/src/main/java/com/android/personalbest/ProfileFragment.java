@@ -47,6 +47,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
         final Context context = this.getContext();
 

@@ -30,9 +30,6 @@ public class HomeFragment extends Fragment {
 
         GoogleFit gFit = new GoogleFit(this.getActivity());
         gFit.setup();
-        gFit.updateData();
-        gFit.readYesterdayStepData();
-        gFit.printArray();
         goal = SharedPrefData.getGoal(this.getContext());
 
 

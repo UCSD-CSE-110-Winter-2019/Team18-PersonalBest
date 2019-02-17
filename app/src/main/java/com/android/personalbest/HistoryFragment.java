@@ -1,10 +1,13 @@
 package com.android.personalbest;
 
+import android.app.Activity;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ public class HistoryFragment extends Fragment {
 
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
+    public static GoogleFit gFit;
 
 
     BarChart stepChart;
@@ -32,8 +36,9 @@ public class HistoryFragment extends Fragment {
     BarDataSet set;
     BarData data;
 
+    private static final int[] TOTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
     private static final int[] TEST_INCIDENTAL_STEPS = new int[] {1234, 432, 142, 4325, 0 , 0, 0};
-//    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
+    private static final int[] TEST_INTENTIONAL_STEPS = new int[] {0, 620, 567, 1234, 0, 0, 0};
     private static final int INCIDENTAL_STEP_COLOR = Color.argb(200, 247, 215, 89);
     private static final int INTENTIONAL_STEP_COLOR = Color.argb(200, 41, 155, 242);
     private static final int TEST_STEP_GOAL = 5000;
@@ -57,6 +62,14 @@ public class HistoryFragment extends Fragment {
         createChart();
         displayStepGoal();
         displayIntentionalSteps();
+
+        Activity activity = this.getActivity();
+        gFit = new GoogleFit(activity);
+        gFit.subscribeForWeeklySteps();
+
+        AsyncGetWeeklySteps runner = new AsyncGetWeeklySteps();
+        String something = "something";
+        runner.execute(something);
     }
 
     // Create the BarEntry objects for the stacked bars
@@ -155,4 +168,28 @@ public class HistoryFragment extends Fragment {
         intentionalStepsCountView.setText(Integer.toString(getTotalIntentionalStepsInWeek()));
     }
 
+    private class AsyncGetWeeklySteps extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected String doInBackground(String... params)
+        {
+            publishProgress("Updating...");
+                try {
+                    gFit.readWeeklyStepData();
+
+                } catch (Exception e) {
+                    Log.wtf("exception", "" + e.getMessage());
+                }
+                return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... text)
+        {
+            for(int i = 0; i < GoogleFit.stepData.length; i++)
+            {
+                TOTAL_STEPS[i] = GoogleFit.stepData[i];
+            }
+        }
+    }
 }
