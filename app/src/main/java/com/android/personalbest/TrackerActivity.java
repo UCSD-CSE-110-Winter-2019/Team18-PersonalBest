@@ -1,12 +1,14 @@
 package com.android.personalbest;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,42 +21,64 @@ public class TrackerActivity extends AppCompatActivity {
     public boolean stopTimer = false;
     public TextView total_time;
     public TextView real_time;
+    public TextView total_steps;
 
     public TextView display_velocity;
     public TextView display_avg_velocity;
+    public TextView summary_steps;
 
     public String display_total_steps;
-    public int curr_step = 0;
+    public long curr_step;
+    public long start_step;
     private double sum_velocity = 0;
-    private double curr_velocity;
+    private double curr_velocity = 0;
     private int curr_time = 0;
+
+    static int height_inch;
+    GoogleFit gFit;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        start_step = HomeFragment.curr_steps;
+        gFit = new GoogleFit(this);
+
+
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
         real_time = findViewById(R.id.time_elapsed);
         display_velocity = findViewById(R.id.velocity);
+        total_steps = findViewById(R.id.steps);
+
 
         timer = new TrackTime();
         timer.execute("0");
 
-        // temp value
-        curr_step = 9;
+        height_inch = SharedPrefData.getHeightFt(this)*12 + SharedPrefData.getHeightIn(this);
 
-        ((TextView)findViewById(R.id.steps)).setText(Integer.toString(curr_step));
+
+        ((TextView)findViewById(R.id.steps)).setText(Long.toString(curr_step));
 
         Button exit = findViewById(R.id.exit_btn);
+        final Context context = this.getApplicationContext();
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
+                SharedPrefData.saveIntentionalSteps(context, Integer.parseInt(display_total_steps));
                 ShowPopup(view);
             }
         });
+    }
+
+    @Override
+    public void onPause(){
+        //Log.d("msg:", "pause");
+        timer.cancel(true);
+        //Log.d("status",runner.getStatus().toString());
+        super.onPause();
     }
 
     public void ShowPopup(View v) {
@@ -63,10 +87,9 @@ public class TrackerActivity extends AppCompatActivity {
 
         total_time = myDialog.findViewById(R.id.total_time);
         display_avg_velocity = myDialog.findViewById(R.id.avg_velocity);
-        stopTimer = true;
+        summary_steps = myDialog.findViewById(R.id.total_steps);
 
-        TextView total_steps = myDialog.findViewById(R.id.total_steps);
-        total_steps.setText(display_total_steps);
+        stopTimer = true;
 
         btnClose = myDialog.findViewById(R.id.back_to_home);
         btnClose.setOnClickListener(new View.OnClickListener() {
@@ -81,9 +104,8 @@ public class TrackerActivity extends AppCompatActivity {
     }
 
     private void launchActivity() {
-
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("intentional_steps", Integer.toString(curr_step));
+        //intent.putExtra("intentional_steps", Long.toString(curr_step));
         startActivity(intent);
     }
 
@@ -93,7 +115,7 @@ public class TrackerActivity extends AppCompatActivity {
         int min = 0;
         int sec = 0;
         String time;
-        Random r = new Random();
+        public long difference = 0;
         private DecimalFormat df = new DecimalFormat("#.00");
 
         @Override
@@ -102,8 +124,19 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
+                    curr_step = gFit.getTotalDailySteps();
+                    difference = curr_step - start_step;
+
+                    double step_per_mile = 5280/(height_inch * 0.413);
+
+                    if (curr_time == 0)
+                        curr_velocity = 0;
+                    else
+                        curr_velocity = (difference / step_per_mile) / curr_time;
+
+
                     // temp value
-                    curr_velocity = r.nextDouble()*2;
+//                    curr_velocity = r.nextDouble()*2;
 
                     Thread.sleep(1000);
                     curr_time ++;
@@ -122,7 +155,9 @@ public class TrackerActivity extends AppCompatActivity {
                 if(stopTimer){
                     return(time);
                 }
-                if(isCancelled()){break;}
+                if(isCancelled()){
+                    break;
+                }
             }
             return (time);
         }
@@ -130,8 +165,11 @@ public class TrackerActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             total_time.setText(time);
+
             double avg_velocity = sum_velocity / curr_time;
             display_avg_velocity.setText(df.format(avg_velocity));
+
+            summary_steps.setText(Long.toString(difference));
         }
 
         @Override
@@ -141,9 +179,10 @@ public class TrackerActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(String... count) {
             real_time.setText(time);
+
+            total_steps.setText(Long.toString(difference));
+
             display_velocity.setText(df.format(curr_velocity));
         }
     }
-
-
 }

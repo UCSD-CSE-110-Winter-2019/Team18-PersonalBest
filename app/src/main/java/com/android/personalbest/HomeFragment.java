@@ -2,6 +2,7 @@ package com.android.personalbest;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -21,56 +22,73 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class HomeFragment extends Fragment {
-    private int curr_steps;
     private static int goal;
-    protected int intentional_steps = 0;
-    Dialog myDialog;
-    //Button btn;
-    boolean ishown=false;
-    FakeApi api;
+    static long curr_steps;
+    GoogleFit gFit;
     static AsyncTaskRunner runner;
     Activity activity;
     static boolean first=true;
     static LayoutInflater temp;
+    static Context ct;
+    static TextView display_goal;
+    static TextView display_steps;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
+        gFit = new GoogleFit(this.getActivity());
         super.onCreate(savedInstanceState);
-
         return inflater.inflate(R.layout.fragment_home, null);
     }
-    public View getActivityView(){
-        return getView();
-    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        api=new FakeApi();
+
+        display_goal = ((TextView)getView().findViewById(R.id.goal));
+        display_steps = ((TextView)getView().findViewById(R.id.display));
+
         if(first){
             runner = new AsyncTaskRunner();
             runner.execute("0");
-            first=false;}
-        // temp value
-        goal = 5000;
-        curr_steps = 2000;
-        activity=getActivity();
-        Intent intent = getActivity().getIntent();
-        if (intent.getStringExtra("intentional_steps") != null) {
-            intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
-            curr_steps = curr_steps + intentional_steps;
+            first=false;
         }
+
+        // temp value
+        goal = SharedPrefData.getGoal(getContext());
+
+        ct=getContext();
+
+        curr_steps = gFit.getTotalDailySteps();
+        activity=getActivity();
+
+        gFit = new GoogleFit(this.getActivity());
+//        gFit.setup();
+//        gFit.updateData();
+//        gFit.readYesterdayStepData();
+//        gFit.printArray();
+
+
+        Intent intent = getActivity().getIntent();
+//        if (intent.getStringExtra("intentional_steps") != null) {
+//            intentional_steps = Integer.parseInt(intent.getStringExtra("intentional_steps"));
+//            curr_steps = curr_steps + intentional_steps;
+//        }
+
+
 
         // display goal and current steps
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
-        ((TextView)getView().findViewById(R.id.display)).setText(Integer.toString(curr_steps));
+        ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
 
         Button start_btn = getView().findViewById(R.id.start);
-        //btn=getView().findViewById(R.id.button);
+
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 runner.cancel(true);
+
                 launchActivity();
             }
         });
@@ -86,7 +104,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume(){
         Log.d("reach", "yes");
-        goal=Encouragement.getGoal();
+        goal=SharedPrefData.getGoal(getContext());
         runner.cancel(true);
         runner=new AsyncTaskRunner();
         runner.execute("0");
@@ -99,11 +117,12 @@ public class HomeFragment extends Fragment {
     }
 
     public static void  async(){
-        goal=Encouragement.getGoal();
-
+        goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }
+
     public void show(){
+
         Log.wtf("value",activity.toString());
 
         Encouragement e =new Encouragement(activity);
@@ -120,52 +139,72 @@ public class HomeFragment extends Fragment {
         runner.cancel(true);
         runner=new AsyncTaskRunner();
     }
-private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+
+    public static void killRunner(){
+        if(!runner.isCancelled())
+            runner.cancel(true);
+    }
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+        long updated_steps = 0;
 
 
-    @Override
-    protected String doInBackground(String... params) {
-        int i=0;
-        while(true) {
-            i++;
-            Encouragement en=new Encouragement(getActivity());
-            int step=api.getStep();
-            try {
-                publishProgress(Integer.toString(step));
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        @Override
+        protected String doInBackground(String... params) {
+            int i=0;
+            while(true) {
+                i++;
+                Encouragement en=new Encouragement(getActivity());
+                if(en.getTime().equals("23:59:59")){
+                    Encouragement.first_pg=true;
+                    Encouragement.first_pi=true;
+                }
+
+                updated_steps=gFit.getTotalDailySteps();
+
+                try {
+                    publishProgress();
+                    Thread.sleep(1000);
+                    goal = SharedPrefData.getGoal(ct);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(isCancelled()){break;}
+                if(updated_steps >=goal){
+                    return("5");
+                }
+                Log.d("time", en.getTime());
+                if(en.getTime().equals("20:00:00")&& updated_steps-en.getPreviousDayStep()>1000)
+                    return("6");
+
+
             }
-            if(isCancelled()){break;}
-            if(step>=goal){
-                return("5");
-            }
-            Log.d("time", en.getTime());
-            if(en.getTime().equals("20:00")&& step-en.getPreviousDayStep()>1000)
-                return("6");
-
-
+            return ("10");
         }
-        return ("10");
-    }
 
-    @Override
-    protected void onPostExecute(String result) {
-        if(Integer.parseInt(result)==5)
-            show();
-        if(Integer.parseInt(result)==6)
-            improve();
-    }
+        @Override
+        protected void onPostExecute(String result) {
+            display_goal.setText(Long.toString(goal));
+            display_steps.setText(Long.toString(updated_steps));
 
-    @Override
-    protected void onPreExecute() {
-    }
+            if(Integer.parseInt(result)==5)
+                show();
+            if(Integer.parseInt(result)==6)
+                improve();
+        }
 
-    @Override
-    protected void onProgressUpdate(String... count) {
-//        btn.findViewById(R.id.button);
-//        btn.setText(String.valueOf(count[0]));
-//        Log.d("button value", String.valueOf(count[0]));
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(String... count) {
+            display_goal.setText(Integer.toString(goal));
+            display_steps.setText(Long.toString(updated_steps));
+
+    //        btn.findViewById(R.id.button);
+    //        btn.setText(String.valueOf(count[0]));
+    //        Log.d("button value", String.valueOf(count[0]));
+        }
     }
-}
 }

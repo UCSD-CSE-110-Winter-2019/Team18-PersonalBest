@@ -1,6 +1,5 @@
 package com.android.personalbest;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -15,9 +14,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Uncomment and run once to log out manually and then create a new account so that SharedPref
+        // works correctly with the right associations
+//        String TAG = HomeFragment.class.getName();
+//        LogInAndOut gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+//        gSignInAndOut.signOut();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
+
 
         loadFragment(new HomeFragment());
     }
