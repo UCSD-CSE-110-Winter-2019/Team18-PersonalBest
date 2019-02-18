@@ -324,7 +324,7 @@ public class GoogleFit
     public void printWeekSteps() {
         for(int i = 0; i < weekSteps.length; i++)
         {
-            Log.d("Weekly step array contents", "" + weekSteps[i] );
+            Log.d("weekStep array contents", "" + weekSteps[i] );
         }
     }
 
@@ -332,7 +332,7 @@ public class GoogleFit
     public void printRecentSteps() {
         for(int i = 0; i < recentSteps.length; i++)
         {
-            Log.d("Today + yesterdays step array contents", "" + recentSteps[i] );
+            Log.d("recentStep contents", "" + recentSteps[i] );
         }
     }
 
