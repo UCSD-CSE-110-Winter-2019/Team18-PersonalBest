@@ -20,8 +20,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 
-import androidx.test.core.app.ApplicationProvider;
-
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
@@ -45,10 +43,10 @@ public class TrackerUnitTest {
                         }
                     });
 
-                    Intent intent = new Intent(ApplicationProvider.getApplicationContext(), TrackerActivity.class);
+                    Intent intent = new Intent(RuntimeEnvironment.application, TrackerActivity.class);
                     intent.putExtra("home to tracker", "TEST_SERVICE");
 
-                    activity = Robolectric.buildActivity(TrackerActivity.class, intent).create().get();
+                    activity = Robolectric.buildActivity(TrackerActivity.class,intent).create().get();
             //
             //        display_steps = activity.findViewById(R.id.steps);
             //        display_velocity = activity.findViewById(R.id.velocity);
