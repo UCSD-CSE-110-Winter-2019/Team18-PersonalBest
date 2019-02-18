@@ -15,11 +15,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.personalbest.fitness.GoogleFit;
+
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = LoginActivity.class.getName();
+    EditText edit_time;
+    public static long desiredTime;
 
-    LogInAndOut gSignInAndOut;
+    GoogleSignInAndOut gSignInAndOut;
+    GoogleFit gFit;
 
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -48,6 +53,8 @@ public class ProfileFragment extends Fragment {
 
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
         final Context context = this.getContext();
+
+        gFit = new GoogleFit(this.getActivity());
 
         //update height and name
 
@@ -141,6 +148,30 @@ public class ProfileFragment extends Fragment {
                 HomeFragment.killRunner();
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
+            }
+        });
+
+        Button addStepsButton = getView().findViewById(R.id.add_500_steps);
+        addStepsButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                gFit.updateToday();
+                gFit.printRecentSteps();
+            }
+        });
+
+        Button changeTimeBtn = getView().findViewById(R.id.change_time_button);
+        changeTimeBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                GoogleFit.changeTime = true;
+                edit_time = (EditText) getView().findViewById(R.id.edit_time);
+                desiredTime = Long.parseLong(edit_time.getText().toString());
+                gFit.readYesterdayStepData();
             }
         });
     }

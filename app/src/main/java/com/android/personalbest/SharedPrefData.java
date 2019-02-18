@@ -10,6 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class SharedPrefData extends AppCompatActivity {
@@ -24,14 +25,15 @@ public class SharedPrefData extends AppCompatActivity {
 
     // Retrieves the timestamp of the current day at 12:00am in milliseconds
     public static long getTodayInMilliseconds() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
-    }
+
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int date = cal.get(Calendar.DATE);
+            cal.clear();
+            cal.set(year, month, date);
+            return cal.getTimeInMillis();
+        }
 
 
     private static String getLoggedInUserId(Context context) {

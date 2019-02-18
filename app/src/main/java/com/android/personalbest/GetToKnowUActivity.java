@@ -18,7 +18,7 @@ import com.google.android.gms.tasks.Task;
 public class GetToKnowUActivity extends AppCompatActivity {
     String TAG = GetToKnowUActivity.class.getName();
     private static int RC_SIGN_IN = 100;
-    LogInAndOut gSignInAndOut;
+    GoogleSignInAndOut gSignInAndOut;
 
     EditText name;
     EditText heightft;

@@ -62,7 +62,6 @@ public class HomeFragment extends Fragment {
             //runner.execute("0");
             first=false;
         }
-
         goal = SharedPrefData.getGoal(getContext());
         curr_steps = gFit.getTotalDailySteps();
 
@@ -100,16 +99,12 @@ public class HomeFragment extends Fragment {
         super.onResume();
         temp.inflate(R.layout.fragment_home, null);
     }
+
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
         intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
-
-    public void setFitnessServiceKey(String fitnessServiceKey) {
-        this.fitnessServiceKey = fitnessServiceKey;
-    }
-
 
     public static void  async(){
         goal=SharedPrefData.getGoal(ct);
@@ -157,6 +152,7 @@ public class HomeFragment extends Fragment {
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
                 gFit.readYesterdayStepData();
+                gFit.printRecentSteps();
 
                 try {
                     publishProgress();

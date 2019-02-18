@@ -18,18 +18,21 @@ import com.google.android.gms.tasks.Task;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static int RC_SIGN_IN = 100;
+    private static int RC_SIGN_IN_KEY = 100;
     String TAG = LoginActivity.class.getName();
+    private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
+    GoogleSignInAndOut gSignInAndOut;
 
-    LogInAndOut gSignInAndOut;
-
+    /**
+     * Begins at the start of the Login Activity to see if user has an account already.
+     */
     @Override
     protected void onStart()
     {
         super.onStart();
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
 
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null and user can sign in.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(gSignInAndOut.updateUI(account))
         {
@@ -37,16 +40,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks the result of calling signIn() method.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN)
+        {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            if ( gSignInAndOut.handleSignInResult(task) == true )
+            if ( gSignInAndOut.handleSignInResult(task) )
             {
                 // Checks if users sign-in on their first use without creating an account first,
                 // redirects them to collect info such as their name and height
@@ -61,6 +68,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Creates buttons for create account and google sign in.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
         gSignInAndOut = new GoogleSignInAndOut(this, TAG);
 
+        //Create account button
         Button createAccountButton = findViewById(R.id.create_account_button);
         createAccountButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -78,10 +89,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Set the dimensions of the sign-in button.
+        // Create and set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
         signInButton.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -99,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    //This method switches to the Home UI
     public void launchHomeScreenActivity()
     {
         Intent intent = new Intent (this, MainActivity.class);

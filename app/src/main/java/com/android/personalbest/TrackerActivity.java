@@ -42,7 +42,8 @@ public class TrackerActivity extends AppCompatActivity {
 
     static int height_inch;
 
-    //GoogleFit gFit;
+    GoogleFit gFit;
+
     private FitnessService fitnessService;
 
 
@@ -53,10 +54,9 @@ public class TrackerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         start_step = HomeFragment.curr_steps;
-
-        //gFit = new GoogleFit(this);
-
-
+        gFit = new GoogleFit(this);
+        gFit.readYesterdayStepData();
+        start_step = GoogleFit.recentSteps[1];
 
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
@@ -146,10 +146,17 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
+                    if(GoogleFit.changeTime)
+                    {
+                        gFit.readYesterdayStepData();
+                        curr_step = GoogleFit.recentSteps[1];
+                    }else {
+                        curr_step = gFit.getTotalDailySteps();
+                    }
 
-                    curr_step = fitnessService.getTotalDailySteps();
-                    if (curr_step > 0)
+                    if(curr_step > 0) {
                         difference = curr_step - start_step;
+                    }
 
                     double step_per_mile = 5280/(height_inch * 0.413);
 
