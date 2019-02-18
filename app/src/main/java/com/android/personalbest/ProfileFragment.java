@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = LoginActivity.class.getName();
@@ -51,9 +49,6 @@ public class ProfileFragment extends Fragment {
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
         final Context context = this.getContext();
 
-        GoogleFit gFit = new GoogleFit(this.getActivity());
-        gFit.updateData();
-
         //update height and name
 
         String name=SharedPrefData.getName(this.getContext());
@@ -73,10 +68,6 @@ public class ProfileFragment extends Fragment {
         goal_edit.setText(Integer.toString(SharedPrefData.getGoal(this.getContext())));
         heightft.setText(String.valueOf(heightfeet));
         heightin.setText(String.valueOf(heightinch));
-
-
-        //BottomNavigationView navigation = (BottomNavigationView) getView().findViewById(R.id.navigation);
-        //navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         edit_height=getView().findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +125,6 @@ public class ProfileFragment extends Fragment {
                     }
                 }
                 else if(edit_goal.getText().toString().equals("edit")){
-                    //Log.d("my_tag", edit_height.getText().toString());
                     edit_goal.setText("save");
                     goal_edit.setVisibility(View.VISIBLE);
                     current_goal.setVisibility(View.GONE);
