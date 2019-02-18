@@ -26,7 +26,6 @@ public class TrackerActivity extends AppCompatActivity {
     public TextView real_time;
     public static TextView total_steps;
 
-
     public static TextView display_velocity;
     public TextView display_avg_velocity;
     public TextView summary_steps;
@@ -44,6 +43,7 @@ public class TrackerActivity extends AppCompatActivity {
     static int height_inch;
 
     GoogleFit gFit;
+
     private FitnessService fitnessService;
 
 

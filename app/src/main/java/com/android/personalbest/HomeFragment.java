@@ -63,9 +63,6 @@ public class HomeFragment extends Fragment {
             first=false;
         }
         goal = SharedPrefData.getGoal(getContext());
-
-        ct=getContext();
-
         curr_steps = gFit.getTotalDailySteps();
 
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
@@ -108,7 +105,6 @@ public class HomeFragment extends Fragment {
         intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
-
 
     public static void  async(){
         goal=SharedPrefData.getGoal(ct);

@@ -371,7 +371,6 @@ public class GoogleFit implements FitnessService {
             endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
         }
 
-        // [START update_data_request]
         Log.i(TAG, "Updating the dataset in the History API.");
 
         DataUpdateRequest request =
