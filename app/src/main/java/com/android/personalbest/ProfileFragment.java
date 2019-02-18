@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.personalbest.fitness.GoogleFit;
+
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = LoginActivity.class.getName();

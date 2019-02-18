@@ -15,9 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.personalbest.fitness.GoogleFit;
+
 public class HomeFragment extends Fragment {
     private static int goal;
-    private String fitnessServiceKey = "GOOGLE_FIT";
 
     static long curr_steps;
     GoogleFit gFit;
@@ -29,6 +30,8 @@ public class HomeFragment extends Fragment {
     static Context ct;
     static TextView display_goal;
     static TextView display_steps;
+
+    private String fitnessServiceKey = "GOOGLE_FIT";
 
     @Nullable
     @Override
@@ -45,6 +48,11 @@ public class HomeFragment extends Fragment {
 
         GoogleFit gFit = new GoogleFit(this.getActivity());
         gFit.setup();
+
+        ct=getContext();
+        activity=getActivity();
+
+
         display_goal = ((TextView)getView().findViewById(R.id.goal));
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -58,9 +66,7 @@ public class HomeFragment extends Fragment {
 
         ct=getContext();
 
-        //gFit.updateData();
         curr_steps = gFit.getTotalDailySteps();
-        activity=getActivity();
 
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
@@ -99,10 +105,12 @@ public class HomeFragment extends Fragment {
 
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
+        intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
 
-    public static void async() {
+
+    public static void  async(){
         goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }
@@ -129,10 +137,6 @@ public class HomeFragment extends Fragment {
             runner.cancel(true);
     }
 
-    public void setFitnessServiceKey(String fitnessServiceKey) {
-        this.fitnessServiceKey = fitnessServiceKey;
-    }
-
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;
@@ -153,7 +157,6 @@ public class HomeFragment extends Fragment {
                 gFit.readWeeklyStepData();
                 gFit.readYesterdayStepData();
                 gFit.printRecentSteps();
-                Log.wtf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", "" + GoogleFit.recentSteps[1]);
 
                 try {
                     publishProgress();
