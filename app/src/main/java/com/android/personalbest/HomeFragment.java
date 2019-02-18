@@ -197,7 +197,12 @@ public class HomeFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... count) {
             display_goal.setText(Integer.toString(goal));
-            display_steps.setText(Long.toString(updated_steps));
+            if(GoogleFit.changeTime)
+            {
+                display_steps.setText(Integer.toString(GoogleFit.recentSteps[1]));
+            }else {
+                display_steps.setText(Long.toString(updated_steps));
+            }
 
             for(int i = 0; i < GoogleFit.weekSteps.length; i++)
             {
