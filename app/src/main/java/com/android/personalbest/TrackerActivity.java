@@ -39,6 +39,7 @@ public class TrackerActivity extends AppCompatActivity {
     public long difference = 0;
     private static DecimalFormat df = new DecimalFormat("#.00");
 
+
     static int height_inch;
 
     //GoogleFit gFit;
@@ -52,7 +53,9 @@ public class TrackerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         start_step = HomeFragment.curr_steps;
+
         //gFit = new GoogleFit(this);
+
 
 
         setContentView(R.layout.activity_tracker);
@@ -63,7 +66,6 @@ public class TrackerActivity extends AppCompatActivity {
 
         String get_value = getIntent().getStringExtra("home to tracker");
         fitnessService = FitnessServiceFactory.create(get_value, this);
-
 
         // start the timer for intentional activities
         timer = new TrackTime();
@@ -79,8 +81,8 @@ public class TrackerActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
-                SharedPrefData.saveIntentionalSteps(context, Integer.parseInt(display_total_steps));
+//                display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
+                SharedPrefData.saveIntentionalSteps(context, (int) difference);
                 ShowPopup(view);
             }
         });
@@ -88,9 +90,7 @@ public class TrackerActivity extends AppCompatActivity {
 
     @Override
     public void onPause(){
-        //Log.d("msg:", "pause");
         timer.cancel(true);
-        //Log.d("status",runner.getStatus().toString());
         super.onPause();
     }
 
@@ -119,7 +119,6 @@ public class TrackerActivity extends AppCompatActivity {
         myDialog.show();
     }
 
-
     private void launchActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("intentional_steps", Long.toString(curr_step));
@@ -147,8 +146,10 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
+
                     curr_step = fitnessService.getTotalDailySteps();
-                    difference = curr_step - start_step;
+                    if (curr_step > 0)
+                        difference = curr_step - start_step;
 
                     double step_per_mile = 5280/(height_inch * 0.413);
 

@@ -55,15 +55,15 @@ public class newLoginActivityTest {
                         isDisplayed()));
         appCompatButton.perform(click());
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.knowU_txt), withText("Get To Know You"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textView.check(matches(withText("Get To Know You")));
+//        ViewInteraction textView = onView(
+//                allOf(withId(R.id.knowU_txt), withText("Get To Know You"),
+//                        childAtPosition(
+//                                childAtPosition(
+//                                        withId(android.R.id.content),
+//                                        0),
+//                                0),
+//                        isDisplayed()));
+//        textView.check(matches(withText("Get To Know You")));
     }
 
     private static Matcher<View> childAtPosition(

@@ -73,14 +73,16 @@ public class GetToKnowUActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
+            // The Task returned from this call is always completed, no need to attach a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 
-            //If sign in was successful then launchActivity
             if ( gSignInAndOut.handleSignInResult(task) == true )
             {
-                // No longer need to launch activity, taken care of by finish button
+                // If the user logs in, already has an account, and tries to create a new account
+                // redirects them to their home page/the main activity
+                if (SharedPrefData.userSharedPrefExists(this)) {
+                    launchActivity();
+                }
             }
         }
     }
