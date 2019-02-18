@@ -55,7 +55,14 @@ public class LoginActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             if ( gSignInAndOut.handleSignInResult(task) )
             {
-                launchHomeScreenActivity();
+                // Checks if users sign-in on their first use without creating an account first,
+                // redirects them to collect info such as their name and height
+                if (SharedPrefData.userSharedPrefExists(this.getApplicationContext())) {
+                    launchHomeScreenActivity();
+                } else {
+                    launchGetToKnowYouActivity();
+                }
+
             }
         }
     }

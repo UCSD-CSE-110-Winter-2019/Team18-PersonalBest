@@ -8,12 +8,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import java.text.DecimalFormat;
-import java.util.Random;
 
 public class TrackerActivity extends AppCompatActivity {
     Dialog myDialog;
@@ -47,14 +45,13 @@ public class TrackerActivity extends AppCompatActivity {
         start_step = HomeFragment.curr_steps;
         gFit = new GoogleFit(this);
         gFit.readYesterdayStepData();
-
+        start_step = GoogleFit.recentSteps[1];
 
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
         real_time = findViewById(R.id.time_elapsed);
         display_velocity = findViewById(R.id.velocity);
         total_steps = findViewById(R.id.steps);
-
 
         // start the timer for intentional activities
         timer = new TrackTime();
@@ -79,9 +76,7 @@ public class TrackerActivity extends AppCompatActivity {
 
     @Override
     public void onPause(){
-        //Log.d("msg:", "pause");
         timer.cancel(true);
-        //Log.d("status",runner.getStatus().toString());
         super.onPause();
     }
 
@@ -110,13 +105,11 @@ public class TrackerActivity extends AppCompatActivity {
         myDialog.show();
     }
 
-
     private void launchActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("intentional_steps", Long.toString(curr_step));
         startActivity(intent);
     }
-
 
     // class to track time elapsed
     private class TrackTime extends AsyncTask<String, String, String> {
@@ -131,8 +124,14 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
-                    curr_step = gFit.getTotalDailySteps();
-                    start_step = GoogleFit.stepData[1];
+                    if(GoogleFit.changeTime)
+                    {
+                        gFit.readYesterdayStepData();
+                        curr_step = GoogleFit.recentSteps[1];
+                    }else {
+                        curr_step = gFit.getTotalDailySteps();
+                    }
+
                     if(curr_step > 0) {
                         difference = curr_step - start_step;
                     }
