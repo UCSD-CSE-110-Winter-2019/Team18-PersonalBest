@@ -13,7 +13,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class GoogleSignInAndOut implements LogInAndOut
+public class GoogleSignInAndOut
 {
     // Google sign in variables
     // Configure sign-in to request the user's ID, email address, and basic
@@ -23,7 +23,8 @@ public class GoogleSignInAndOut implements LogInAndOut
             .build();
 
     private GoogleSignInClient mGoogleSignInClient;
-    private static int RC_SIGN_IN = 100;
+    private static int RC_SIGN_IN_KEY = 100;
+    private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
     Activity activity;
     String TAG;
 
@@ -36,14 +37,12 @@ public class GoogleSignInAndOut implements LogInAndOut
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
     }
 
-    @Override
     public void signIn()
     {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    @Override
     public void signOut()
     {
         mGoogleSignInClient.signOut()
@@ -55,7 +54,7 @@ public class GoogleSignInAndOut implements LogInAndOut
                 });
     }
 
-    @Override
+    //Update UI if handleSignInResult shows that sign in was successful
     public boolean updateUI(GoogleSignInAccount acc)
     {
         if(acc == null)
@@ -66,8 +65,7 @@ public class GoogleSignInAndOut implements LogInAndOut
         }
     }
 
-    //Determines of sign in was successful
-    @Override
+    //Determines if sign in was successful
     public boolean handleSignInResult(Task<GoogleSignInAccount> completedTask)
     {
         try {

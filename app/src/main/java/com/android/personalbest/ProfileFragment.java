@@ -21,7 +21,8 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = LoginActivity.class.getName();
 
-    LogInAndOut gSignInAndOut;
+    GoogleSignInAndOut gSignInAndOut;
+    GoogleFit gFit;
 
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -50,6 +51,8 @@ public class ProfileFragment extends Fragment {
 
         gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
         final Context context = this.getContext();
+
+        gFit = new GoogleFit(this.getActivity());
 
         //update height and name
 
@@ -148,6 +151,18 @@ public class ProfileFragment extends Fragment {
                 HomeFragment.killRunner();
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
+            }
+        });
+
+        Button addStepsButton = getView().findViewById(R.id.add_500_steps);
+        addStepsButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                gFit.updateToday();
+                gFit.printArray();
+
             }
         });
     }

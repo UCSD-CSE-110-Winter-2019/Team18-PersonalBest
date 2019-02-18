@@ -1,11 +1,8 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,11 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Observable;
-import java.util.Observer;
-
 public class HomeFragment extends Fragment {
     private static int goal;
+    private String fitnessServiceKey = "GOOGLE_FIT";
 
     static long curr_steps;
     GoogleFit gFit;
@@ -66,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         ct=getContext();
 
-        gFit.updateData();
+        //gFit.updateData();
         curr_steps = gFit.getTotalDailySteps();
         activity=getActivity();
 
@@ -154,6 +149,10 @@ public class HomeFragment extends Fragment {
     public static void killRunner(){
         if(!runner.isCancelled())
             runner.cancel(true);
+    }
+
+    public void setFitnessServiceKey(String fitnessServiceKey) {
+        this.fitnessServiceKey = fitnessServiceKey;
     }
 
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {

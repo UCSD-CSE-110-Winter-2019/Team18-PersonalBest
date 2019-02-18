@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
         // works correctly with the right associations
 //        String TAG = HomeFragment.class.getName();
-//        LogInAndOut gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+//        GoogleSignInAndOut gSignInAndOut = new GoogleSignInAndOut(this, TAG);
 //        gSignInAndOut.signOut();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -36,6 +36,12 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.fragment_container, fragment).commit();
         }
         return false;
+    }
+
+    public void launchHomeFragment()
+    {
+        Fragment fragment = new HomeFragment();
+        loadFragment(fragment);
     }
 
     @Override
