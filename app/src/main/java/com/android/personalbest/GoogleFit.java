@@ -1,23 +1,10 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.Bucket;
@@ -26,19 +13,15 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.request.DataUpdateRequest;
-import com.google.android.gms.fitness.result.DailyTotalResult;
 import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +29,6 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
-import static java.text.DateFormat.getTimeInstance;
 
 public class GoogleFit
 {
@@ -84,8 +66,6 @@ public class GoogleFit
 
     /** Records step data by requesting a subscription to background step data. */
     public void subscribeForDailySteps() {
-        // To create a subscription, invoke the Recording API. As soon as the subscription is
-        // active, fitness data will start recording.
         Fitness.getRecordingClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
                 .addOnCompleteListener(
@@ -147,10 +127,9 @@ public class GoogleFit
     }
 
     /**
-     * Asynchronous task to read the history data. When the task succeeds, it will print out yesterday's data.
+     * Read the history data. When the task succeeds, it will print out yesterday's data.
      */
     public Task<DataReadResponse> readYesterdayStepData() {
-        // Begin by creating the query.
         DataReadRequest readRequest = queryYesterdayFitnessData();
 
         // Invoke the History API to fetch the data with the query
@@ -179,19 +158,14 @@ public class GoogleFit
      * Asynchronous task to read the history data. When the task succeeds, it will print out the week's data.
      */
     public Task<DataReadResponse> readWeeklyStepData() {
-        // Begin by creating the query.
         DataReadRequest readRequest = queryWeekFitnessData();
 
-        // Invoke the History API to fetch the data with the query
         return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .readData(readRequest)
                 .addOnSuccessListener(
                         new OnSuccessListener<DataReadResponse>() {
                             @Override
                             public void onSuccess(DataReadResponse dataReadResponse) {
-                                // For the sake of the sample, we'll print the data so we can see what we just
-                                // added. In general, logging fitness information should be avoided for privacy
-                                // reasons.
                                 printWeekData(dataReadResponse);
                             }
                         })
@@ -206,8 +180,6 @@ public class GoogleFit
 
     /** Returns a {@link DataReadRequest} for all step count changes in the past day. */
     public static DataReadRequest queryYesterdayFitnessData() {
-        // [START build_read_data_request]
-        // Setting a start and end date using a range of 1 week before this moment.
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
@@ -221,7 +193,6 @@ public class GoogleFit
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
 
-//        java.text.DateFormat dateFormat = getDateInstance();
         Log.wtf(TAG, "Range Start of yesterday steps: " + dateFormat.format(startTime) + " " + timeFormat.format(startTime) );
         Log.wtf(TAG, "Range End of yesterday steps: " + dateFormat.format(endTime) + " " + timeFormat.format(endTime) );
 
@@ -246,10 +217,8 @@ public class GoogleFit
         return readRequest;
     }
 
-    /** Returns a {@link DataReadRequest} for all step count changes in the past week. */
+    /** Returns a {@link DataReadRequest} for all step count changes starting from the past Sunday */
     public static DataReadRequest queryWeekFitnessData() {
-        // [START build_read_data_request]
-        // Setting a start and end date using a range of 1 week before this moment.
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
@@ -266,35 +235,15 @@ public class GoogleFit
 
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()
-                        // The data request can specify multiple data types to return, effectively
-                        // combining multiple data queries into one call.
-                        // In this example, it's very unlikely that the request is for several hundred
-                        // datapoints each consisting of a few steps and a timestamp.  The more likely
-                        // scenario is wanting to see how many steps were walked per day, for 7 days.
                         .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        // Analogous to a "Group By" in SQL, defines how data should be aggregated.
-                        // bucketByTime allows for a time span, whereas bucketBySession would allow
-                        // bucketing by "sessions", which would need to be defined in code.
                         .bucketByTime(1, TimeUnit.DAYS)
                         .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                         .build();
-        // [END build_read_data_request]
-
         return readRequest;
     }
 
-    /**
-     * Logs a record of the query result. It's possible to get more constrained data sets by
-     * specifying a data source or data type, but for demonstrative purposes here's how one would dump
-     * all the data. In this sample, logging also prints to the device screen, so we can see what the
-     * query returns, but your app should not log fitness information as a privacy consideration. A
-     * better option would be to dump the data you receive to a local data directory to avoid exposing
-     * it to other applications.
-     */
+    /** Logs a record of the query results */
     public void printWeekData(DataReadResponse dataReadResult) {
-        // [START parse_read_data_result]
-        // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
-        // as buckets containing DataSets, instead of just DataSets.
         int counter = 0;
         if (dataReadResult.getBuckets().size() > 0) {
             Log.i(
@@ -313,13 +262,9 @@ public class GoogleFit
                 counter++;
             }
         }
-        // [END parse_read_data_result]
     }
 
     public void printRecentData(DataReadResponse dataReadResult) {
-        // [START parse_read_data_result]
-        // If the DataReadRequest object specified aggregated data, dataReadResult will be returned
-        // as buckets containing DataSets, instead of just DataSets.
         int counter = 0;
         if (dataReadResult.getBuckets().size() > 0) {
             Log.i(
@@ -338,15 +283,12 @@ public class GoogleFit
                 counter++;
             }
         }
-        // [END parse_read_data_result]
     }
 
-    // [START parse_dataset]
     private void dumpWeekSteps(DataSet dataSet, int counter) {
         Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
-        Log.wtf("size of data set", "" + dataSet.isEmpty());
 
         for (DataPoint dp : dataSet.getDataPoints()) {
             Log.i(TAG, "Data point:");
@@ -378,39 +320,38 @@ public class GoogleFit
         }
     }
 
+    /** Prints array contents for testing*/
     public void printWeekSteps() {
         for(int i = 0; i < weekSteps.length; i++)
         {
-            Log.wtf("Weekly step array contents", "" + weekSteps[i] );
+            Log.d("weekStep array contents", "" + weekSteps[i] );
         }
     }
 
+    /** Prints array contents for testing*/
     public void printRecentSteps() {
         for(int i = 0; i < recentSteps.length; i++)
         {
-            Log.wtf("Today + yesterdays step array contents", "" + recentSteps[i] );
+            Log.d("recentStep contents", "" + recentSteps[i] );
         }
     }
 
 
     /**
-     * Creates a {@link DataSet},then makes a {@link DataUpdateRequest} to update step data. Then
-     * invokes the History API with the HistoryClient object and update request.
+     * Creates a {@link DataSet},then makes a {@link DataUpdateRequest} to update step data. Adds
+     * steps to each day starting from past Sunday to now
      * Used for testing
      */
     public Task<Void> updateData() {
-        // Create a new dataset and update request.
         DataSet dataSet = updateFitnessData();
         long startTime = 0;
         long endTime = 0;
 
-        // Get the start and end times from the dataset.
         for (DataPoint dataPoint : dataSet.getDataPoints()) {
             startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
             endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
         }
 
-        // [START update_data_request]
         Log.i(TAG, "Updating the dataset in the History API.");
 
         DataUpdateRequest request =
@@ -419,7 +360,6 @@ public class GoogleFit
                         .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                         .build();
 
-        // Invoke the History API to update data.
         return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .updateData(request)
                 .addOnCompleteListener(
@@ -443,9 +383,6 @@ public class GoogleFit
     private DataSet updateFitnessData() {
         Log.i(TAG, "Creating a new data update request.");
 
-        // [START build_update_data_request]
-        // Set a start and end time for the data that fits within the time range
-        // of the original insertion.
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
@@ -456,7 +393,6 @@ public class GoogleFit
         cal.set(Calendar.SECOND, 0);
         long startTime = cal.getTimeInMillis();
 
-        // Create a data source
         DataSource dataSource =
                 new DataSource.Builder()
                         .setAppPackageName(activity)
@@ -465,19 +401,15 @@ public class GoogleFit
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
-//        Random rand = new Random();
-//        int n = rand.nextInt(10000);
-        int n = 4000;
-        // Create a data set
+        Random rand = new Random(); //for testing
+        int n = rand.nextInt(10000);
+
         int stepCountDelta = n;
         DataSet dataSet = DataSet.create(dataSource);
-        // For each data point, specify a start time, end time, and the data value -- in this case,
-        // the number of new steps.
         DataPoint dataPoint =
                 dataSet.createDataPoint().setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS);
         dataPoint.getValue(Field.FIELD_STEPS).setInt(stepCountDelta);
         dataSet.add(dataPoint);
-        // [END build_update_data_request]
 
         return dataSet;
     }
