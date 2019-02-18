@@ -100,26 +100,26 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    public static void  async(){
+    public static void async() {
         goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }
 
     public void show(){
-        Encouragement e =new Encouragement(activity);
-        e.showChangeGoal();
-
         runner.cancel(true);
         runner=new AsyncTaskRunner();
-        Log.d("goal", String.valueOf(goal));
+
+        Encouragement e =new Encouragement(activity);
+        e.showChangeGoal();
     }
 
 
-    public void improve(){
-        Encouragement e =new Encouragement(activity);
-        e.displayImprovement();
+    public void improve(int numStepsOver){
         runner.cancel(true);
         runner=new AsyncTaskRunner();
+
+        Encouragement e =new Encouragement(activity);
+        e.displayImprovement(numStepsOver);
     }
 
     public static void killRunner(){
@@ -128,7 +128,8 @@ public class HomeFragment extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-        long updated_steps = 0;
+        long updated_steps = gFit.getTotalDailySteps();
+        int numStepsOver = 0;
 
         @Override
         protected String doInBackground(String... params) {
@@ -144,6 +145,7 @@ public class HomeFragment extends Fragment {
                 //gFit.updateData();
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
+                gFit.readYesterdayStepData();
 
                 try {
                     publishProgress();
@@ -157,8 +159,14 @@ public class HomeFragment extends Fragment {
                 if(updated_steps >=goal){
                     return("5");
                 }
-                if(en.getTime().equals("20:00:00")&& updated_steps-en.getPreviousDayStep()>1000)
-                    return("6");
+
+                Log.d("time", en.getTime());
+
+                // Checks for displaying encouragement at 8pm every night
+                numStepsOver = calculateImprovementInterval((int) updated_steps, en.getPreviousDayStep());
+                if (en.getTime().equals("20:00:00") && numStepsOver >= 500) {
+                    return ("6");
+                }
             }
             return ("10");
         }
@@ -171,7 +179,7 @@ public class HomeFragment extends Fragment {
             if(Integer.parseInt(result)==5)
                 show();
             if(Integer.parseInt(result)==6)
-                improve();
+                improve(numStepsOver);
         }
 
         @Override
@@ -188,6 +196,11 @@ public class HomeFragment extends Fragment {
             {
                 HistoryFragment.TOTAL_STEPS[i] = GoogleFit.weekSteps[i];
             }
+        }
+
+        // Calculate what interval encouragement pop-up should display (increased 500, 1000, etc.)
+        private int calculateImprovementInterval(int todaySteps, int yesterdaySteps) {
+            return ((todaySteps - yesterdaySteps) / 500) * 500;
         }
     }
 }
