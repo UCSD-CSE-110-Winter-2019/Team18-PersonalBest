@@ -77,9 +77,5 @@ workflows:
   build_and_android_test:
     jobs:
       - build
-<<<<<<< HEAD
-      - android_test
-=======
 #      - android_test
->>>>>>> a16552e71d7791cf7d4710b0948eaff431319027
 
