@@ -11,6 +11,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.android.personalbest.fitness.FitnessService;
+import com.android.personalbest.fitness.FitnessServiceFactory;
+import com.android.personalbest.fitness.GoogleFit;
+
 import java.text.DecimalFormat;
 
 public class TrackerActivity extends AppCompatActivity {
@@ -19,9 +24,9 @@ public class TrackerActivity extends AppCompatActivity {
     public boolean stopTimer = false;
     public TextView total_time;
     public TextView real_time;
-    public TextView total_steps;
+    public static TextView total_steps;
 
-    public TextView display_velocity;
+    public static TextView display_velocity;
     public TextView display_avg_velocity;
     public TextView summary_steps;
 
@@ -32,9 +37,14 @@ public class TrackerActivity extends AppCompatActivity {
     private double curr_velocity = 0;
     private int curr_time = 0;
     public long difference = 0;
+    private static DecimalFormat df = new DecimalFormat("#.00");
+
 
     static int height_inch;
-    GoogleFit gFit;
+
+    //GoogleFit gFit;
+    private FitnessService fitnessService;
+
 
 
     // create the tracker page for planned activities
@@ -43,14 +53,19 @@ public class TrackerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         start_step = HomeFragment.curr_steps;
-        gFit = new GoogleFit(this);
-        gFit.readYesterdayStepData();
+
+        //gFit = new GoogleFit(this);
+
+
 
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
         real_time = findViewById(R.id.time_elapsed);
         display_velocity = findViewById(R.id.velocity);
         total_steps = findViewById(R.id.steps);
+
+        String get_value = getIntent().getStringExtra("home to tracker");
+        fitnessService = FitnessServiceFactory.create(get_value, this);
 
         // start the timer for intentional activities
         timer = new TrackTime();
@@ -110,12 +125,20 @@ public class TrackerActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public static void setStepCount(long difference) {
+        total_steps.setText(Long.toString(difference));
+    }
+
+    public static void setInstantVelocity(double velocity) {
+        display_velocity.setText(df.format(velocity));
+    }
+
+
     // class to track time elapsed
     private class TrackTime extends AsyncTask<String, String, String> {
         int min = 0;
         int sec = 0;
         String time;
-        private DecimalFormat df = new DecimalFormat("#.00");
 
         @Override
         protected String doInBackground(String... params) {
@@ -123,11 +146,10 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
-                    curr_step = gFit.getTotalDailySteps();
-                    start_step = GoogleFit.recentSteps[1];
-                    if(curr_step > 0) {
+
+                    curr_step = fitnessService.getTotalDailySteps();
+                    if (curr_step > 0)
                         difference = curr_step - start_step;
-                    }
 
                     double step_per_mile = 5280/(height_inch * 0.413);
 
@@ -179,9 +201,8 @@ public class TrackerActivity extends AppCompatActivity {
         protected void onProgressUpdate(String... count) {
             real_time.setText(time);
 
-            total_steps.setText(Long.toString(difference));
-
-            display_velocity.setText(df.format(curr_velocity));
+            setStepCount(difference);
+            setInstantVelocity(curr_velocity);
         }
     }
 }

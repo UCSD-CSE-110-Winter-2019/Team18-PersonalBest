@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.android.personalbest.fitness.GoogleFit;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 

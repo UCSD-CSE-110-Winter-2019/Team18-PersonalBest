@@ -1,9 +1,10 @@
-package com.android.personalbest;
+package com.android.personalbest.fitness;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.android.personalbest.TrackerActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
@@ -30,19 +31,23 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class GoogleFit
-{
+public class GoogleFit implements FitnessService {
     Activity activity;
+
     public static final String TAG = "GoogleFitTag";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 0x1001;
     public long total;
     public static int weekSteps[] = new int[7];
     public static int recentSteps[] = new int[2];
 
-    public GoogleFit(Activity activity)
-    {
+
+    public GoogleFit(Activity activity) {
         this.activity = activity;
     }
+
+//    public GoogleFit(TrackerActivity trackerActivity) {
+//        this.activity = trackerActivity;
+//    }
 
     //Asks user for permission to access data if it hasn't been asked for before.
     public void setup()
@@ -285,6 +290,7 @@ public class GoogleFit
         }
     }
 
+
     private void dumpWeekSteps(DataSet dataSet, int counter) {
         Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
@@ -351,6 +357,7 @@ public class GoogleFit
             startTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS);
             endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
         }
+
 
         Log.i(TAG, "Updating the dataset in the History API.");
 

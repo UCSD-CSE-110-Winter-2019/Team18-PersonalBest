@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.personalbest.fitness.GoogleFit;
+
 public class HomeFragment extends Fragment {
     private static int goal;
 
@@ -28,6 +30,8 @@ public class HomeFragment extends Fragment {
     static Context ct;
     static TextView display_goal;
     static TextView display_steps;
+
+    private String fitnessServiceKey = "GOOGLE_FIT";
 
     @Nullable
     @Override
@@ -44,6 +48,11 @@ public class HomeFragment extends Fragment {
 
         GoogleFit gFit = new GoogleFit(this.getActivity());
         gFit.setup();
+
+        ct=getContext();
+        activity=getActivity();
+
+
         display_goal = ((TextView)getView().findViewById(R.id.goal));
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -55,11 +64,7 @@ public class HomeFragment extends Fragment {
         }
 
         goal = SharedPrefData.getGoal(getContext());
-
-        ct=getContext();
-
         curr_steps = gFit.getTotalDailySteps();
-        activity=getActivity();
 
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
@@ -97,10 +102,16 @@ public class HomeFragment extends Fragment {
     }
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivity.class);
+        intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
 
-    public static void async() {
+    public void setFitnessServiceKey(String fitnessServiceKey) {
+        this.fitnessServiceKey = fitnessServiceKey;
+    }
+
+
+    public static void  async(){
         goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }
