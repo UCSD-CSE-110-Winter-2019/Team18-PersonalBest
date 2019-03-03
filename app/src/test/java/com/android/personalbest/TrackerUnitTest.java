@@ -1,26 +1,17 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.personalbest.fitness.FitnessService;
-import com.android.personalbest.fitness.FitnessServiceFactory;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.tasks.Task;
+import com.android.personalbest.UIdisplay.TrackerActivityUI;
+import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.fitness.FitServiceFactory;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 
-
-import androidx.test.core.app.ApplicationProvider;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,17 +29,17 @@ public class TrackerUnitTest {
     public void setUp() throws Exception {
         try {
 
-                    FitnessServiceFactory.put("TEST_SERVICE", new FitnessServiceFactory.BluePrint() {
+                    FitServiceFactory.put("TEST_SERVICE", new FitServiceFactory.BluePrint() {
                         @Override
-                        public FitnessService create(Activity activity) {
+                        public IFitService create(Activity activity) {
                             return new TestFitnessService(activity);
                         }
                     });
 
-//                    Intent intent = new Intent(ApplicationProvider.getApplicationContext(), TrackerActivity.class);
+//                    Intent intent = new Intent(ApplicationProvider.getApplicationContext(), TrackerActivityUI.class);
 //                    intent.putExtra("home to tracker", "TEST_SERVICE");
 
-//                    activity = Robolectric.buildActivity(TrackerActivity.class, intent).create().get();
+//                    activity = Robolectric.buildActivity(TrackerActivityUI.class, intent).create().get();
             //
             //        display_steps = activity.findViewById(R.id.steps);
             //        display_velocity = activity.findViewById(R.id.velocity);
@@ -67,7 +58,7 @@ public class TrackerUnitTest {
 
     }
 
-    private class TestFitnessService implements FitnessService {
+    private class TestFitnessService implements IFitService {
 //        private static final String TAG = "[TestFitnessService]: ";
         private Activity activity;
 
@@ -83,7 +74,7 @@ public class TrackerUnitTest {
         @Override
         public long getTotalDailySteps() {
 //            System.out.println(TAG + "updateStepCount");
-            TrackerActivity.setStepCount(nextStepCount);
+            TrackerActivityUI.setStepCount(nextStepCount);
 
             return 0;
         }

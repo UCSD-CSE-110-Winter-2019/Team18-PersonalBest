@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.android.personalbest.ProfileFragment;
-import com.android.personalbest.TrackerActivity;
+import com.android.personalbest.UIdisplay.ProfileUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class GoogleFit implements FitnessService {
+public class GoogleFitAdaptor {
     Activity activity;
 
     public static final String TAG = "GoogleFitTag";
@@ -43,11 +42,11 @@ public class GoogleFit implements FitnessService {
     public static boolean changeTime = false;
 
 
-    public GoogleFit(Activity activity) {
+    public GoogleFitAdaptor(Activity activity) {
         this.activity = activity;
     }
 
-//    public GoogleFit(TrackerActivity trackerActivity) {
+//    public GoogleFitAdaptor(TrackerActivityUI trackerActivity) {
 //        this.activity = trackerActivity;
 //    }
 
@@ -191,7 +190,7 @@ public class GoogleFit implements FitnessService {
         Date now = new Date();
         if(changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }
@@ -235,7 +234,7 @@ public class GoogleFit implements FitnessService {
         Date now = new Date();
         if(changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }
@@ -443,7 +442,7 @@ public class GoogleFit implements FitnessService {
         Date now = new Date();
         if(changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }

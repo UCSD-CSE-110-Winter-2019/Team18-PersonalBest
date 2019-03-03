@@ -8,9 +8,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.android.personalbest.fitness.FitnessService;
-import com.android.personalbest.fitness.FitnessServiceFactory;
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.UIdisplay.ChartUI;
+import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.ProfileUI;
+import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.fitness.FitServiceFactory;
 
 
 public class MainActivity extends AppCompatActivity
@@ -23,21 +26,21 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
         // works correctly with the right associations
-//        String TAG = HomeFragment.class.getName();
-//        GoogleSignInAndOut gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+//        String TAG = HomeUI.class.getName();
+//        GoogleFitAdaptor gSignInAndOut = new GoogleFitAdaptor(this, TAG);
 //        gSignInAndOut.signOut();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
 
-        loadFragment(new HomeFragment());
+        loadFragment(new HomeUI());
 
 
-        FitnessServiceFactory.put("GOOGLE_FIT", new FitnessServiceFactory.BluePrint() {
+        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
             @Override
-            public FitnessService create(Activity activity) {
-                return new GoogleFit(activity);
+            public IFitService create(Activity activity) {
+                return new GoogleFitAdaptor(activity);
             }
         });
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 
     public void launchHomeFragment()
     {
-        Fragment fragment = new HomeFragment();
+        Fragment fragment = new HomeUI();
         loadFragment(fragment);
     }
 
@@ -63,15 +66,15 @@ public class MainActivity extends AppCompatActivity
 
         switch(menuItem.getItemId()) {
             case R.id.navigation_home:
-                fragment = new HomeFragment();
+                fragment = new HomeUI();
                 break;
 
             case R.id.navigation_history:
-                fragment = new HistoryFragment();
+                fragment = new ChartUI();
                 break;
 
             case R.id.navigation_profile:
-                fragment = new ProfileFragment();
+                fragment = new ProfileUI();
                 break;
         }
         return loadFragment(fragment);

@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
@@ -10,7 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.fitness.GoogleFitAdaptor;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,15 +41,15 @@ public class Encouragement {
     }
 
     public int getPreviousDayStep() {
-        return GoogleFit.recentSteps[0];
+        return GoogleFitAdaptor.recentSteps[0];
     }
 
 
     public void setGoal(int goal){
-        SharedPrefData.setGoal(HomeFragment.ct, goal);
+        SharedPrefData.setGoal(HomeUI.ct, goal);
     }
 
-    // call the set goal function from GoogleFit class
+    // call the set goal function from GoogleFitAdaptor class
 //    public static void incGoal(int inc) {
 //        goal=goal+inc;
 //        this.setGoal(goal);
@@ -65,7 +67,7 @@ public class Encouragement {
             myDialog.show();
             first_pg=false;
          } else {
-             HomeFragment.async();
+             HomeUI.async();
          }
 
          Button incGoal=myDialog.findViewById(R.id.inc_goal_btn);
@@ -73,21 +75,21 @@ public class Encouragement {
 
          // Displays the correct goal in pop-up
          TextView currentGoalView = myDialog.findViewById(R.id.current_goal);
-         currentGoalView.setText(Integer.toString(SharedPrefData.getGoal(HomeFragment.ct)));
+         currentGoalView.setText(Integer.toString(SharedPrefData.getGoal(HomeUI.ct)));
 
          incGoal.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 setGoal(500+SharedPrefData.getGoal(HomeFragment.ct));
-                 HomeFragment.async();
+                 setGoal(500+SharedPrefData.getGoal(HomeUI.ct));
+                 HomeUI.async();
              }
          });
          back.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 HomeFragment.async();
+                 HomeUI.async();
              }
          });
 
@@ -102,7 +104,7 @@ public class Encouragement {
             myDialog.show();
             first_pi=false;
         } else {
-            HomeFragment.async();
+            HomeUI.async();
         }
 
         Button getHome = myDialog.findViewById(R.id.back_home_btn);
@@ -113,7 +115,7 @@ public class Encouragement {
             @Override
             public void onClick(View view) {
                 myDialog.dismiss();
-                HomeFragment.async();
+                HomeUI.async();
             }
         });
 

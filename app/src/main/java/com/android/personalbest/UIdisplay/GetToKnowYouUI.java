@@ -1,9 +1,7 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,14 +9,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.personalbest.CheckInvalid;
+import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 
-public class GetToKnowUActivity extends AppCompatActivity {
-    String TAG = GetToKnowUActivity.class.getName();
+public class GetToKnowYouUI extends AppCompatActivity {
+    String TAG = GetToKnowYouUI.class.getName();
     private static int RC_SIGN_IN = 100;
-    GoogleSignInAndOut gSignInAndOut;
+    GoogleSignAndOut gSignInAndOut;
 
     EditText name;
     EditText heightft;
@@ -29,11 +33,11 @@ public class GetToKnowUActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_to_know_u);
-        gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+        gSignInAndOut = new GoogleSignAndOut(this, TAG);
         gSignInAndOut.signIn();
 
         Button finish=(Button) findViewById(R.id.finish_btn);
-        final Context context = GetToKnowUActivity.this;
+        final Context context = GetToKnowYouUI.this;
 
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,19 +45,19 @@ public class GetToKnowUActivity extends AppCompatActivity {
                 name=findViewById(R.id.name_input);
                 heightft=findViewById(R.id.heightft_input);
                 heightin=findViewById(R.id.heightin_input);
-                int ft=CheckInvalid.checkForHeightft(heightft.getText());
+                int ft= CheckInvalid.checkForHeightft(heightft.getText());
                 int in=CheckInvalid.checkForHeightin(heightin.getText());
 
                 if(!CheckInvalid.checkForName(name.getText())||in<0||ft<0){
                     Log.d("invalid", String.valueOf(CheckInvalid.checkForName(name.getText())));
-                    Toast.makeText(GetToKnowUActivity.this, "Invalid Input", Toast.LENGTH_SHORT).show();}
+                    Toast.makeText(GetToKnowYouUI.this, "Invalid Input", Toast.LENGTH_SHORT).show();}
                 else{
                     SharedPrefData.setName(context, name.getText().toString());
                     SharedPrefData.setHeightFt(context, ft);
                     SharedPrefData.setHeightIn(context, in);
                     SharedPrefData.setGoal(context, 5000);
 
-                    Toast.makeText(GetToKnowUActivity.this, "Saved", Toast.LENGTH_SHORT);
+                    Toast.makeText(GetToKnowYouUI.this, "Saved", Toast.LENGTH_SHORT);
                     launchActivity();
                     }
             }
