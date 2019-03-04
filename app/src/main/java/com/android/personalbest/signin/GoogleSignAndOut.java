@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.signin;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,8 +13,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class GoogleSignInAndOut
-{
+public class GoogleSignAndOut implements ISignIn{
     // Google sign in variables
     // Configure sign-in to request the user's ID, email address, and basic
     // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -27,9 +26,7 @@ public class GoogleSignInAndOut
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
     Activity activity;
     String TAG;
-
-    GoogleSignInAndOut(Activity activity, String TAG)
-    {
+    public GoogleSignAndOut(Activity activity, String TAG) {
         this.activity = activity;
         this.TAG = TAG;
 

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.android.personalbest.R;
+import com.android.personalbest.UIdisplay.LoginUI;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -28,10 +28,10 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class newLoginActivityTest {
+public class newLoginUITest {
 
     @Rule
-    public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
+    public ActivityTestRule<LoginUI> mActivityTestRule = new ActivityTestRule<>(LoginUI.class);
 
     @Test
     public void newLoginActivityTest() {

@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,15 +15,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.fitness.FitServiceFactory;
+import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.fitness.IFitService;
 
-public class HomeFragment extends Fragment {
+public class HomeUI extends Fragment {
+    IFitService gFit;
+
     private static int goal;
-
     static long curr_steps;
-    GoogleFit gFit;
     static AsyncTaskRunner runner;
-
     Activity activity;
     static boolean first=true;
     static LayoutInflater temp;
@@ -37,7 +41,9 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
-        gFit = new GoogleFit(this.getActivity());
+//        gFit = FitServiceFactory.create("Home", this.getActivity());
+
+//        gFit = new GoogleFitAdaptor(this.getActivity());
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -46,7 +52,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        GoogleFit gFit = new GoogleFit(this.getActivity());
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
         gFit.setup();
 
         ct=getContext();
@@ -83,7 +89,6 @@ public class HomeFragment extends Fragment {
     public void onPause(){
 
         Log.d("msg:", "pause");
-        //runner.cancel(true);
         Log.d("status",runner.getStatus().toString());
 
         super.onPause();
@@ -101,7 +106,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void launchActivity() {
-        Intent intent = new Intent(getActivity(), TrackerActivity.class);
+        Intent intent = new Intent(getActivity(), TrackerActivityUI.class);
         intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
@@ -148,7 +153,6 @@ public class HomeFragment extends Fragment {
                     Encouragement.first_pi=true;
                 }
 
-                //gFit.updateData();
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
                 gFit.readYesterdayStepData();
@@ -197,16 +201,16 @@ public class HomeFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... count) {
             display_goal.setText(Integer.toString(goal));
-            if(GoogleFit.changeTime)
+            if(gFit.getIsTimeChanged())
             {
-                display_steps.setText(Integer.toString(GoogleFit.recentSteps[1]));
+                display_steps.setText(Integer.toString(GoogleFitAdaptor.recentSteps[1]));
             }else {
                 display_steps.setText(Long.toString(updated_steps));
             }
 
-            for(int i = 0; i < GoogleFit.weekSteps.length; i++)
+            for(int i = 0; i < GoogleFitAdaptor.weekSteps.length; i++)
             {
-                HistoryFragment.TOTAL_STEPS[i] = GoogleFit.weekSteps[i];
+                ChartUI.TOTAL_STEPS[i] = GoogleFitAdaptor.weekSteps[i];
             }
         }
 

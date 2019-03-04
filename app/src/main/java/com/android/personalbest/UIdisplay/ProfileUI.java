@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,16 +15,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.CheckInvalid;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.fitness.FitServiceFactory;
+import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
 
-public class ProfileFragment extends Fragment {
+public class ProfileUI extends Fragment {
+    ISignIn gSignInAndOut;
+    IFitService gFit;
 
-    private static final String TAG = LoginActivity.class.getName();
+    private static final String TAG = LoginUI.class.getName();
     EditText edit_time;
     public static long desiredTime;
 
-    GoogleSignInAndOut gSignInAndOut;
-    GoogleFit gFit;
 
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -51,14 +59,16 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        gSignInAndOut = new GoogleSignInAndOut(getActivity(), TAG);
+        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this.getActivity(), TAG);
+//        gSignInAndOut.signIn();
         final Context context = this.getContext();
 
-        gFit = new GoogleFit(this.getActivity());
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+        gFit.setup();
 
         //update height and name
 
-        String name=SharedPrefData.getName(this.getContext());
+        String name= SharedPrefData.getName(this.getContext());
         int heightfeet=SharedPrefData.getHeightFt(this.getContext());
         int heightinch=SharedPrefData.getHeightIn(this.getContext());
         TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
@@ -84,7 +94,7 @@ public class ProfileFragment extends Fragment {
                 if(edit_height.getText().toString().equals("save")){
 
 
-                    int ft=CheckInvalid.checkForHeightft(feet_edit.getText());
+                    int ft= CheckInvalid.checkForHeightft(feet_edit.getText());
                     int in=CheckInvalid.checkForHeightin(inch_edit.getText());
                     if(ft<0||in<0)
                         Toast.makeText(getActivity(), "Invalid height", Toast.LENGTH_SHORT).show();
@@ -145,7 +155,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                HomeFragment.killRunner();
+                HomeUI.killRunner();
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
             }
@@ -168,7 +178,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                GoogleFit.changeTime = true;
+                gFit.setIsTimeChanged(true);
                 edit_time = (EditText) getView().findViewById(R.id.edit_time);
                 desiredTime = Long.parseLong(edit_time.getText().toString());
                 gFit.readYesterdayStepData();
@@ -178,7 +188,7 @@ public class ProfileFragment extends Fragment {
 
     public void launchLoginScreenActivity()
     {
-        Intent intent = new Intent (getActivity(), LoginActivity.class);
+        Intent intent = new Intent (getActivity(), LoginUI.class);
         startActivity(intent);
     }
 }
