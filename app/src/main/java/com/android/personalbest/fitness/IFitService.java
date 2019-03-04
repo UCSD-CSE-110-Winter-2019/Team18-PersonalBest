@@ -9,9 +9,9 @@ public interface IFitService {
     void subscribeForDailySteps();
     void subscribeForWeeklySteps();
     void readDailyStepData();
-    Task<DataReadResponse> readYesterdayStepData();
-    Task<DataReadResponse> readWeeklyStepData();
-    Task<Void> updateToday();
+    void readYesterdayStepData();
+    void readWeeklyStepData();
+    void updateToday();
     long getTotalDailySteps();
     void setTotalDailySteps(long total);
     void printWeekData(DataReadResponse dataReadResult);
