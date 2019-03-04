@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
@@ -34,15 +35,24 @@ public class HomeUI extends Fragment {
     static TextView display_goal;
     static TextView display_steps;
 
-    private String fitnessServiceKey = "GOOGLE_FIT";
-
+    private static String fitnessServiceKey = "GOOGLE_FIT";
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
-//        gFit = FitServiceFactory.create("Home", this.getActivity());
+        //gFit = FitServiceFactory.create("Home", this.getActivity());
 
-//        gFit = new GoogleFitAdaptor(this.getActivity());
+        //gFit = new GoogleFitAdaptor(this.getActivity());
+
+        activity=getActivity();
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
+        if(fitnessServiceKey==null)
+            fitnessServiceKey="Google_Fit";
+        Log.wtf("key",fitnessServiceKey);
+        Toast.makeText(activity, fitnessServiceKey,Toast.LENGTH_LONG).show();
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
+        gFit.setup();
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -51,11 +61,16 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gFit = FitServiceFactory.create("Home", this.getActivity());
+//        gFit = FitServiceFactory.create("Home", this.getActivity());
+//        gFit.setup();
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
-
         ct=getContext();
         activity=getActivity();
+        Bundle args = getArguments();
+        String text = args.getString("key");
+        Log.wtf("key",text);
+        Toast.makeText(activity, text,Toast.LENGTH_LONG).show();
 
 
         display_goal = ((TextView)getView().findViewById(R.id.goal));
@@ -177,6 +192,8 @@ public class HomeUI extends Fragment {
                 if (en.getTime().equals("20:00:00") && numStepsOver >= 500) {
                     return ("6");
                 }
+                if(fitnessServiceKey.equals("test"))
+                    break;
             }
             return ("10");
         }
@@ -190,6 +207,8 @@ public class HomeUI extends Fragment {
                 show();
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);
+            if(Integer.parseInt(result)==10)
+                killRunner();
         }
 
         @Override
@@ -202,14 +221,14 @@ public class HomeUI extends Fragment {
             display_goal.setText(Integer.toString(goal));
             if(gFit.getIsTimeChanged())
             {
-                display_steps.setText(Integer.toString(GoogleFitAdaptor.recentSteps[1]));
+                display_steps.setText(Integer.toString(gFit.getRecentSteps()[1]));
             }else {
                 display_steps.setText(Long.toString(updated_steps));
             }
 
-            for(int i = 0; i < GoogleFitAdaptor.weekSteps.length; i++)
+            for(int i = 0; i < gFit.getWeekSteps().length; i++)
             {
-                ChartUI.TOTAL_STEPS[i] = GoogleFitAdaptor.weekSteps[i];
+                ChartUI.TOTAL_STEPS[i] = gFit.getWeekSteps()[i];
             }
         }
 

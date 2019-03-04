@@ -6,7 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.personalbest.UIdisplay.ChartUI;
 import com.android.personalbest.UIdisplay.HomeUI;
@@ -19,7 +21,7 @@ import com.android.personalbest.fitness.FitServiceFactory;
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-
+    Bundle args;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +34,16 @@ public class MainActivity extends AppCompatActivity
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-
-
-        loadFragment(new HomeUI());
-
+        String text=getIntent().getStringExtra("key");
+        Log.wtf("activity key", text);
+        Toast.makeText(this, text,Toast.LENGTH_LONG).show();
+        HomeUI homeUI=new HomeUI();
+        args = new Bundle();
+        args.putString("key", text);
+        homeUI.setArguments(args);
+        loadFragment(homeUI);
+//        String text=getIntent().getStringExtra("key");
+//        Toast.makeText(this, text,Toast.LENGTH_LONG).show();
 
 //        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
 //            @Override
@@ -48,6 +56,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
+            //Toast.makeText(this, "reach",Toast.LENGTH_LONG).show();
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
         }
@@ -77,6 +87,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = new ProfileUI();
                 break;
         }
+        fragment.setArguments(args);
         return loadFragment(fragment);
     }
 }

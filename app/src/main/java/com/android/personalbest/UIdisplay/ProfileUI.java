@@ -29,7 +29,7 @@ public class ProfileUI extends Fragment {
     EditText edit_time;
     public static long desiredTime;
 
-    GoogleSignAndOut gSignInAndOut;
+    //GoogleSignAndOut gSignInAndOut;
     IFitService gFit;
 
     SharedPreferences sharedPreferences;
@@ -57,7 +57,7 @@ public class ProfileUI extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
+//        gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
         final Context context = this.getContext();
 
         gFit = FitServiceFactory.create("Home", this.getActivity());
@@ -153,6 +153,7 @@ public class ProfileUI extends Fragment {
             public void onClick(View view)
             {
                 HomeUI.killRunner();
+                GoogleSignAndOut gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
             }

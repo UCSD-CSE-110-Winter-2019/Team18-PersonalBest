@@ -602,5 +602,11 @@ public class GoogleFitAdaptor implements IFitService{
         return this.total;
     }
 
+    public int[] getWeekSteps() {
+        return weekSteps;
+    }
+    public int[] getRecentSteps(){
+        return recentSteps;
+    }
 }
 
