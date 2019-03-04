@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class ProfileUI extends Fragment {
     Boolean invalid=false;
 
     SharedPreferences.Editor editor;
-
+    String fitnessServiceKey;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,8 +60,13 @@ public class ProfileUI extends Fragment {
 
 //        gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
         final Context context = this.getContext();
-
-        gFit = FitServiceFactory.create("Home", this.getActivity());
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
+        if(fitnessServiceKey==null)
+            fitnessServiceKey="Google_Fit";
+        Log.wtf("profile key",fitnessServiceKey);
+        Toast.makeText(this.getActivity(), fitnessServiceKey,Toast.LENGTH_LONG).show();
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
 
         //update height and name
