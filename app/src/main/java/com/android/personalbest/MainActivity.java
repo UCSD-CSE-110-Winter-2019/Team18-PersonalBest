@@ -21,11 +21,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Uncomment and run once to log out manually and then create a new account so that SharedPref
-        // works correctly with the right associations
-//        String TAG = HomeFragment.class.getName();
-//        GoogleSignInAndOut gSignInAndOut = new GoogleSignInAndOut(this, TAG);
-//        gSignInAndOut.signOut();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
@@ -51,12 +46,6 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    public void launchHomeFragment()
-    {
-        Fragment fragment = new HomeFragment();
-        loadFragment(fragment);
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
@@ -72,6 +61,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.navigation_profile:
                 fragment = new ProfileFragment();
+                break;
+
+            case R.id.navigation_friends:
+                fragment = new FriendsFragment();
                 break;
         }
         return loadFragment(fragment);
