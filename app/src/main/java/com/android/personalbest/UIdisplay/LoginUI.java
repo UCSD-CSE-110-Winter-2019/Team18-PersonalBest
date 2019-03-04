@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.signin.GoogleSignAndOut;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
@@ -24,7 +25,7 @@ public class LoginUI extends AppCompatActivity {
     private static int RC_SIGN_IN_KEY = 100;
     String TAG = LoginUI.class.getName();
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
-    GoogleFitAdaptor gSignInAndOut;
+    GoogleSignAndOut gSignInAndOut;
 
     /**
      * Begins at the start of the Login Activity to see if user has an account already.
@@ -79,7 +80,7 @@ public class LoginUI extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        gSignInAndOut = new GoogleFitAdaptor(this, TAG);
+        gSignInAndOut = new GoogleSignAndOut(this, TAG);
 
         //Create account button
         Button createAccountButton = findViewById(R.id.create_account_button);

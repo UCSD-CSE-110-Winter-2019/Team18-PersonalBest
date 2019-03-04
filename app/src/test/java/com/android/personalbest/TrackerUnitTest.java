@@ -27,26 +27,26 @@ public class TrackerUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        try {
-
-                    FitServiceFactory.put("TEST_SERVICE", new FitServiceFactory.BluePrint() {
-                        @Override
-                        public IFitService create(Activity activity) {
-                            return new TestFitnessService(activity);
-                        }
-                    });
-
-//                    Intent intent = new Intent(ApplicationProvider.getApplicationContext(), TrackerActivityUI.class);
-//                    intent.putExtra("home to tracker", "TEST_SERVICE");
-
-//                    activity = Robolectric.buildActivity(TrackerActivityUI.class, intent).create().get();
-            //
-            //        display_steps = activity.findViewById(R.id.steps);
-            //        display_velocity = activity.findViewById(R.id.velocity);
-            //        nextStepCount = 200;
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//
+//                    FitServiceFactory.put("TEST_SERVICE", new FitServiceFactory.BluePrint() {
+//                        @Override
+//                        public IFitService create(Activity activity) {
+//                            return new TestFitnessService(activity);
+//                        }
+//                    });
+//
+////                    Intent intent = new Intent(ApplicationProvider.getApplicationContext(), TrackerActivityUI.class);
+////                    intent.putExtra("home to tracker", "TEST_SERVICE");
+//
+////                    activity = Robolectric.buildActivity(TrackerActivityUI.class, intent).create().get();
+//            //
+//            //        display_steps = activity.findViewById(R.id.steps);
+//            //        display_velocity = activity.findViewById(R.id.velocity);
+//            //        nextStepCount = 200;
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Test
@@ -58,26 +58,26 @@ public class TrackerUnitTest {
 
     }
 
-    private class TestFitnessService implements IFitService {
-//        private static final String TAG = "[TestFitnessService]: ";
-        private Activity activity;
-
-        public TestFitnessService(Activity activity) {
-            this.activity = activity;
-        }
-
-
-        @Override
-        public void setup() {
-        }
-
-        @Override
-        public long getTotalDailySteps() {
-//            System.out.println(TAG + "updateStepCount");
-            TrackerActivityUI.setStepCount(nextStepCount);
-
-            return 0;
-        }
+//    private class TestFitnessService implements IFitService {
+////        private static final String TAG = "[TestFitnessService]: ";
+//        private Activity activity;
+//
+//        public TestFitnessService(Activity activity) {
+//            this.activity = activity;
+//        }
+//
+//
+//        @Override
+//        public void setup() {
+//        }
+//
+//        @Override
+//        public long getTotalDailySteps() {
+////            System.out.println(TAG + "updateStepCount");
+//            TrackerActivityUI.setStepCount(nextStepCount);
+//
+//            return 0;
+//        }
 
 
 //        @Override
@@ -119,5 +119,5 @@ public class TrackerUnitTest {
 
 
 
-    }
+
 }

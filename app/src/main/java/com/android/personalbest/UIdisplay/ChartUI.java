@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.StepXAxisValueFormatter;
+import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -30,7 +32,7 @@ public class ChartUI extends Fragment {
 
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
-    public static GoogleFitAdaptor gFit;
+    IFitService gFit;
 
 
     BarChart stepChart;
@@ -66,7 +68,8 @@ public class ChartUI extends Fragment {
         displayIntentionalSteps();
 
         Activity activity = this.getActivity();
-        gFit = new GoogleFitAdaptor(activity);
+        gFit = FitServiceFactory.create("Home", this.getActivity());
+//        gFit.setup();
         gFit.subscribeForWeeklySteps();
     }
 

@@ -37,12 +37,12 @@ public class MainActivity extends AppCompatActivity
         loadFragment(new HomeUI());
 
 
-        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
-            @Override
-            public IFitService create(Activity activity) {
-                return new GoogleFitAdaptor(activity);
-            }
-        });
+//        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
+//            @Override
+//            public IFitService create(Activity activity) {
+//                return new GoogleFitAdaptor(activity);
+//            }
+//        });
 
     }
 

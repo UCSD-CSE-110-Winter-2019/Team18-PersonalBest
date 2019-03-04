@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class GoogleFitAdaptor {
+public class GoogleFitAdaptor implements IFitService{
     Activity activity;
 
     public static final String TAG = "GoogleFitTag";
@@ -39,7 +39,7 @@ public class GoogleFitAdaptor {
     public long total;
     public static int weekSteps[] = new int[7];
     public static int recentSteps[] = new int[2];
-    public static boolean changeTime = false;
+    public boolean changeTime = false;
 
 
     public GoogleFitAdaptor(Activity activity) {
@@ -85,6 +85,13 @@ public class GoogleFitAdaptor {
                                 }
                             }
                         });
+    }
+
+    public boolean getIsTimeChanged() {
+        return changeTime;
+    }
+    public void setIsTimeChanged(boolean changeTime) {
+        this.changeTime = changeTime;
     }
 
     /** Asks for permission to access weekly steps */
@@ -185,10 +192,10 @@ public class GoogleFitAdaptor {
     }
 
     /** Returns a {@link DataReadRequest} for all step count changes in the past day. */
-    public static DataReadRequest queryYesterdayFitnessData() {
+    public DataReadRequest queryYesterdayFitnessData() {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
-        if(changeTime)
+        if(this.changeTime)
         {
             cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
@@ -229,10 +236,10 @@ public class GoogleFitAdaptor {
     }
 
     /** Returns a {@link DataReadRequest} for all step count changes starting from the past Sunday */
-    public static DataReadRequest queryWeekFitnessData() {
+    public DataReadRequest queryWeekFitnessData() {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
-        if(changeTime)
+        if(this.changeTime)
         {
             cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {

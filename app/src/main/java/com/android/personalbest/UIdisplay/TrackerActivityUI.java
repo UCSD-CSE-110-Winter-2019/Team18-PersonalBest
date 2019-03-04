@@ -45,9 +45,8 @@ public class TrackerActivityUI extends AppCompatActivity {
 
     static int height_inch;
 
-    GoogleFitAdaptor gFit;
+    IFitService gFit;
 
-    private IFitService fitnessService;
 
 
 
@@ -57,7 +56,9 @@ public class TrackerActivityUI extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         start_step = HomeUI.curr_steps;
-        gFit = new GoogleFitAdaptor(this);
+        gFit = FitServiceFactory.create("Home", this);
+        gFit.setup();
+
         gFit.readYesterdayStepData();
         start_step = GoogleFitAdaptor.recentSteps[1];
 
@@ -68,7 +69,7 @@ public class TrackerActivityUI extends AppCompatActivity {
         total_steps = findViewById(R.id.steps);
 
         String get_value = getIntent().getStringExtra("home to tracker");
-        fitnessService = FitServiceFactory.create(get_value, this);
+//        fitnessService = FitServiceFactory.create(get_value, this);
 
         // start the timer for intentional activities
         timer = new TrackTime();
@@ -149,7 +150,7 @@ public class TrackerActivityUI extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
-                    if(GoogleFitAdaptor.changeTime)
+                    if(gFit.getIsTimeChanged())
                     {
                         gFit.readYesterdayStepData();
                         curr_step = GoogleFitAdaptor.recentSteps[1];

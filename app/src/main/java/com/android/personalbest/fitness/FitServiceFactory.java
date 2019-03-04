@@ -7,18 +7,13 @@ import java.util.Map;
 
 public class FitServiceFactory {
 
-    private static Map<String, BluePrint> blueprints = new HashMap<>();
-
-    public static void put(String key, BluePrint bluePrint) {
-        blueprints.put(key, bluePrint);
-    }
-
-    public static IFitService create(String key, Activity activity) {
-        return blueprints.get(key).create(activity);
-    }
-
-
-    public interface BluePrint {
-        IFitService create(Activity activity);
+    public static IFitService create(String i, Activity activity) {
+        if (i.equals("Test")) {
+            // TODO
+            return null;
+        }
+        else {
+            return new GoogleFitAdaptor(activity);
+        }
     }
 }

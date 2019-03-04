@@ -17,16 +17,16 @@ import android.widget.TextView;
 
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.fitness.IFitService;
 
 public class HomeUI extends Fragment {
+    IFitService gFit;
+
     private static int goal;
-
     static long curr_steps;
-//    GoogleFitAdaptor gFitAdaptor;
-    GoogleFitAdaptor gFit;
     static AsyncTaskRunner runner;
-
     Activity activity;
     static boolean first=true;
     static LayoutInflater temp;
@@ -40,6 +40,8 @@ public class HomeUI extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
+//        gFit = FitServiceFactory.create("Home", this.getActivity());
+
 //        gFit = new GoogleFitAdaptor(this.getActivity());
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
@@ -49,7 +51,7 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gFit= new GoogleFitAdaptor(this.getActivity());
+        gFit = FitServiceFactory.create("Home", this.getActivity());
         gFit.setup();
 
         ct=getContext();
@@ -86,7 +88,6 @@ public class HomeUI extends Fragment {
     public void onPause(){
 
         Log.d("msg:", "pause");
-        //runner.cancel(true);
         Log.d("status",runner.getStatus().toString());
 
         super.onPause();
@@ -151,7 +152,6 @@ public class HomeUI extends Fragment {
                     Encouragement.first_pi=true;
                 }
 
-                //gFit.updateData();
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
                 gFit.readYesterdayStepData();
@@ -200,7 +200,7 @@ public class HomeUI extends Fragment {
         @Override
         protected void onProgressUpdate(String... count) {
             display_goal.setText(Integer.toString(goal));
-            if(GoogleFitAdaptor.changeTime)
+            if(gFit.getIsTimeChanged())
             {
                 display_steps.setText(Integer.toString(GoogleFitAdaptor.recentSteps[1]));
             }else {
