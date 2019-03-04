@@ -16,8 +16,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.personalbest.fitness.GoogleFit;
-
 
 public class FriendsFragment extends Fragment {
 
