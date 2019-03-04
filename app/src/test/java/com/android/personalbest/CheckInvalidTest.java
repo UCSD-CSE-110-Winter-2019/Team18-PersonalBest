@@ -2,6 +2,8 @@ package com.android.personalbest;
 
 import android.widget.EditText;
 
+import com.android.personalbest.UIdisplay.LoginUI;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,12 +16,12 @@ import org.robolectric.RobolectricTestRunner;
 public class CheckInvalidTest {
 
     // Need a temporary activity & EditText to be able to produce Editable objects
-    private LoginActivity mockActivity;
+    private LoginUI mockActivity;
     private EditText mockEditable;
 
     @Before
     public void setup() {
-        mockActivity = Robolectric.setupActivity(LoginActivity.class);
+        mockActivity = Robolectric.setupActivity(LoginUI.class);
         mockEditable = new EditText(mockActivity);
     }
 

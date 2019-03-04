@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,13 +12,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.personalbest.fitness.FitnessService;
-import com.android.personalbest.fitness.FitnessServiceFactory;
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.fitness.FitServiceFactory;
 
 import java.text.DecimalFormat;
 
-public class TrackerActivity extends AppCompatActivity {
+public class TrackerActivityUI extends AppCompatActivity {
     Dialog myDialog;
     TrackTime timer;
     public boolean stopTimer = false;
@@ -42,9 +45,8 @@ public class TrackerActivity extends AppCompatActivity {
 
     static int height_inch;
 
-    GoogleFit gFit;
+    IFitService gFit;
 
-    private FitnessService fitnessService;
 
 
 
@@ -53,10 +55,12 @@ public class TrackerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        start_step = HomeFragment.curr_steps;
-        gFit = new GoogleFit(this);
+        start_step = HomeUI.curr_steps;
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
+        gFit.setup();
+
         gFit.readYesterdayStepData();
-        start_step = GoogleFit.recentSteps[1];
+        start_step = GoogleFitAdaptor.recentSteps[1];
 
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
@@ -65,7 +69,7 @@ public class TrackerActivity extends AppCompatActivity {
         total_steps = findViewById(R.id.steps);
 
         String get_value = getIntent().getStringExtra("home to tracker");
-        fitnessService = FitnessServiceFactory.create(get_value, this);
+//        fitnessService = FitServiceFactory.create(get_value, this);
 
         // start the timer for intentional activities
         timer = new TrackTime();
@@ -146,10 +150,10 @@ public class TrackerActivity extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
-                    if(GoogleFit.changeTime)
+                    if(gFit.getIsTimeChanged())
                     {
                         gFit.readYesterdayStepData();
-                        curr_step = GoogleFit.recentSteps[1];
+                        curr_step = GoogleFitAdaptor.recentSteps[1];
                     }else {
                         curr_step = gFit.getTotalDailySteps();
                     }

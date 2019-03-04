@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.android.personalbest.ProfileFragment;
-import com.android.personalbest.TrackerActivity;
+import com.android.personalbest.UIdisplay.ProfileUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
@@ -32,7 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class GoogleFit implements FitnessService {
+
+public class GoogleFitAdaptor implements IFitService{
     Activity activity;
 
     public static final String TAG = "GoogleFitTag";
@@ -40,14 +40,14 @@ public class GoogleFit implements FitnessService {
     public long total;
     public static int weekSteps[] = new int[7];
     public static int recentSteps[] = new int[2];
-    public static boolean changeTime = false;
+    public boolean changeTime = false;
 
 
-    public GoogleFit(Activity activity) {
+    public GoogleFitAdaptor(Activity activity) {
         this.activity = activity;
     }
 
-//    public GoogleFit(TrackerActivity trackerActivity) {
+//    public GoogleFitAdaptor(TrackerActivityUI trackerActivity) {
 //        this.activity = trackerActivity;
 //    }
 
@@ -86,6 +86,13 @@ public class GoogleFit implements FitnessService {
                                 }
                             }
                         });
+    }
+
+    public boolean getIsTimeChanged() {
+        return changeTime;
+    }
+    public void setIsTimeChanged(boolean changeTime) {
+        this.changeTime = changeTime;
     }
 
     /** Asks for permission to access weekly steps */
@@ -136,62 +143,62 @@ public class GoogleFit implements FitnessService {
     /**
      * Read the history data. When the task succeeds, it will print out yesterday's data.
      */
-    public Task<DataReadResponse> readYesterdayStepData() {
+    public void readYesterdayStepData() {
         DataReadRequest readRequest = queryYesterdayFitnessData();
 
         // Invoke the History API to fetch the data with the query
-        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-                .readData(readRequest)
-                .addOnSuccessListener(
-                        new OnSuccessListener<DataReadResponse>() {
-                            @Override
-                            public void onSuccess(DataReadResponse dataReadResponse) {
-                                // For the sake of the sample, we'll print the data so we can see what we just
-                                // added. In general, logging fitness information should be avoided for privacy
-                                // reasons.
-                                printRecentData(dataReadResponse);
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "There was a problem reading the data.", e);
-                            }
+        Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+            .readData(readRequest)
+            .addOnSuccessListener(
+                    new OnSuccessListener<DataReadResponse>() {
+                        @Override
+                        public void onSuccess(DataReadResponse dataReadResponse) {
+                            // For the sake of the sample, we'll print the data so we can see what we just
+                            // added. In general, logging fitness information should be avoided for privacy
+                            // reasons.
+                            printRecentData(dataReadResponse);
+                        }
+                    })
+            .addOnFailureListener(
+                    new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "There was a problem reading the data.", e);
+                    }
                         });
     }
 
     /**
      * Asynchronous task to read the history data. When the task succeeds, it will print out the week's data.
      */
-    public Task<DataReadResponse> readWeeklyStepData() {
+    public void readWeeklyStepData() {
         DataReadRequest readRequest = queryWeekFitnessData();
 
-        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-                .readData(readRequest)
-                .addOnSuccessListener(
-                        new OnSuccessListener<DataReadResponse>() {
-                            @Override
-                            public void onSuccess(DataReadResponse dataReadResponse) {
-                                printWeekData(dataReadResponse);
-                            }
-                        })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "There was a problem reading the data.", e);
-                            }
-                        });
+        Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+            .readData(readRequest)
+            .addOnSuccessListener(
+                    new OnSuccessListener<DataReadResponse>() {
+                        @Override
+                        public void onSuccess(DataReadResponse dataReadResponse) {
+                            printWeekData(dataReadResponse);
+                        }
+                    })
+            .addOnFailureListener(
+                    new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "There was a problem reading the data.", e);
+                        }
+                    });
     }
 
     /** Returns a {@link DataReadRequest} for all step count changes in the past day. */
-    public static DataReadRequest queryYesterdayFitnessData() {
+    public DataReadRequest queryYesterdayFitnessData() {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
-        if(changeTime)
+        if(this.changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }
@@ -230,12 +237,12 @@ public class GoogleFit implements FitnessService {
     }
 
     /** Returns a {@link DataReadRequest} for all step count changes starting from the past Sunday */
-    public static DataReadRequest queryWeekFitnessData() {
+    public DataReadRequest queryWeekFitnessData() {
         Calendar cal = Calendar.getInstance();
         Date now = new Date();
-        if(changeTime)
+        if(this.changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }
@@ -396,7 +403,7 @@ public class GoogleFit implements FitnessService {
                         });
     }
 
-    public Task<Void> updateToday() {
+    public void updateToday() {
         // Create a new dataset and update request.
         DataSet dataSet = updateTodayFitnessData();
         long startTime = 0;
@@ -417,20 +424,20 @@ public class GoogleFit implements FitnessService {
                         .build();
 
         // Invoke the History API to update data.
-        return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-                .updateData(request)
-                .addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // At this point the data has been updated and can be read.
-                                    Log.i(TAG, "Data update was successful.");
-                                } else {
-                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
-                                }
-                            }
-                        });
+        Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+            .updateData(request)
+            .addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // At this point the data has been updated and can be read.
+                            Log.i(TAG, "Data update was successful.");
+                        } else {
+                            Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+                        }
+                    }
+                 });
     }
 
     private DataSet updateTodayFitnessData() {
@@ -443,7 +450,7 @@ public class GoogleFit implements FitnessService {
         Date now = new Date();
         if(changeTime)
         {
-            cal.setTimeInMillis(ProfileFragment.desiredTime);
+            cal.setTimeInMillis(ProfileUI.desiredTime);
         }else {
             cal.setTime(now);
         }

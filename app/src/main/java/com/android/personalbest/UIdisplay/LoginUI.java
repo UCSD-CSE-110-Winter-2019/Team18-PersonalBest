@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
@@ -16,12 +22,13 @@ import com.google.android.gms.tasks.Task;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginUI extends AppCompatActivity {
+    ISignIn gSignInAndOut;
 
     private static int RC_SIGN_IN_KEY = 100;
-    String TAG = LoginActivity.class.getName();
+    String TAG = LoginUI.class.getName();
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
-    GoogleSignInAndOut gSignInAndOut;
+
 
     /**
      * Begins at the start of the Login Activity to see if user has an account already.
@@ -30,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
+        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this, TAG);
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null and user can sign in.
@@ -76,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        gSignInAndOut = new GoogleSignInAndOut(this, TAG);
+        gSignInAndOut = new GoogleSignAndOut(this, TAG);
 
         //Create account button
         Button createAccountButton = findViewById(R.id.create_account_button);
@@ -104,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void launchGetToKnowYouActivity() {
-        Intent intent = new Intent(this, GetToKnowUActivity.class);
+        Intent intent = new Intent(this, GetToKnowYouUI.class);
         startActivity(intent);
 
     }

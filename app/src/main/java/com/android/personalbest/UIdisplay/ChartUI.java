@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -11,7 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.personalbest.fitness.GoogleFit;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
+import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.StepXAxisValueFormatter;
+import com.android.personalbest.fitness.FitServiceFactory;
+import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,11 +28,11 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryFragment extends Fragment {
+public class ChartUI extends Fragment {
 
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
-    public static GoogleFit gFit;
+    IFitService gFit;
 
 
     BarChart stepChart;
@@ -63,7 +68,8 @@ public class HistoryFragment extends Fragment {
         displayIntentionalSteps();
 
         Activity activity = this.getActivity();
-        gFit = new GoogleFit(activity);
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+//        gFit.setup();
         gFit.subscribeForWeeklySteps();
     }
 
