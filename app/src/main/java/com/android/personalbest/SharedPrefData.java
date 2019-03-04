@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.android.personalbest.signin.ISignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -53,7 +54,8 @@ public class SharedPrefData extends AppCompatActivity {
         long sundayOfThisWeek = getTodayInMilliseconds() - (currentDayOfWeek * NUM_MILLISECONDS_IN_DAY);
 
         long curDay = sundayOfThisWeek;
-        String accountId = getLoggedInUserId(context);
+
+        String accountId = "s8lei";
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
 
         for (int i = 0; i < intentionalSteps.length; i++) {
@@ -73,7 +75,7 @@ public class SharedPrefData extends AppCompatActivity {
         // intentional steps taken on this specific day
         String currentDayKey = Long.toString(getTodayInMilliseconds());
 
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -90,7 +92,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static int getGoal(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         return sharedPreferences.getInt("goal", 5000);
@@ -98,7 +100,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static void setGoal(Context context, int stepGoal) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -108,7 +110,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static String getName(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         return sharedPreferences.getString("name", "");
@@ -116,7 +118,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static void setName(Context context, String name) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -126,7 +128,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static int getHeightFt(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         return sharedPreferences.getInt("heightft", 0);
@@ -134,7 +136,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static void setHeightFt(Context context, int heightFt) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -143,7 +145,7 @@ public class SharedPrefData extends AppCompatActivity {
     }
 
     public static int getHeightIn(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         return sharedPreferences.getInt("heightin", 0);
@@ -151,7 +153,7 @@ public class SharedPrefData extends AppCompatActivity {
 
 
     public static void setHeightIn(Context context, int heightIn) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -163,7 +165,7 @@ public class SharedPrefData extends AppCompatActivity {
     // Check if a logged in user has a SharedPreference file to indicate whether or not they
     // created a Personal Best account; controls the login/create-account flow
     public static boolean userSharedPrefExists(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
         String SHARED_PREF_FILE_PATH = "/data/data/" + context.getPackageName() + "/shared_prefs/" + accountId + ".xml";
 
         File f = new File(SHARED_PREF_FILE_PATH);
@@ -173,7 +175,7 @@ public class SharedPrefData extends AppCompatActivity {
 
     // Helper method to print out all the key-values of a SharedPref file
     public static void logAllKeyValues(Context context) {
-        String accountId = getLoggedInUserId(context);
+        String accountId = "s8lei";
         SharedPreferences sharedPreferences = context.getSharedPreferences(accountId, Context.MODE_PRIVATE);
 
         Map<String, ?> allEntries = sharedPreferences.getAll();
