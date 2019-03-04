@@ -16,21 +16,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.CheckInvalid;
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.fitness.FitServiceFactory;
-import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
 
 public class ProfileUI extends Fragment {
+    ISignIn gSignInAndOut;
+    IFitService gFit;
 
     private static final String TAG = LoginUI.class.getName();
     EditText edit_time;
     public static long desiredTime;
 
-    GoogleSignAndOut gSignInAndOut;
-    IFitService gFit;
 
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -57,10 +59,11 @@ public class ProfileUI extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
+        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this.getActivity(), TAG);
+//        gSignInAndOut.signIn();
         final Context context = this.getContext();
 
-        gFit = FitServiceFactory.create("Home", this.getActivity());
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
         gFit.setup();
 
         //update height and name

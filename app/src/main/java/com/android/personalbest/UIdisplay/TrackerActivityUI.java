@@ -56,7 +56,7 @@ public class TrackerActivityUI extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         start_step = HomeUI.curr_steps;
-        gFit = FitServiceFactory.create("Home", this);
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit.setup();
 
         gFit.readYesterdayStepData();

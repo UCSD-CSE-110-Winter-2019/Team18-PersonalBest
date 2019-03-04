@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.fitness.FitServiceFactory;
@@ -51,7 +52,7 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gFit = FitServiceFactory.create("Home", this.getActivity());
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
         gFit.setup();
 
         ct=getContext();

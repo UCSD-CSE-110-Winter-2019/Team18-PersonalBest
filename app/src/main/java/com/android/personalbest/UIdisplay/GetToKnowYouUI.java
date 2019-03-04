@@ -15,6 +15,8 @@ import com.android.personalbest.signin.GoogleSignAndOut;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +24,7 @@ import com.google.android.gms.tasks.Task;
 public class GetToKnowYouUI extends AppCompatActivity {
     String TAG = GetToKnowYouUI.class.getName();
     private static int RC_SIGN_IN = 100;
-    GoogleSignAndOut gSignInAndOut;
+    ISignIn gSignInAndOut;
 
     EditText name;
     EditText heightft;
@@ -33,7 +35,8 @@ public class GetToKnowYouUI extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_to_know_u);
-        gSignInAndOut = new GoogleSignAndOut(this, TAG);
+//        gSignInAndOut = new GoogleSignAndOut(this, TAG);
+        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this, TAG);
         gSignInAndOut.signIn();
 
         Button finish=(Button) findViewById(R.id.finish_btn);

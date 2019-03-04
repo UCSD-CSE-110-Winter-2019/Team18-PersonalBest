@@ -17,12 +17,4 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 public class testMainActivity {
-    @Test
-    public void clickingButton_shouldChangeMessage() {
-        MainActivity activity = Robolectric.setupActivity(MainActivity.class);
-
-        ShadowToast st= new ShadowToast();
-        String a= st.getTextOfLatestToast();
-        assertTrue(a.equals("123"));
-    }
 }

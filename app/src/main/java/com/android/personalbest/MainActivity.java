@@ -18,6 +18,8 @@ import com.android.personalbest.fitness.FitServiceFactory;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
+    public static String fitness_indicator = "Test";
+    public static String signin_indicator = "googlesignin";
 
 
     @Override

@@ -10,7 +10,7 @@ public class FitServiceFactory {
     public static IFitService create(String i, Activity activity) {
         if (i.equals("Test")) {
             // TODO
-            return null;
+            return new TestFitService(activity);
         }
         else {
             return new GoogleFitAdaptor(activity);
