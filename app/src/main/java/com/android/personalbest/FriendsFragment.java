@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 public class FriendsFragment extends Fragment {
 
     final int TEXTVIEW_SIZE = 25;
