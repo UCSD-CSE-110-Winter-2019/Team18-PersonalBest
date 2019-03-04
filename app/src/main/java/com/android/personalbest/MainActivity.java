@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.android.personalbest.fitness.FitnessService;
 import com.android.personalbest.fitness.FitnessServiceFactory;
 import com.android.personalbest.fitness.GoogleFit;
+import com.google.firebase.FirebaseApp;
 
 
 public class MainActivity extends AppCompatActivity
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
                 return new GoogleFit(activity);
             }
         });
+        FirebaseApp.initializeApp(this);
 
     }
 
