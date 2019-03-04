@@ -27,6 +27,11 @@ android {
             includeAndroidResources = true
         }
     }
+
+    lintOptions{
+        warning 'InvalidPackage'
+    }
+
     // Gradle automatically adds 'android.test.runner' as a dependency.
     useLibrary 'android.test.runner'
 
