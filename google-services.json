@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "387879995706",
+    "firebase_url": "https://team18-personalbest-80b7a.firebaseio.com",
+    "project_id": "team18-personalbest-80b7a",
+    "storage_bucket": "team18-personalbest-80b7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387879995706:android:84a4c3804adaeec9",
+        "android_client_info": {
+          "package_name": "com.android.personalbest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387879995706-oe2k1pree0dcjr3mguj43gien31hatl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNjNyGOirmgASRgG_6LeUrtRqCr9Sjj2s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

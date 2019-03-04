@@ -8,12 +8,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.firebase.FirebaseApp;
+
 import com.android.personalbest.UIdisplay.ChartUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.fitness.FitServiceFactory;
+
 
 
 public class MainActivity extends AppCompatActivity
@@ -36,16 +39,9 @@ public class MainActivity extends AppCompatActivity
         navigation.setOnNavigationItemSelectedListener(this);
 
 
+        FirebaseApp.initializeApp(this);
+
         loadFragment(new HomeUI());
-
-
-//        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
-//            @Override
-//            public IFitService create(Activity activity) {
-//                return new GoogleFitAdaptor(activity);
-//            }
-//        });
-
     }
 
     private boolean loadFragment(Fragment fragment) {
