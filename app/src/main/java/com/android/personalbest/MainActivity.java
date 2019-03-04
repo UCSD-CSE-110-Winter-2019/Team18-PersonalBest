@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    public void launchHomeFragment()
-    {
-        Fragment fragment = new HomeUI();
-        loadFragment(fragment);
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
@@ -77,6 +71,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.navigation_profile:
                 fragment = new ProfileUI();
+                break;
+
+            case R.id.navigation_friends:
+                fragment = new FriendsFragment();
                 break;
         }
         return loadFragment(fragment);
