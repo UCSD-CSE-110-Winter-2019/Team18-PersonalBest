@@ -14,11 +14,11 @@ public class FitServiceFactory {
     }
 
     public static IFitService create(String key, Activity activity) {
-        return blueprints.get(key).create(activity);
-    }
-
-
-    public interface BluePrint {
-        IFitService create(Activity activity);
+        if(key.equals("googlefit")){
+            return new GoogleFitAdaptor(activity);
+        }
+        else{
+            return new
+        }
     }
 }

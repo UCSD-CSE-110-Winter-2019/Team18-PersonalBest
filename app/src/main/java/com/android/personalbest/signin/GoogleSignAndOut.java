@@ -26,7 +26,6 @@ public class GoogleSignAndOut implements ISignIn{
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
     Activity activity;
     String TAG;
-
     public GoogleSignAndOut(Activity activity, String TAG) {
         this.activity = activity;
         this.TAG = TAG;

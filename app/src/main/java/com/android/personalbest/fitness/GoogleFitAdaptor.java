@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateInstance;
 
-public class GoogleFitAdaptor {
+public class GoogleFitAdaptor implements  IFitService{
     Activity activity;
 
     public static final String TAG = "GoogleFitTag";
