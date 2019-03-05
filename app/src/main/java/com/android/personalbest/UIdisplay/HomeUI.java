@@ -126,6 +126,7 @@ public class HomeUI extends Fragment {
     }
 
     public static void  async(){
+
         goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }

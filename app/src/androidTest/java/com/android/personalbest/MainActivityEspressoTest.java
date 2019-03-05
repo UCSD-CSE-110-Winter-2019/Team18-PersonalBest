@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.EditText;
 
+import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.fitness.TestFitService;
 
 import org.hamcrest.Description;
@@ -39,7 +40,9 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityEspressoTest {
     Intent intent;
-    SharedPreferences.Editor preferencesEditor;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    TestFitService testFitService;
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
@@ -50,21 +53,22 @@ public class MainActivityEspressoTest {
     public void setUp() {
         Context targetContext = getInstrumentation().getTargetContext();
         SharedPrefData.setAccountId(targetContext, "testaccount");
-        SharedPreferences sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
         editor.putInt("goal", 1000);
         editor.putString("name", "test");
         editor.putInt("heightft", 3);
         editor.putInt("heightin", 6);
         editor.commit();
-        Intent intent=new Intent();
+        intent=new Intent();
         intent.putExtra("key", "test");
-        TestFitService testFitService=new TestFitService(mActivityTestRule.getActivity());
+        testFitService=new TestFitService(mActivityTestRule.getActivity());
         testFitService.setTotalDailySteps(200);
-        mActivityTestRule.launchActivity(intent);
+
     }
     @Test
-    public void testMain(){
+    public void testDisplay(){
+        mActivityTestRule.launchActivity(intent);
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
@@ -93,6 +97,26 @@ public class MainActivityEspressoTest {
         ViewInteraction heightin = onView(
                 allOf(withId(R.id.current_in),isDisplayed()));
         heightin.check(matches(withText("6")));
+
+    }
+
+    @Test
+    public void testReachGoalPopup(){
+        testFitService.setTotalDailySteps(1000);
+        mActivityTestRule.launchActivity(intent);
+        ViewInteraction popup = onView(
+                allOf(withId(R.id.summary_title)));
+        popup.check(matches(withText("CONGRATULATIONS!")));
+
+
+        ViewInteraction inc_goal = onView(
+                allOf(withId(R.id.inc_goal_btn)));
+        inc_goal.perform(click());
+
+        ViewInteraction current_goal = onView(
+                allOf(withId(R.id.goal)));
+        current_goal.check(matches(withText("1500")));
+
     }
 
 
