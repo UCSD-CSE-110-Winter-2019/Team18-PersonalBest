@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,7 +21,7 @@ import com.android.personalbest.fitness.FitServiceFactory;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
-
+//    static CountingIdlingResource idlingResourceCounter = new CountingIdlingResource("MainActivity");
     Bundle args;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,4 +91,7 @@ public class MainActivity extends AppCompatActivity
         fragment.setArguments(args);
         return loadFragment(fragment);
     }
+//    public static CountingIdlingResource getResource(){
+//        return idlingResourceCounter;
+//    }
 }

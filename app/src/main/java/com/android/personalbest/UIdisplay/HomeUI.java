@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.fitness.FitServiceFactory;
@@ -104,7 +106,6 @@ public class HomeUI extends Fragment {
 
         Log.d("msg:", "pause");
         Log.d("status",runner.getStatus().toString());
-
         super.onPause();
     }
 
@@ -152,7 +153,11 @@ public class HomeUI extends Fragment {
         if(!runner.isCancelled())
             runner.cancel(true);
     }
-
+    public void testkillRunner(){
+        if(!runner.isCancelled())
+            runner.cancel(true);
+        runner=new AsyncTaskRunner();
+    }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;
@@ -160,6 +165,7 @@ public class HomeUI extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             int i=0;
+            //MainActivity.getResource().increment();
             while(true) {
                 i++;
                 Encouragement en=new Encouragement(getActivity());
@@ -204,12 +210,15 @@ public class HomeUI extends Fragment {
             display_goal.setText(Long.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
 
-            if(Integer.parseInt(result)==5)
+            if(Integer.parseInt(result)==5){
                 show();
+                //MainActivity.getResource().decrement();
+                //Log.wtf("idling","reach");
+            }
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);
             if(Integer.parseInt(result)==10)
-                killRunner();
+                testkillRunner();
         }
 
         @Override
@@ -237,6 +246,7 @@ public class HomeUI extends Fragment {
         private int calculateImprovementInterval(int todaySteps, int yesterdaySteps) {
             return ((todaySteps - yesterdaySteps) / 500) * 500;
         }
+
     }
 }
 

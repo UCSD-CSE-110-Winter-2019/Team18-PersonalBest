@@ -4,7 +4,9 @@ package com.android.personalbest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -102,8 +104,22 @@ public class MainActivityEspressoTest {
 
     @Test
     public void testReachGoalPopup(){
-        testFitService.setTotalDailySteps(1000);
+
         mActivityTestRule.launchActivity(intent);
+
+        //CountingIdlingResource componentIdlingResource = MainActivity.getResource();
+        //IdlingRegistry.getInstance().register(componentIdlingResource);
+        ViewInteraction homegoal = onView(
+                allOf(withId(R.id.goal),
+                        isDisplayed()));
+        homegoal.check(matches(withText("1000")));
+
+        ViewInteraction totalStep = onView(
+                allOf(withId(R.id.display),isDisplayed()));
+        totalStep.check(matches(withText("200")));
+        testFitService.setTotalDailySteps(1000);
+        HomeUI.async();
+
         ViewInteraction popup = onView(
                 allOf(withId(R.id.summary_title)));
         popup.check(matches(withText("CONGRATULATIONS!")));
