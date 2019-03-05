@@ -37,6 +37,10 @@ android {
 
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 
