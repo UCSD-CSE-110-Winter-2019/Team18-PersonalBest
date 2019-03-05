@@ -8,6 +8,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.android.personalbest.firestore.FirestoreAdaptor;
+import com.android.personalbest.firestore.FirestoreFactory;
+import com.android.personalbest.firestore.IFirestore;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.FirebaseApp;
 
 import com.android.personalbest.UIdisplay.ChartUI;
@@ -23,6 +27,10 @@ public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
     public static String fitness_indicator = "Test";
     public static String signin_indicator = "googlesignin";
+
+    public static IFirestore firestore;
+    public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
+    public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
 
 
     @Override
@@ -40,6 +48,21 @@ public class MainActivity extends AppCompatActivity
 
 
         FirebaseApp.initializeApp(this);
+
+        // Determine what implementation of IFirestore to use
+        String firestoreKey = getIntent().getStringExtra(FIRESTORE_SERVICE_KEY);
+        if (firestoreKey == null) {
+            FirestoreFactory.put(FIRESTORE_ADAPTOR_KEY, new FirestoreFactory.BluePrint() {
+                @Override
+                public IFirestore create(Activity activity, String userEmail) {
+                    return new FirestoreAdaptor(activity, userEmail);
+                }
+            });
+            // Default Firestore implementation using our adaptor
+            firestore = new FirestoreAdaptor(this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+        } else {
+            firestore = FirestoreFactory.create(firestoreKey, this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+        }
 
         loadFragment(new HomeUI());
     }
