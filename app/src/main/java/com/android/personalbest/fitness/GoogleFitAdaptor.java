@@ -47,9 +47,6 @@ public class GoogleFitAdaptor implements IFitService{
         this.activity = activity;
     }
 
-//    public GoogleFitAdaptor(TrackerActivityUI trackerActivity) {
-//        this.activity = trackerActivity;
-//    }
 
     //Asks user for permission to access data if it hasn't been asked for before.
     public void setup()

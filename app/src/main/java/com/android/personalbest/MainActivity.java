@@ -21,7 +21,6 @@ import com.android.personalbest.fitness.FitServiceFactory;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
-//    static CountingIdlingResource idlingResourceCounter = new CountingIdlingResource("MainActivity");
     Bundle args;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,27 +36,17 @@ public class MainActivity extends AppCompatActivity
         navigation.setOnNavigationItemSelectedListener(this);
         String text=getIntent().getStringExtra("key");
         Log.wtf("activity key", text);
-        Toast.makeText(this, text,Toast.LENGTH_LONG).show();
         HomeUI homeUI=new HomeUI();
         args = new Bundle();
         args.putString("key", text);
         homeUI.setArguments(args);
         loadFragment(homeUI);
-//        String text=getIntent().getStringExtra("key");
-//        Toast.makeText(this, text,Toast.LENGTH_LONG).show();
 
-//        FitServiceFactory.put("GOOGLE_FIT", new FitServiceFactory.BluePrint() {
-//            @Override
-//            public IFitService create(Activity activity) {
-//                return new GoogleFitAdaptor(activity);
-//            }
-//        });
 
     }
 
     private boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            //Toast.makeText(this, "reach",Toast.LENGTH_LONG).show();
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
@@ -91,7 +80,5 @@ public class MainActivity extends AppCompatActivity
         fragment.setArguments(args);
         return loadFragment(fragment);
     }
-//    public static CountingIdlingResource getResource(){
-//        return idlingResourceCounter;
-//    }
+
 }

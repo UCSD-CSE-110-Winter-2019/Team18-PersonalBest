@@ -21,7 +21,7 @@ public class SharedPrefData extends AppCompatActivity {
     private static final int NUM_DAYS_IN_WEEK = 7;
     private static final int NUM_MILLISECONDS_IN_DAY = 86400000;
     private static final String TAG = "SharedPrefData";
-    static String accountId = "s8lei";
+    static String accountId;
     public SharedPrefData() {
 
     }
@@ -158,6 +158,7 @@ public class SharedPrefData extends AppCompatActivity {
     // Check if a logged in user has a SharedPreference file to indicate whether or not they
     // created a Personal Best account; controls the login/create-account flow
     public static boolean userSharedPrefExists(Context context) {
+        Log.wtf("account_id", accountId);
         String SHARED_PREF_FILE_PATH = "/data/data/" + context.getPackageName() + "/shared_prefs/" + accountId + ".xml";
 
         File f = new File(SHARED_PREF_FILE_PATH);

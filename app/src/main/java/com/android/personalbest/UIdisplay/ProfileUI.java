@@ -30,7 +30,6 @@ public class ProfileUI extends Fragment {
     EditText edit_time;
     public static long desiredTime;
 
-    //GoogleSignAndOut gSignInAndOut;
     IFitService gFit;
 
     SharedPreferences sharedPreferences;
@@ -57,15 +56,12 @@ public class ProfileUI extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-
-//        gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
         final Context context = this.getContext();
         Bundle args = getArguments();
         fitnessServiceKey = args.getString("key");
         if(fitnessServiceKey==null)
             fitnessServiceKey="Google_Fit";
         Log.wtf("profile key",fitnessServiceKey);
-        Toast.makeText(this.getActivity(), fitnessServiceKey,Toast.LENGTH_LONG).show();
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
 

@@ -9,7 +9,6 @@ public class FitServiceFactory {
 
     public static IFitService create(String i, Activity activity) {
         if (i.equals("test")) {
-            // TODO
             return new TestFitService(activity);
         }
         else {

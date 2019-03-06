@@ -42,9 +42,6 @@ public class HomeUI extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
-        //gFit = FitServiceFactory.create("Home", this.getActivity());
-
-        //gFit = new GoogleFitAdaptor(this.getActivity());
 
         activity=getActivity();
         Bundle args = getArguments();
@@ -52,7 +49,7 @@ public class HomeUI extends Fragment {
         if(fitnessServiceKey==null)
             fitnessServiceKey="Google_Fit";
         Log.wtf("key",fitnessServiceKey);
-        Toast.makeText(activity, fitnessServiceKey,Toast.LENGTH_LONG).show();
+
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
         super.onCreate(savedInstanceState);
@@ -63,16 +60,10 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        gFit = FitServiceFactory.create("Home", this.getActivity());
-//        gFit.setup();
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
         ct=getContext();
         activity=getActivity();
-        Bundle args = getArguments();
-        String text = args.getString("key");
-        Log.wtf("key",text);
-        Toast.makeText(activity, text,Toast.LENGTH_LONG).show();
 
 
         display_goal = ((TextView)getView().findViewById(R.id.goal));
@@ -81,7 +72,6 @@ public class HomeUI extends Fragment {
 
         if(first){
             runner = new AsyncTaskRunner();
-            //runner.execute("0");
             first=false;
         }
         goal = SharedPrefData.getGoal(getContext());
@@ -212,8 +202,6 @@ public class HomeUI extends Fragment {
 
             if(Integer.parseInt(result)==5){
                 show();
-                //MainActivity.getResource().decrement();
-                //Log.wtf("idling","reach");
             }
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);

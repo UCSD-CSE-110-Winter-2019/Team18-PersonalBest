@@ -82,6 +82,7 @@ public class GetToKnowYouUI extends AppCompatActivity {
 
             if ( gSignInAndOut.handleSignInResult(task) == true )
             {
+                SharedPrefData.setAccountId(this, GoogleSignIn.getLastSignedInAccount(this).getId());
                 // If the user logs in, already has an account, and tries to create a new account
                 // redirects them to their home page/the main activity
                 if (SharedPrefData.userSharedPrefExists(this)) {
