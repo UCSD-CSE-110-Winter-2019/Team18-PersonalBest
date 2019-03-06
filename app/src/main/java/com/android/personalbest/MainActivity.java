@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
@@ -25,9 +28,9 @@ import com.android.personalbest.fitness.FitServiceFactory;
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
+    Bundle args;
     public static String fitness_indicator = "Test";
     public static String signin_indicator = "googlesignin";
-
     public static IFirestore firestore;
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
@@ -45,8 +48,17 @@ public class MainActivity extends AppCompatActivity
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
+        String text=getIntent().getStringExtra("key");
+        Log.wtf("activity key", text);
+        HomeUI homeUI=new HomeUI();
+        args = new Bundle();
+        args.putString("key", text);
+        homeUI.setArguments(args);
 
 
+        String email="brbr";
+        if(text!=null&&!text.equals("test"))
+            email=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
         FirebaseApp.initializeApp(this);
 
         // Determine what implementation of IFirestore to use
@@ -59,16 +71,17 @@ public class MainActivity extends AppCompatActivity
                 }
             });
             // Default Firestore implementation using our adaptor
-            firestore = new FirestoreAdaptor(this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+            firestore = new FirestoreAdaptor(this, email);
         } else {
-            firestore = FirestoreFactory.create(firestoreKey, this, GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail());
+            firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
 
-        loadFragment(new HomeUI());
+        loadFragment(homeUI);
     }
 
     private boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
         }
@@ -96,6 +109,8 @@ public class MainActivity extends AppCompatActivity
                 fragment = new FriendsFragment();
                 break;
         }
+        fragment.setArguments(args);
         return loadFragment(fragment);
     }
+
 }

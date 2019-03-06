@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.PhilJay:MPAndroidChart-v3.1.0-alpha">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-v3.1.0-alpha.aar/4a27f156b64241a318d61d5a5a5f5cb4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-v3.1.0-alpha.aar/4a27f156b64241a318d61d5a5a5f5cb4/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.PhilJay/MPAndroidChart/v3.1.0-alpha/4d62701ef24f41e282a52cf1cdcde5b4b98ea10d/MPAndroidChart-v3.1.0-alpha-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

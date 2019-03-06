@@ -1,10 +1,12 @@
 package com.android.personalbest.signin;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.android.personalbest.SharedPrefData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,6 +28,7 @@ public class GoogleSignAndOut implements ISignIn{
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
     Activity activity;
     String TAG;
+    public  GoogleSignAndOut(){}
     public GoogleSignAndOut(Activity activity, String TAG) {
         this.activity = activity;
         this.TAG = TAG;
@@ -77,4 +80,5 @@ public class GoogleSignAndOut implements ISignIn{
             return updateUI(null);
         }
     }
+    public String setAccountID(Context context){return GoogleSignIn.getLastSignedInAccount(context).getId();}
 }
