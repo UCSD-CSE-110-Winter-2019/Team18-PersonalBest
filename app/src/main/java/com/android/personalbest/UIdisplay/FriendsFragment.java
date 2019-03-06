@@ -1,4 +1,4 @@
-package com.android.personalbest;
+package com.android.personalbest.UIdisplay;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.android.personalbest.R;
+import com.android.personalbest.UIdisplay.MessagesUI;
 
 public class FriendsFragment extends Fragment {
 
@@ -117,10 +120,15 @@ public class FriendsFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Log.wtf("Testing friends", "Id of friend: " + friend.getId());
+                    Intent intent = new Intent(getActivity(), MessagesUI.class);
+                    intent.putExtra("friend_id", Integer.toString(friend.getId()));
+                    startActivity(intent);
                 }
             });
         }
     }
+
+
 
 
     public void ShowAddFriendPopup(View v) {
