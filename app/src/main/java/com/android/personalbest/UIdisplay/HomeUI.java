@@ -10,8 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -61,7 +59,7 @@ public class HomeUI extends Fragment {
         activity=getActivity();
 
 
-        display_goal = ((TextView)getView().findViewById(R.id.goal));
+        display_goal = getView().findViewById(R.id.goal);
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
 
@@ -78,12 +76,9 @@ public class HomeUI extends Fragment {
 
         Button start_btn = getView().findViewById(R.id.start);
 
-        start_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                runner.cancel(true);
-                launchActivity();
-            }
+        start_btn.setOnClickListener(view1 -> {
+            runner.cancel(true);
+            launchActivity();
         });
     }
 
@@ -212,7 +207,11 @@ public class HomeUI extends Fragment {
 
             for(int i = 0; i < GoogleFitAdaptor.weekSteps.length; i++)
             {
-                ChartUI.TOTAL_STEPS[i] = GoogleFitAdaptor.weekSteps[i];
+                HistoryFragment.TOTAL_STEPS[i] = GoogleFitAdaptor.weekSteps[i];
+
+            }
+            for (int i = 0; i < 28; i++) {
+                ChartMonthDisplay.TOTAL_STEPS[i] = 0;
             }
         }
 
