@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.StepXAxisValueFormatter;
 import com.android.personalbest.fitness.FitServiceFactory;
-import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -68,7 +68,7 @@ public class ChartUI extends Fragment {
         displayIntentionalSteps();
 
         Activity activity = this.getActivity();
-        gFit = FitServiceFactory.create("Home", this.getActivity());
+        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
 //        gFit.setup();
         gFit.subscribeForWeeklySteps();
     }

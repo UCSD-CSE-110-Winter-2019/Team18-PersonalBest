@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.android.personalbest"
-        minSdkVersion 18
+        minSdkVersion 21
+        multiDexEnabled true
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -26,12 +28,22 @@ android {
             includeAndroidResources = true
         }
     }
+
+    lintOptions{
+        warning 'InvalidPackage'
+    }
+
     // Gradle automatically adds 'android.test.runner' as a dependency.
     useLibrary 'android.test.runner'
 
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
+
 
 repositories {
     maven { url 'https://jitpack.io' }
@@ -44,6 +56,7 @@ repositories {
 }
 
 dependencies {
+
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
     implementation "com.android.support:support-compat:28.0.0"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -55,7 +68,11 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.google.android.gms:play-services-fitness:16.0.1'
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.google.firebase:firebase-firestore:18.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    //androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'
     testImplementation 'androidx.test:core:1.1.0'
@@ -63,8 +80,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation "com.android.support:support-compat:28.0.0"
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
+
+apply plugin: 'com.google.gms.google-services'

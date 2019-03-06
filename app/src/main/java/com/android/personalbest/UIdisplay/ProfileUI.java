@@ -17,12 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.CheckInvalid;
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
-import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 public class ProfileUI extends Fragment {
 
@@ -30,7 +34,9 @@ public class ProfileUI extends Fragment {
     EditText edit_time;
     public static long desiredTime;
 
+
     IFitService gFit;
+    IFirestore firestore;
 
     SharedPreferences sharedPreferences;
     TextView heightft;
@@ -65,13 +71,17 @@ public class ProfileUI extends Fragment {
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
 
+        firestore = MainActivity.firestore;
+
+
         //update height and name
 
         String name= SharedPrefData.getName(this.getContext());
         int heightfeet=SharedPrefData.getHeightFt(this.getContext());
         int heightinch=SharedPrefData.getHeightIn(this.getContext());
         TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
-        nametext.setText(name);
+//        nametext.setText(name);
+        firestore.displayName(nametext);
 
         //edit height and goal
         heightft=(TextView)getView().findViewById(R.id.current_ft);

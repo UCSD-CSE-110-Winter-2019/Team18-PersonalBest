@@ -12,6 +12,8 @@ import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.signin.GoogleSignAndOut;
+import com.android.personalbest.signin.ISignIn;
+import com.android.personalbest.signin.SignInFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
@@ -21,11 +23,12 @@ import com.google.android.gms.tasks.Task;
  * A login screen that offers login via email/password.
  */
 public class LoginUI extends AppCompatActivity {
+    ISignIn gSignInAndOut;
 
     private static int RC_SIGN_IN_KEY = 100;
     String TAG = LoginUI.class.getName();
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
-    GoogleSignAndOut gSignInAndOut;
+
 
     /**
      * Begins at the start of the Login Activity to see if user has an account already.
@@ -34,6 +37,7 @@ public class LoginUI extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
+        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this, TAG);
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null and user can sign in.

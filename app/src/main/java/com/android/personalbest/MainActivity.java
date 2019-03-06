@@ -11,6 +11,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.personalbest.firestore.FirestoreAdaptor;
+import com.android.personalbest.firestore.FirestoreFactory;
+import com.android.personalbest.firestore.IFirestore;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.FirebaseApp;
+
 import com.android.personalbest.UIdisplay.ChartUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
@@ -19,9 +25,17 @@ import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.fitness.FitServiceFactory;
 
 
+
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
     Bundle args;
+    public static String fitness_indicator = "Test";
+    public static String signin_indicator = "googlesignin";
+    public static IFirestore firestore;
+    public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
+    public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +54,29 @@ public class MainActivity extends AppCompatActivity
         args = new Bundle();
         args.putString("key", text);
         homeUI.setArguments(args);
+
+
+        String email="brbr";
+        if(text!=null&&!text.equals("test"))
+            email=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
+        FirebaseApp.initializeApp(this);
+
+        // Determine what implementation of IFirestore to use
+        String firestoreKey = getIntent().getStringExtra(FIRESTORE_SERVICE_KEY);
+        if (firestoreKey == null) {
+            FirestoreFactory.put(FIRESTORE_ADAPTOR_KEY, new FirestoreFactory.BluePrint() {
+                @Override
+                public IFirestore create(Activity activity, String userEmail) {
+                    return new FirestoreAdaptor(activity, userEmail);
+                }
+            });
+            // Default Firestore implementation using our adaptor
+            firestore = new FirestoreAdaptor(this, email);
+        } else {
+            firestore = FirestoreFactory.create(firestoreKey, this, email);
+        }
+
         loadFragment(homeUI);
-
-
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -52,12 +86,6 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.fragment_container, fragment).commit();
         }
         return false;
-    }
-
-    public void launchHomeFragment()
-    {
-        Fragment fragment = new HomeUI();
-        loadFragment(fragment);
     }
 
     @Override
@@ -75,6 +103,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.navigation_profile:
                 fragment = new ProfileUI();
+                break;
+
+            case R.id.navigation_friends:
+                fragment = new FriendsFragment();
                 break;
         }
         fragment.setArguments(args);

@@ -25,6 +25,8 @@ public class TrackerUnitTest {
     private long nextStepCount;
     private double nextVelocity;
 
+
+
     @Before
     public void setUp() throws Exception {
 //        try {
