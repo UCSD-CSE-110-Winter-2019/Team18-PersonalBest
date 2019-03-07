@@ -20,15 +20,13 @@ import com.android.personalbest.CheckInvalid;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.signin.GoogleSignAndOut;
-import com.android.personalbest.signin.ISignIn;
-import com.android.personalbest.signin.SignInFactory;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
-public class ProfileUI extends Fragment {
+public class ProfileUI extends Fragment implements IUserObserver {
 
     private static final String TAG = LoginUI.class.getName();
     EditText edit_time;
@@ -37,8 +35,9 @@ public class ProfileUI extends Fragment {
 
     IFitService gFit;
     IFirestore firestore;
+    User user;
 
-    SharedPreferences sharedPreferences;
+    TextView nametext;
     TextView heightft;
     TextView heightin;
     TextView current_goal;
@@ -49,14 +48,17 @@ public class ProfileUI extends Fragment {
     Button edit_goal;
     Boolean invalid=false;
 
-    SharedPreferences.Editor editor;
     String fitnessServiceKey;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_profile, null);
     }
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -71,29 +73,21 @@ public class ProfileUI extends Fragment {
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
 
-        firestore = MainActivity.firestore;
+        // Get instance of Firestore from MainActivity and get the current logged in user
+        firestore = MainActivity.getFirestore();
+        firestore.register(this);
+        user = MainActivity.getCurrentUser();
 
+        nametext=(TextView)getView().findViewById(R.id.user_txt);
 
-        //update height and name
-
-        String name= SharedPrefData.getName(this.getContext());
-        int heightfeet=SharedPrefData.getHeightFt(this.getContext());
-        int heightinch=SharedPrefData.getHeightIn(this.getContext());
-        TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
-//        nametext.setText(name);
-        firestore.displayName(nametext);
-
-        //edit height and goal
+        // Initialize all the views & display correct values
         heightft=(TextView)getView().findViewById(R.id.current_ft);
         heightin=(TextView)getView().findViewById(R.id.current_in);
         feet_edit=(EditText) getView().findViewById(R.id.ft_edit);
         inch_edit=(EditText) getView().findViewById(R.id.in_edit);
         current_goal=(TextView) getView().findViewById(R.id.current_goal);
-        current_goal.setText(Integer.toString(SharedPrefData.getGoal(this.getContext())));
         goal_edit=(EditText) getView().findViewById(R.id.goal_edit);
-        goal_edit.setText(Integer.toString(SharedPrefData.getGoal(this.getContext())));
-        heightft.setText(String.valueOf(heightfeet));
-        heightin.setText(String.valueOf(heightinch));
+        updateViews();
 
         edit_height=getView().findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
@@ -108,8 +102,9 @@ public class ProfileUI extends Fragment {
                     if(ft<0||in<0)
                         Toast.makeText(getActivity(), "Invalid height", Toast.LENGTH_SHORT).show();
                     else{
-                        SharedPrefData.setHeightFt(context, ft);
-                        SharedPrefData.setHeightIn(context, in);
+                        firestore.setHeightFt(ft);
+                        firestore.setHeightIn(in);
+
                         edit_height.setText("edit");
                         feet_edit.setVisibility(View.GONE);
                         inch_edit.setVisibility(View.GONE);
@@ -122,15 +117,17 @@ public class ProfileUI extends Fragment {
                 }
                 else if(edit_height.getText().toString().equals("edit")){
                     edit_height.setText("save");
-                    feet_edit.setText(String.valueOf(SharedPrefData.getHeightFt(context)));
+                    feet_edit.setText(Integer.toString(user.getHeightFt()));
                     feet_edit.setVisibility(View.VISIBLE);
                     heightft.setVisibility(View.GONE);
-                    inch_edit.setText(String.valueOf(SharedPrefData.getHeightIn(context)));
+                    inch_edit.setText(Integer.toString(user.getHeightIn()));
                     inch_edit.setVisibility(View.VISIBLE);
                     heightin.setVisibility(View.GONE);
                 }
             }
         });
+
+
         edit_goal=getView().findViewById(R.id.edit_goal_btn);
 
         edit_goal.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +139,7 @@ public class ProfileUI extends Fragment {
                     if(goal<0)
                         Toast.makeText(getActivity(), "Invalid Goal", Toast.LENGTH_SHORT).show();
                     else{
-                        SharedPrefData.setGoal(context, goal);
+                        firestore.setGoal(goal);
 
                         edit_goal.setText("edit");
                         goal_edit.setVisibility(View.GONE);
@@ -200,5 +197,33 @@ public class ProfileUI extends Fragment {
     {
         Intent intent = new Intent (getActivity(), LoginUI.class);
         startActivity(intent);
+    }
+
+
+    public void onUserChange(User user) {
+        Log.d(TAG, "onUserChange from ProfileUI with user: " + user.getName());
+        this.user = user;
+        updateViews();
+    }
+
+
+    // Update various views for goals, height, etc. when the User object is updated
+    public void updateViews() {
+        nametext.setText(user.getName());
+
+        current_goal.setText(Integer.toString(user.getGoal()));
+        goal_edit.setText(Integer.toString(user.getGoal()));
+
+        heightft.setText(Integer.toString(user.getHeightFt()));
+        feet_edit.setText(Integer.toString(user.getHeightFt()));
+
+        heightin.setText(Integer.toString(user.getHeightIn()));
+        inch_edit.setText(Integer.toString(user.getHeightIn()));
+    }
+
+
+    @Override
+    public String getObserverName() {
+        return this.getClass().getSimpleName();
     }
 }

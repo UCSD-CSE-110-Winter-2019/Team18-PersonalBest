@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.IUserObserver;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
@@ -161,13 +162,23 @@ public class MainActivityEspressoTest {
 
 
         @Override
-        public void displayName(TextView view) {
-            Log.d(TAG, "Displaying name");
+        public void setName(String name) {
+            Log.d(TAG, "Setting name " + name + " to database");
         }
 
         @Override
-        public void setName(String name) {
-            Log.d(TAG, "Setting name " + name + " to database");
+        public void setGoal(int goal) {
+
+        }
+
+        @Override
+        public void setHeightFt(int heightFt) {
+
+        }
+
+        @Override
+        public void setHeightIn(int heightIn) {
+
         }
 
         @Override
@@ -190,6 +201,26 @@ public class MainActivityEspressoTest {
         @Override
         public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
             Log.d(TAG, "Adding message to database");
+        }
+
+        @Override
+        public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+            mainActivity.loadFragment(homeUI);
+        }
+
+        @Override
+        public void updatedUser() {
+
+        }
+
+        @Override
+        public void register(IUserObserver observer) {
+
+        }
+
+        @Override
+        public void unregister() {
+
         }
     }
 
