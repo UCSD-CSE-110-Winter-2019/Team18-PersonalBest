@@ -23,6 +23,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 
 public class FirestoreAdaptor implements IFirestore {
@@ -41,6 +42,7 @@ public class FirestoreAdaptor implements IFirestore {
     String FROM_NAME_KEY = "fromName";
     String TEXT_KEY = "text";
 
+    public String user_name;
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
@@ -63,29 +65,58 @@ public class FirestoreAdaptor implements IFirestore {
 
     // Given a TextView that needs to display the user's name, goes to Firestore to retrieve and display
     // Passing in TextView is the current workaround for asynchronous nature
-    public void displayName(final TextView textView) {
+//    public void displayName(final TextView textView) {
+//        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(this.userEmail);
+//
+//        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+//                        textView.setText((String) document.get("name"));
+//                        return;
+//                    } else {
+//                        Log.e(TAG, "No such document");
+//                    }
+//                } else {
+//                    Log.w(TAG, "get failed with ", task.getException());
+//                }
+//
+//                // Default case
+//                textView.setText("User");
+//            }
+//        });
+//    }
+
+    public String displayName() {
+        CountDownLatch done = new CountDownLatch(1);
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(this.userEmail);
+//        String user_name;
+        try {
+            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            user_name = document.get("name").toString();
+                            done.countDown();
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        textView.setText((String) document.get("name"));
-                        return;
+                        } else {
+                            Log.e(TAG, "No such document");
+                        }
                     } else {
-                        Log.e(TAG, "No such document");
+                        Log.w(TAG, "get failed with ", task.getException());
                     }
-                } else {
-                    Log.w(TAG, "get failed with ", task.getException());
                 }
+            });
 
-                // Default case
-                textView.setText("User");
-            }
-        });
+            done.await();
+        } catch (InterruptedException e) {}
+        return user_name;
     }
 
 

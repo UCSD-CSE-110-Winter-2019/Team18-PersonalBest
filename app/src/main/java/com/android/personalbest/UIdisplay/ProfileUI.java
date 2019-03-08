@@ -79,7 +79,9 @@ public class ProfileUI extends Fragment {
         int heightinch=SharedPrefData.getHeightIn(this.getContext());
         TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
 //        nametext.setText(name);
-        firestore.displayName(nametext);
+//        firestore.displayName(nametext);
+
+        nametext.setText(firestore.displayName());
 
         //edit height and goal
         heightft=(TextView)getView().findViewById(R.id.current_ft);
