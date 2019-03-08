@@ -34,6 +34,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -60,15 +63,15 @@ public class MainActivityEspressoTest {
 
     @Before
     public void setUp() {
-        Context targetContext = getInstrumentation().getTargetContext();
-        SharedPrefData.setAccountId(targetContext, "testaccount");
-        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putInt("goal", 1000);
-        editor.putString("name", "test");
-        editor.putInt("heightft", 3);
-        editor.putInt("heightin", 6);
-        editor.commit();
+//        Context targetContext = getInstrumentation().getTargetContext();
+//        SharedPrefData.setAccountId(targetContext, "testaccount");
+//        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
+//        editor = sharedPreferences.edit();
+//        editor.putInt("goal", 1000);
+//        editor.putString("name", "test");
+//        editor.putInt("heightft", 3);
+//        editor.putInt("heightin", 6);
+//        editor.commit();
         intent=new Intent();
         intent.putExtra("key", "test");
         intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
@@ -88,7 +91,7 @@ public class MainActivityEspressoTest {
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
-        homegoal.check(matches(withText("1000")));
+        homegoal.check(matches(withText("2000")));
 
         ViewInteraction totalStep = onView(
                 allOf(withId(R.id.display),isDisplayed()));
@@ -104,7 +107,7 @@ public class MainActivityEspressoTest {
 
         ViewInteraction profilegoal = onView(
                 allOf(withId(R.id.current_goal),isDisplayed()));
-        profilegoal.check(matches(withText("1000")));
+        profilegoal.check(matches(withText("2000")));
 
         ViewInteraction heightft = onView(
                 allOf(withId(R.id.current_ft),isDisplayed()));
@@ -126,12 +129,12 @@ public class MainActivityEspressoTest {
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
-        homegoal.check(matches(withText("1000")));
+        homegoal.check(matches(withText("2000")));
 
         ViewInteraction totalStep = onView(
                 allOf(withId(R.id.display),isDisplayed()));
         totalStep.check(matches(withText("200")));
-        testFitService.setTotalDailySteps(1000);
+        testFitService.setTotalDailySteps(2000);
         HomeUI.async();
 
         ViewInteraction popup = onView(
@@ -145,19 +148,21 @@ public class MainActivityEspressoTest {
 
         ViewInteraction current_goal = onView(
                 allOf(withId(R.id.goal)));
-        current_goal.check(matches(withText("1500")));
+        current_goal.check(matches(withText("2500")));
 
     }
-    private class TestFirestore implements IFirestore {
+    private class TestFirestore implements IFirestore, ISubject<IUserObserver> {
 
         private static final String TAG = "[TestFirestore]: ";
+        private User user;
         private Activity activity;
         private String userEmail;
-
+        private List<IUserObserver> observers;
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
             this.userEmail = userEmail;
+            observers = new ArrayList<>();
         }
 
 
@@ -205,17 +210,29 @@ public class MainActivityEspressoTest {
 
         @Override
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+            this.user=new User();
+            updatedUser();
+            for(IUserObserver observer : this.observers) {
+                observer.onUserChange(user);
+                Log.i(TAG, observer.toString());
+            }
             mainActivity.loadFragment(homeUI);
+
         }
 
         @Override
         public void updatedUser() {
+            user.setName("testuser");
+            user.setEmail("testemail");
+            user.setGoal(2000);
+            user.setHeightFt(3);
+            user.setHeightIn(6);
 
         }
 
         @Override
         public void register(IUserObserver observer) {
-
+            observers.add(observer);
         }
 
         @Override

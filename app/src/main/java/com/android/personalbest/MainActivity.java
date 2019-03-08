@@ -46,16 +46,16 @@ public class MainActivity extends AppCompatActivity
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        String text=getIntent().getStringExtra("key");
-        Log.wtf("activity key", text);
+        String key=getIntent().getStringExtra("key");
+        Log.wtf("activity key", key);
         HomeUI homeUI=new HomeUI();
         args = new Bundle();
-        args.putString("key", text);
+        args.putString("key", key);
         homeUI.setArguments(args);
 
 
-        String email="brbr";
-        if (text == null || (text != null && !text.equals("test"))) {
+        String email="testemail";
+        if (key == null || (key != null && !key.equals("test"))) {
             email=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
         }
 
@@ -75,16 +75,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         firestore.register(this);
+        firestore.register(homeUI);
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
-
 
 //        loadFragment(homeUI);
     }
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            firestore.unregister();
+            //firestore.unregister();
+
             Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
@@ -92,25 +93,35 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    //has to register ui before create ui view, otherwise user change will not notify ui.
+    //thinking about making a ui factory
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
-
+        firestore.unregister();
         switch(menuItem.getItemId()) {
             case R.id.navigation_home:
-                fragment = new HomeUI();
+                HomeUI home = new HomeUI();
+                fragment=home;
+                firestore.register(home);
                 break;
 
             case R.id.navigation_history:
-                fragment = new HistoryFragment();
+                HistoryFragment history = new HistoryFragment();
+                fragment=history;
+                firestore.register(history);
                 break;
 
             case R.id.navigation_profile:
-                fragment = new ProfileUI();
+                ProfileUI profile = new ProfileUI();
+                fragment = profile;
+                firestore.register(profile);
                 break;
 
             case R.id.navigation_friends:
-                fragment = new FriendsFragment();
+                FriendsFragment friends = new FriendsFragment();
+                fragment = friends;
+                firestore.register(friends);
                 break;
         }
         fragment.setArguments(args);

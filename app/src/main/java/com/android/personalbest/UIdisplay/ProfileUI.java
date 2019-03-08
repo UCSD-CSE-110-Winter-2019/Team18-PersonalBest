@@ -75,7 +75,7 @@ public class ProfileUI extends Fragment implements IUserObserver {
 
         // Get instance of Firestore from MainActivity and get the current logged in user
         firestore = MainActivity.getFirestore();
-        firestore.register(this);
+        //firestore.register(this);
         user = MainActivity.getCurrentUser();
 
         nametext=(TextView)getView().findViewById(R.id.user_txt);
