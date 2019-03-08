@@ -212,10 +212,6 @@ public class MainActivityEspressoTest {
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
             this.user=new User();
             updatedUser();
-            for(IUserObserver observer : this.observers) {
-                observer.onUserChange(user);
-                Log.i(TAG, observer.toString());
-            }
             mainActivity.loadFragment(homeUI);
 
         }
@@ -227,12 +223,18 @@ public class MainActivityEspressoTest {
             user.setGoal(2000);
             user.setHeightFt(3);
             user.setHeightIn(6);
+            for(IUserObserver observer : this.observers) {
+                observer.onUserChange(user);
+                Log.i(TAG, observer.toString());
+            }
+            MainActivity.setCurrentUser(user);
 
         }
 
         @Override
         public void register(IUserObserver observer) {
             observers.add(observer);
+
         }
 
         @Override

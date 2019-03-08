@@ -60,7 +60,8 @@ public class HomeUI extends Fragment implements IUserObserver{
         gFit.setup();
 
         firestore=MainActivity.getFirestore();
-        //firestore.register(this);
+        firestore.register(this);
+        user=MainActivity.getCurrentUser();
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }

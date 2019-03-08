@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         firestore.register(this);
-        firestore.register(homeUI);
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            //firestore.unregister();
+            firestore.unregister();
 
             Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
@@ -93,35 +92,25 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    //has to register ui before create ui view, otherwise user change will not notify ui.
-    //thinking about making a ui factory
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment = null;
-        firestore.unregister();
+
         switch(menuItem.getItemId()) {
             case R.id.navigation_home:
-                HomeUI home = new HomeUI();
-                fragment=home;
-                firestore.register(home);
+                fragment = new HomeUI();
                 break;
 
             case R.id.navigation_history:
-                HistoryFragment history = new HistoryFragment();
-                fragment=history;
-                firestore.register(history);
+                fragment = new HistoryFragment();
                 break;
 
             case R.id.navigation_profile:
-                ProfileUI profile = new ProfileUI();
-                fragment = profile;
-                firestore.register(profile);
+                fragment = new ProfileUI();
                 break;
 
             case R.id.navigation_friends:
-                FriendsFragment friends = new FriendsFragment();
-                fragment = friends;
-                firestore.register(friends);
+                fragment = new FriendsFragment();
                 break;
         }
         fragment.setArguments(args);

@@ -20,7 +20,7 @@ import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 
-public class HistoryFragment extends Fragment implements IUserObserver{
+public class HistoryFragment extends Fragment{
     private final int NUM_DAYS_IN_WEEK = 7;
     private int[] total_steps;
     private int[] intentional_steps;
@@ -109,11 +109,4 @@ public class HistoryFragment extends Fragment implements IUserObserver{
         }
     }
 
-    @Override
-    public void onUserChange(User user) {
-
-    }
-
-    @Override
-    public String getObserverName(){ return this.getClass().getSimpleName();}
 }

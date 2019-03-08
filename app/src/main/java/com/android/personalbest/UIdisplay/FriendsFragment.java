@@ -20,7 +20,7 @@ import com.android.personalbest.R;
 import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 
-public class FriendsFragment extends Fragment implements IUserObserver{
+public class FriendsFragment extends Fragment{
 
     final int TEXTVIEW_SIZE = 25;
 
@@ -184,6 +184,5 @@ public class FriendsFragment extends Fragment implements IUserObserver{
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
-    public void onUserChange(User user){}
-    public String getObserverName(){return this.getClass().getSimpleName();}
+
 }
