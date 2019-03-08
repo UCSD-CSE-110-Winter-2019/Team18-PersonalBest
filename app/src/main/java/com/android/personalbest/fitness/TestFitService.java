@@ -8,7 +8,7 @@ import com.google.android.gms.tasks.Task;
 public class TestFitService implements IFitService {
     private static final String TAG = "[TestFitService]: ";
     private Activity activity;
-
+    private static long TotalDailySteps;
     public TestFitService(Activity activity) {
         this.activity = activity;
     }
@@ -22,14 +22,32 @@ public class TestFitService implements IFitService {
     }
     public void readWeeklyStepData(){}
     public void updateToday(){}
+    public void setTotalDailySteps(long total){TotalDailySteps=total;}
     public long getTotalDailySteps(){
-        return 0;
+        return TotalDailySteps;
     }
-    public void setTotalDailySteps(long total){}
     public void printWeekData(DataReadResponse dataReadResult){}
     public void printRecentSteps(){}
     public boolean getIsTimeChanged(){
         return false;
     }
     public void setIsTimeChanged(boolean timeChanged){}
+
+    @Override
+    public int[] getRecentSteps() {
+        int[] recentStep= new int[2];
+        for(int i=0;i<2;i++){
+            recentStep[i]=100;
+        }
+        return recentStep;
+    }
+
+    @Override
+    public int[] getWeekSteps() {
+        int[] weekStep= new int[7];
+        for(int i=0;i<7;i++){
+            weekStep[i]=100;
+        }
+        return weekStep;
+    }
 }

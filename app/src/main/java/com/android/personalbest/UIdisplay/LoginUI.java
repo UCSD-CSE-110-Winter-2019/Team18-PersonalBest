@@ -43,7 +43,7 @@ public class LoginUI extends AppCompatActivity {
         // the GoogleSignInAccount will be non-null and user can sign in.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(gSignInAndOut.updateUI(account))
-        {
+        {   SharedPrefData.setAccountId(this, GoogleSignIn.getLastSignedInAccount(this).getId());
             launchHomeScreenActivity();
         }
     }
@@ -63,6 +63,7 @@ public class LoginUI extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             if ( gSignInAndOut.handleSignInResult(task) )
             {
+                SharedPrefData.setAccountId(this, GoogleSignIn.getLastSignedInAccount(this).getId());
                 // Checks if users sign-in on their first use without creating an account first,
                 // redirects them to collect info such as their name and height
                 if (SharedPrefData.userSharedPrefExists(this.getApplicationContext())) {

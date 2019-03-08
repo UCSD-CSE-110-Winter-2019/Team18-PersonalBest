@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +29,13 @@ import com.android.personalbest.signin.SignInFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 public class ProfileUI extends Fragment {
-    ISignIn gSignInAndOut;
-    IFitService gFit;
 
     private static final String TAG = LoginUI.class.getName();
     EditText edit_time;
     public static long desiredTime;
 
+
+    IFitService gFit;
     IFirestore firestore;
 
     SharedPreferences sharedPreferences;
@@ -49,7 +50,7 @@ public class ProfileUI extends Fragment {
     Boolean invalid=false;
 
     SharedPreferences.Editor editor;
-
+    String fitnessServiceKey;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,12 +62,13 @@ public class ProfileUI extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
-
-        gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this.getActivity(), TAG);
-//        gSignInAndOut.signIn();
         final Context context = this.getContext();
-
-        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
+        if(fitnessServiceKey==null)
+            fitnessServiceKey="Google_Fit";
+        Log.wtf("profile key",fitnessServiceKey);
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
 
         firestore = MainActivity.firestore;
@@ -165,6 +167,7 @@ public class ProfileUI extends Fragment {
             public void onClick(View view)
             {
                 HomeUI.killRunner();
+                GoogleSignAndOut gSignInAndOut = new GoogleSignAndOut(getActivity(), TAG);
                 gSignInAndOut.signOut();
                 launchLoginScreenActivity();
             }

@@ -26,4 +26,8 @@
     <string name="title_activity_encouragement_popup">encouragement_popup</string>
     <string name="step_goal_header">Step Goal</string>
     <string name="intentional_steps_header">Intentional Steps This Week</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="total_steps_header">Total Steps</string>
 </resources>

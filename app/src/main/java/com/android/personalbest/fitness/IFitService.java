@@ -18,4 +18,6 @@ public interface IFitService {
     void printRecentSteps();
     boolean getIsTimeChanged();
     void setIsTimeChanged(boolean timeChanged);
+    int[] getWeekSteps();
+    int[] getRecentSteps();
 }

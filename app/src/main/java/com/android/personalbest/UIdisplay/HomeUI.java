@@ -7,15 +7,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
@@ -37,15 +37,21 @@ public class HomeUI extends Fragment {
     static TextView display_goal;
     static TextView display_steps;
 
-    private String fitnessServiceKey = "GOOGLE_FIT";
-
+    private static String fitnessServiceKey = "GOOGLE_FIT";
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         temp=inflater;
-//        gFit = FitServiceFactory.create("Home", this.getActivity());
 
-//        gFit = new GoogleFitAdaptor(this.getActivity());
+        activity=getActivity();
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
+        if(fitnessServiceKey==null)
+            fitnessServiceKey="Google_Fit";
+        Log.wtf("key",fitnessServiceKey);
+
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
+        gFit.setup();
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -54,20 +60,18 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
-
         ct=getContext();
         activity=getActivity();
 
 
-        display_goal = ((TextView)getView().findViewById(R.id.goal));
+        display_goal = getView().findViewById(R.id.goal);
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
 
         if(first){
             runner = new AsyncTaskRunner();
-            //runner.execute("0");
             first=false;
         }
         goal = SharedPrefData.getGoal(getContext());
@@ -78,12 +82,9 @@ public class HomeUI extends Fragment {
 
         Button start_btn = getView().findViewById(R.id.start);
 
-        start_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                runner.cancel(true);
-                launchActivity();
-            }
+        start_btn.setOnClickListener(view1 -> {
+            runner.cancel(true);
+            launchActivity();
         });
     }
 
@@ -92,7 +93,6 @@ public class HomeUI extends Fragment {
 
         Log.d("msg:", "pause");
         Log.d("status",runner.getStatus().toString());
-
         super.onPause();
     }
 
@@ -114,6 +114,7 @@ public class HomeUI extends Fragment {
     }
 
     public static void  async(){
+
         goal=SharedPrefData.getGoal(ct);
         runner.execute("0");
     }
@@ -139,7 +140,11 @@ public class HomeUI extends Fragment {
         if(!runner.isCancelled())
             runner.cancel(true);
     }
-
+    public void testkillRunner(){
+        if(!runner.isCancelled())
+            runner.cancel(true);
+        runner=new AsyncTaskRunner();
+    }
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;
@@ -147,6 +152,7 @@ public class HomeUI extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             int i=0;
+            //MainActivity.getResource().increment();
             while(true) {
                 i++;
                 Encouragement en=new Encouragement(getActivity());
@@ -180,6 +186,8 @@ public class HomeUI extends Fragment {
                 if (en.getTime().equals("20:00:00") && numStepsOver >= 500) {
                     return ("6");
                 }
+                if(fitnessServiceKey.equals("test"))
+                    break;
             }
             return ("10");
         }
@@ -189,10 +197,13 @@ public class HomeUI extends Fragment {
             display_goal.setText(Long.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
 
-            if(Integer.parseInt(result)==5)
+            if(Integer.parseInt(result)==5){
                 show();
+            }
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);
+            if(Integer.parseInt(result)==10)
+                testkillRunner();
         }
 
         @Override
@@ -205,14 +216,20 @@ public class HomeUI extends Fragment {
             display_goal.setText(Integer.toString(goal));
             if(gFit.getIsTimeChanged())
             {
-                display_steps.setText(Integer.toString(GoogleFitAdaptor.recentSteps[1]));
+                display_steps.setText(Integer.toString(gFit.getRecentSteps()[1]));
             }else {
                 display_steps.setText(Long.toString(updated_steps));
             }
 
-            for(int i = 0; i < GoogleFitAdaptor.weekSteps.length; i++)
+            for(int i = 0; i < gFit.getWeekSteps().length; i++)
             {
-                ChartUI.TOTAL_STEPS[i] = GoogleFitAdaptor.weekSteps[i];
+
+                HistoryFragment.TOTAL_STEPS[i] = gFit.getWeekSteps()[i];;
+
+            }
+            for (int i = 0; i < 28; i++) {
+                ChartMonthDisplay.TOTAL_STEPS[i] = 0;
+
             }
         }
 
@@ -220,6 +237,7 @@ public class HomeUI extends Fragment {
         private int calculateImprovementInterval(int todaySteps, int yesterdaySteps) {
             return ((todaySteps - yesterdaySteps) / 500) * 500;
         }
+
     }
 }
 
