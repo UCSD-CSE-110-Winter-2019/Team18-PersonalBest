@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.fitness.FitServiceFactory;
-import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 
 public class HomeUI extends Fragment {
@@ -60,11 +55,12 @@ public class HomeUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
         ct=getContext();
         activity=getActivity();
-
 
         display_goal = getView().findViewById(R.id.goal);
         display_steps = ((TextView)getView().findViewById(R.id.display));
@@ -90,7 +86,6 @@ public class HomeUI extends Fragment {
 
     @Override
     public void onPause(){
-
         Log.d("msg:", "pause");
         Log.d("status",runner.getStatus().toString());
         super.onPause();
@@ -140,11 +135,13 @@ public class HomeUI extends Fragment {
         if(!runner.isCancelled())
             runner.cancel(true);
     }
+
     public void testkillRunner(){
         if(!runner.isCancelled())
             runner.cancel(true);
         runner=new AsyncTaskRunner();
     }
+
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;

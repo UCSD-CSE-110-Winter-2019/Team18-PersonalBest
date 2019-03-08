@@ -16,6 +16,8 @@ import com.android.personalbest.UIdisplay.FriendsFragment;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
+import com.android.personalbest.messaging.IMessaging;
+import com.android.personalbest.messaging.MessagingFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.FirebaseApp;
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     public static IFirestore firestore;
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
+    public static IMessaging messaging;
 
 
     @Override
@@ -72,6 +75,11 @@ public class MainActivity extends AppCompatActivity
         } else {
             firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
+
+        messaging = MessagingFactory.create(0, this, "s8leiucsd.eduxul078ucsd.edu");
+        messaging.setup();
+//        messaging.subscribeToNotificationsTopic();
+//        messaging.sendNotification("you've reached your goal");
 
         loadFragment(homeUI);
     }
