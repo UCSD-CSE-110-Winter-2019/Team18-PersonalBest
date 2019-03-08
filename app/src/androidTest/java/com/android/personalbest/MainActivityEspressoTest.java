@@ -101,9 +101,9 @@ public class MainActivityEspressoTest {
                 allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-//        ViewInteraction name = onView(
-//                allOf(withId(R.id.user_txt), isDisplayed()));
-//        name.check(matches(withText("test")));
+        ViewInteraction name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
 
         ViewInteraction profilegoal = onView(
                 allOf(withId(R.id.current_goal),isDisplayed()));
@@ -237,7 +237,13 @@ public class MainActivityEspressoTest {
 
         @Override
         public void unregister() {
-
+//            for (IUserObserver observer: observers) {
+//                // Removes every observer except the Main Activity when a different fragment is loaded
+//                if (!observer.getObserverName().equals("MainActivity")) {
+//                    Log.wtf(TAG, "REMOVING OBSERVER" + observer);
+//                    observers.remove(observer);
+//                }
+//            }
         }
     }
 
