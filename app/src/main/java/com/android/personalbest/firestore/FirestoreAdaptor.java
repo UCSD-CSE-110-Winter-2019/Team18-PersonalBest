@@ -47,7 +47,7 @@ public class FirestoreAdaptor implements IFirestore {
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
-        this.userEmail = userEmail;
+        this.userEmail = "cwguan@ucsd.edu";
         this.fs = FirebaseFirestore.getInstance();
     }
 

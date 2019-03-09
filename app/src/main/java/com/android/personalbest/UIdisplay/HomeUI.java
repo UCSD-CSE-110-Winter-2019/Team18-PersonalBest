@@ -86,7 +86,7 @@ public class HomeUI extends Fragment {
         }
         //goal = SharedPrefData.getGoal(getContext());
         curr_steps = gFit.getTotalDailySteps();
-
+        goal = user.getGoal();
         //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         //((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
@@ -119,12 +119,6 @@ public class HomeUI extends Fragment {
         temp.inflate(R.layout.fragment_home, null);
     }
 
-
-    public void updateinfo(){
-        goal=user.getGoal();
-        //wondering which of googlefit and user to ask for steps?
-        //dsteps=user.getIntentionalSteps().get("today");
-    }
 
 
     private void launchActivity() {
