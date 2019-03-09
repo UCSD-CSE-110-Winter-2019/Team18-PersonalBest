@@ -16,12 +16,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
+import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 
 public class HomeUI extends Fragment {
     IFitService gFit;
-
+    IFirestore firestore;
+    static User user;
+    static TextView display_goal;
+    static TextView display_steps;
+    private  int dsteps;
     private static int goal;
     static long curr_steps;
     static AsyncTaskRunner runner;
@@ -29,10 +35,10 @@ public class HomeUI extends Fragment {
     static boolean first=true;
     static LayoutInflater temp;
     static Context ct;
-    static TextView display_goal;
-    static TextView display_steps;
 
     private static String fitnessServiceKey = "GOOGLE_FIT";
+    private static final String TAG = HomeUI.class.getName();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +53,10 @@ public class HomeUI extends Fragment {
 
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.setup();
+
+        firestore=MainActivity.getFirestore();
+        user=MainActivity.getCurrentUser();
+
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -70,11 +80,13 @@ public class HomeUI extends Fragment {
             runner = new AsyncTaskRunner();
             first=false;
         }
-        goal = SharedPrefData.getGoal(getContext());
+        //goal = SharedPrefData.getGoal(getContext());
         curr_steps = gFit.getTotalDailySteps();
 
+        //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
+        //((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
-        ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
+        ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( curr_steps));
 
         Button start_btn = getView().findViewById(R.id.start);
 
@@ -94,7 +106,7 @@ public class HomeUI extends Fragment {
     @Override
     public void onResume(){
         Log.d("reach", "yes");
-        goal=SharedPrefData.getGoal(getContext());
+        goal=user.getGoal();
         runner.cancel(true);
         runner=new AsyncTaskRunner();
         runner.execute("0");
@@ -102,15 +114,23 @@ public class HomeUI extends Fragment {
         temp.inflate(R.layout.fragment_home, null);
     }
 
+
+    public void updateinfo(){
+        goal=user.getGoal();
+        //wondering which of googlefit and user to ask for steps?
+        //dsteps=user.getIntentionalSteps().get("today");
+    }
+
+
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivityUI.class);
         intent.putExtra("home to tracker", "GOOGLE_FIT");
         startActivity(intent);
     }
 
-    public static void  async(){
+    public static void async(){
 
-        goal=SharedPrefData.getGoal(ct);
+        goal=user.getGoal();
         runner.execute("0");
     }
 
@@ -119,7 +139,7 @@ public class HomeUI extends Fragment {
         runner=new AsyncTaskRunner();
 
         Encouragement e =new Encouragement(activity);
-        e.showChangeGoal();
+        e.showChangeGoal(user);
     }
 
 
@@ -166,7 +186,7 @@ public class HomeUI extends Fragment {
                 try {
                     publishProgress();
                     Thread.sleep(1000);
-                    goal = SharedPrefData.getGoal(ct);
+                    goal = user.getGoal();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

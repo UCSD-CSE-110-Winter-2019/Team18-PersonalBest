@@ -1,20 +1,18 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import static org.junit.Assert.assertEquals;
 
@@ -68,13 +66,23 @@ public class DisplayMessagesFirestoreTest {
 
 
         @Override
-        public void displayName(TextView view) {
-            Log.d(TAG, "Displaying name");
+        public void setName(String name) {
+            Log.d(TAG, "Setting name " + name + " to database");
         }
 
         @Override
-        public void setName(String name) {
-            Log.d(TAG, "Setting name " + name + " to database");
+        public void setGoal(int goal) {
+
+        }
+
+        @Override
+        public void setHeightFt(int heightFt) {
+
+        }
+
+        @Override
+        public void setHeightIn(int heightIn) {
+
         }
 
         @Override
@@ -98,5 +106,11 @@ public class DisplayMessagesFirestoreTest {
         public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
             Log.d(TAG, "Adding message to database");
         }
+
+        @Override
+        public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+
+        }
+
     }
 }

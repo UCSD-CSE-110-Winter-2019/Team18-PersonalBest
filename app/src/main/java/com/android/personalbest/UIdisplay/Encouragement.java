@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 
 import java.text.SimpleDateFormat;
@@ -57,7 +58,7 @@ public class Encouragement {
 //    }
 
 
-     public void showChangeGoal () {
+     public void showChangeGoal (User user) {
 
          myDialog = new Dialog(activity);
          myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
@@ -81,7 +82,7 @@ public class Encouragement {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 setGoal(500+SharedPrefData.getGoal(HomeUI.ct));
+                 user.setGoal(500+user.getGoal());
                  HomeUI.async();
              }
          });

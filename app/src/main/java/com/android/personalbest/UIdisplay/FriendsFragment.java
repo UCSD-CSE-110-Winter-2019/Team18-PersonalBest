@@ -18,8 +18,9 @@ import android.widget.TextView;
 
 import com.android.personalbest.R;
 import com.android.personalbest.UIdisplay.MessagesUI;
+import com.android.personalbest.User;
 
-public class FriendsFragment extends Fragment {
+public class FriendsFragment extends Fragment{
 
     final int TEXTVIEW_SIZE = 25;
 

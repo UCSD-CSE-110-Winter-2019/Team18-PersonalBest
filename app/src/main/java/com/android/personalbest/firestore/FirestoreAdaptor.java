@@ -6,7 +6,9 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.personalbest.R;
+import com.android.personalbest.MainActivity;
+import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +50,6 @@ public class FirestoreAdaptor implements IFirestore {
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
         this.userEmail = userEmail;
-
-
         this.fs = FirebaseFirestore.getInstance();
     }
 
@@ -63,66 +64,74 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
 
-    // Given a TextView that needs to display the user's name, goes to Firestore to retrieve and display
-    // Passing in TextView is the current workaround for asynchronous nature
-//    public void displayName(final TextView textView) {
-//        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(this.userEmail);
-//
-//        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                        textView.setText((String) document.get("name"));
-//                        return;
-//                    } else {
-//                        Log.e(TAG, "No such document");
-//                    }
-//                } else {
-//                    Log.w(TAG, "get failed with ", task.getException());
-//                }
-//
-//                // Default case
-//                textView.setText("User");
-//            }
-//        });
-//    }
-
-    public String displayName() {
-        CountDownLatch done = new CountDownLatch(1);
-        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(this.userEmail);
-//        String user_name;
-        try {
-            userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                            user_name = document.get("name").toString();
-                            done.countDown();
-
-                        } else {
-                            Log.e(TAG, "No such document");
-                        }
-                    } else {
-                        Log.w(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
-
-            done.await();
-        } catch (InterruptedException e) {}
-        return user_name;
-    }
-
-
     public void setName(String name) {
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+        userRef.set(data, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+    }
+
+    @Override
+    public void setGoal(int goal) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("goal", goal);
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+        userRef.set(data, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+    }
+
+
+    @Override
+    public void setHeightFt(int heightFt) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("heightFt", heightFt);
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+        userRef.set(data, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
+    }
+
+
+    @Override
+    public void setHeightIn(int heightIn) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("heightIn", heightIn);
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
@@ -185,6 +194,59 @@ public class FirestoreAdaptor implements IFirestore {
         }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
+    }
+
+    @Override
+    public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+                        MainActivity.setCurrentUser(user);
+                        mainActivity.loadFragment(homeUI);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+    }
+
+
+    // Method used to notify all observers that the User object may have been updated
+    public void updatedUser() {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+                        Log.d(TAG, "" + user);
+                        MainActivity.setCurrentUser(user);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
     }
 
 }

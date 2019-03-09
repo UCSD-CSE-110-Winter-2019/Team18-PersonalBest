@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.android.personalbest.UIdisplay.HistoryFragment;
 import com.android.personalbest.UIdisplay.FriendsFragment;
@@ -31,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     public static String fitness_indicator = "Test";
     public static String signin_indicator = "googlesignin";
     public static IFirestore firestore;
+    public static User currentUser;
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
     public static IMessaging messaging;
@@ -40,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseApp.initializeApp(this);
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
         // works correctly with the right associations
 //        String TAG = HomeUI.class.getName();
@@ -48,18 +48,18 @@ public class MainActivity extends AppCompatActivity
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        String text=getIntent().getStringExtra("key");
-        Log.wtf("activity key", text);
+        String key=getIntent().getStringExtra("key");
+        Log.wtf("activity key", key);
         HomeUI homeUI=new HomeUI();
         args = new Bundle();
-        args.putString("key", text);
+        args.putString("key", key);
         homeUI.setArguments(args);
 
 
-        String email="brbr";
-        if(text!=null&&!text.equals("test"))
+        String email="testemail";
+        if (key == null || (key != null && !key.equals("test"))) {
             email=GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail();
-        FirebaseApp.initializeApp(this);
+        }
 
         // Determine what implementation of IFirestore to use
         String firestoreKey = getIntent().getStringExtra(FIRESTORE_SERVICE_KEY);
@@ -81,12 +81,17 @@ public class MainActivity extends AppCompatActivity
 //        messaging.subscribeToNotificationsTopic();
 //        messaging.sendNotification("you've reached your goal");
 
-        loadFragment(homeUI);
+
+        // Launches UI from initMainActivity to wait for User object to be initialized
+        firestore.initMainActivity(this, homeUI);
+
+//        loadFragment(homeUI);
+
     }
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-
+            Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
         }
@@ -118,4 +123,19 @@ public class MainActivity extends AppCompatActivity
         return loadFragment(fragment);
     }
 
+
+    public static IFirestore getFirestore() {
+        return firestore;
+    }
+
+
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
 }
