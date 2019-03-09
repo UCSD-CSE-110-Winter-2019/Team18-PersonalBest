@@ -5,7 +5,9 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 
@@ -109,6 +111,21 @@ public class DisplayMessagesFirestoreTest {
 
         @Override
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+
+        }
+
+        @Override
+        public void loginCheckIfUserExists(String otherUserEmail, LoginUI loginUI) {
+
+        }
+
+        @Override
+        public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
+
+        }
+
+        @Override
+        public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
 
         }
 

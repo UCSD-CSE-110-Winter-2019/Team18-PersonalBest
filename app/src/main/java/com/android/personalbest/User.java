@@ -18,13 +18,14 @@ public class User {
 
     public User() {}
 
-    public User(String name, String email, int goal, int heightFt, int heightIn, Map<String, Integer> intentionalSteps, List<String> friends, Map<String, Boolean> pendingFriends) {
+    public User(String name, String email, int goal, int heightFt, int heightIn, Map<String, Integer> intentionalSteps, Map<String, Integer> totalSteps, List<String> friends, Map<String, Boolean> pendingFriends) {
         this.name = name;
         this.email = email;
         this.goal = goal;
         this.heightFt = heightFt;
         this.heightIn = heightIn;
         this.intentionalSteps = intentionalSteps;
+        this.totalSteps = totalSteps;
         this.friends = friends;
         this.pendingFriends = pendingFriends;
     }
