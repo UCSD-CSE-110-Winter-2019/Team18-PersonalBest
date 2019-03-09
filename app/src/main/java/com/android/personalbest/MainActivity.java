@@ -9,8 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
+import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
@@ -20,10 +20,6 @@ import com.google.firebase.FirebaseApp;
 import com.android.personalbest.UIdisplay.ChartUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
-import com.android.personalbest.fitness.GoogleFitAdaptor;
-import com.android.personalbest.fitness.IFitService;
-import com.android.personalbest.fitness.FitServiceFactory;
-
 
 
 public class MainActivity extends AppCompatActivity
@@ -106,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.navigation_friends:
-                fragment = new FriendsFragment();
+                fragment = new FriendsUI();
                 break;
         }
         fragment.setArguments(args);
