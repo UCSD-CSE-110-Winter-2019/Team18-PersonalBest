@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import com.android.personalbest.UIdisplay.HistoryFragment;
 import com.android.personalbest.UIdisplay.FriendsFragment;
-import com.android.personalbest.UIdisplay.IUserObserver;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
@@ -23,7 +22,7 @@ import com.android.personalbest.UIdisplay.ProfileUI;
 
 
 public class MainActivity extends AppCompatActivity
-        implements BottomNavigationView.OnNavigationItemSelectedListener, IUserObserver {
+        implements BottomNavigationView.OnNavigationItemSelectedListener {
     Bundle args;
     public static String fitness_indicator = "Test";
     public static String signin_indicator = "googlesignin";
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity
             firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
 
-        firestore.register(this);
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
 
@@ -83,8 +81,6 @@ public class MainActivity extends AppCompatActivity
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            firestore.unregister();
-
             Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
@@ -123,11 +119,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onUserChange(User user) {
-        currentUser = user;
-    }
-
 
     public static User getCurrentUser() {
         return currentUser;
@@ -136,10 +127,5 @@ public class MainActivity extends AppCompatActivity
 
     public static void setCurrentUser(User user) {
         currentUser = user;
-    }
-
-
-    public String getObserverName() {
-        return this.getClass().getSimpleName();
     }
 }

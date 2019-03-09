@@ -26,7 +26,7 @@ import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.signin.GoogleSignAndOut;
 
-public class ProfileUI extends Fragment implements IUserObserver {
+public class ProfileUI extends Fragment {
 
     private static final String TAG = LoginUI.class.getName();
     EditText edit_time;
@@ -75,7 +75,6 @@ public class ProfileUI extends Fragment implements IUserObserver {
 
         // Get instance of Firestore from MainActivity and get the current logged in user
         firestore = MainActivity.getFirestore();
-        firestore.register(this);
         user = MainActivity.getCurrentUser();
 
         nametext=(TextView)getView().findViewById(R.id.user_txt);
@@ -104,6 +103,9 @@ public class ProfileUI extends Fragment implements IUserObserver {
                     else{
                         firestore.setHeightFt(ft);
                         firestore.setHeightIn(in);
+
+                        user.setHeightFt(ft);
+                        user.setHeightIn(in);
 
                         edit_height.setText("edit");
                         feet_edit.setVisibility(View.GONE);
@@ -140,6 +142,8 @@ public class ProfileUI extends Fragment implements IUserObserver {
                         Toast.makeText(getActivity(), "Invalid Goal", Toast.LENGTH_SHORT).show();
                     else{
                         firestore.setGoal(goal);
+
+                        user.setGoal(goal);
 
                         edit_goal.setText("edit");
                         goal_edit.setVisibility(View.GONE);
@@ -200,13 +204,6 @@ public class ProfileUI extends Fragment implements IUserObserver {
     }
 
 
-    public void onUserChange(User user) {
-        Log.d(TAG, "onUserChange from ProfileUI with user: " + user.getName());
-        this.user = user;
-        updateViews();
-    }
-
-
     // Update various views for goals, height, etc. when the User object is updated
     public void updateViews() {
         nametext.setText(user.getName());
@@ -219,11 +216,5 @@ public class ProfileUI extends Fragment implements IUserObserver {
 
         heightin.setText(Integer.toString(user.getHeightIn()));
         inch_edit.setText(Integer.toString(user.getHeightIn()));
-    }
-
-
-    @Override
-    public String getObserverName() {
-        return this.getClass().getSimpleName();
     }
 }

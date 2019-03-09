@@ -26,7 +26,7 @@ import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 
-public class HomeUI extends Fragment implements IUserObserver{
+public class HomeUI extends Fragment {
     IFitService gFit;
     IFirestore firestore;
     static User user;
@@ -60,8 +60,8 @@ public class HomeUI extends Fragment implements IUserObserver{
         gFit.setup();
 
         firestore=MainActivity.getFirestore();
-        firestore.register(this);
         user=MainActivity.getCurrentUser();
+
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -119,23 +119,13 @@ public class HomeUI extends Fragment implements IUserObserver{
         temp.inflate(R.layout.fragment_home, null);
     }
 
-    @Override
-    public void onUserChange(User user) {
-        Log.d(TAG, "onUserChange from HomeUI with user: " + user.getName());
-        this.user = user;
-        Log.i("user", Integer.toString(user.getGoal()));
-        updateinfo();
-    }
+
     public void updateinfo(){
         goal=user.getGoal();
         //wondering which of googlefit and user to ask for steps?
         //dsteps=user.getIntentionalSteps().get("today");
     }
 
-    @Override
-    public String getObserverName(){
-        return this.getClass().getSimpleName();
-    }
 
     private void launchActivity() {
         Intent intent = new Intent(getActivity(), TrackerActivityUI.class);

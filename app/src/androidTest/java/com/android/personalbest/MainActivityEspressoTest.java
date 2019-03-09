@@ -2,32 +2,21 @@ package com.android.personalbest;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.personalbest.UIdisplay.HomeUI;
-import com.android.personalbest.UIdisplay.IUserObserver;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +26,6 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -151,18 +139,16 @@ public class MainActivityEspressoTest {
         current_goal.check(matches(withText("2500")));
 
     }
-    private class TestFirestore implements IFirestore, ISubject<IUserObserver> {
+    private class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
         private User user;
         private Activity activity;
         private String userEmail;
-        private List<IUserObserver> observers;
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
             this.userEmail = userEmail;
-            observers = new ArrayList<>();
         }
 
 
@@ -211,42 +197,17 @@ public class MainActivityEspressoTest {
         @Override
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
             this.user=new User();
-            updatedUser();
-            mainActivity.loadFragment(homeUI);
-
-        }
-
-        @Override
-        public void updatedUser() {
             user.setName("testuser");
             user.setEmail("testemail");
             user.setGoal(2000);
             user.setHeightFt(3);
             user.setHeightIn(6);
-            for(IUserObserver observer : this.observers) {
-                observer.onUserChange(user);
-                Log.i(TAG, observer.toString());
-            }
+
             MainActivity.setCurrentUser(user);
+            mainActivity.loadFragment(homeUI);
 
         }
 
-        @Override
-        public void register(IUserObserver observer) {
-            observers.add(observer);
-
-        }
-
-        @Override
-        public void unregister() {
-//            for (IUserObserver observer: observers) {
-//                // Removes every observer except the Main Activity when a different fragment is loaded
-//                if (!observer.getObserverName().equals("MainActivity")) {
-//                    Log.wtf(TAG, "REMOVING OBSERVER" + observer);
-//                    observers.remove(observer);
-//                }
-//            }
-        }
     }
 
 

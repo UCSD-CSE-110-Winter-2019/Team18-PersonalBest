@@ -61,6 +61,9 @@ public class User {
     public Map<String, Integer> getTotalSteps() {
         return totalSteps;
     }
+    public void setTotalSteps(Map<String, Integer> totalSteps) {
+        this.totalSteps = totalSteps;
+    }
     public void setIntentionalSteps(Map<String, Integer> intentionalSteps) { this.intentionalSteps= intentionalSteps;}
 
     public List<String> getFriends() {

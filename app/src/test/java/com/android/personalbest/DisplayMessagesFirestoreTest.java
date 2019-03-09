@@ -1,22 +1,18 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android.personalbest.UIdisplay.HomeUI;
-import com.android.personalbest.UIdisplay.IUserObserver;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 
 import static org.junit.Assert.assertEquals;
 
@@ -121,14 +117,5 @@ public class DisplayMessagesFirestoreTest {
 
         }
 
-        @Override
-        public void register(IUserObserver observer) {
-
-        }
-
-        @Override
-        public void unregister() {
-
-        }
     }
 }

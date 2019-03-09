@@ -6,10 +6,8 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.personalbest.ISubject;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.UIdisplay.HomeUI;
-import com.android.personalbest.UIdisplay.IUserObserver;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
+public class FirestoreAdaptor implements IFirestore {
     private static final String TAG = "[FirestoreAdaptor]";
     private Activity activity;
     String userEmail;
@@ -46,14 +44,11 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
     String FROM_NAME_KEY = "fromName";
     String TEXT_KEY = "text";
 
-    private static List<IUserObserver> observers;
-
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
         this.userEmail = userEmail;
         this.fs = FirebaseFirestore.getInstance();
-        observers = new ArrayList<>();
     }
 
 
@@ -77,7 +72,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        updatedUser();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -99,7 +93,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        updatedUser();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -122,7 +115,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        updatedUser();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -145,7 +137,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        updatedUser();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -245,12 +236,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
                         Log.d(TAG, "" + user);
                         MainActivity.setCurrentUser(user);
 
-                        for (IUserObserver observer : FirestoreAdaptor.observers) {
-                            observer.onUserChange(user);
-                        }
-
-
-
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -260,37 +245,6 @@ public class FirestoreAdaptor implements IFirestore, ISubject<IUserObserver> {
             }
         });
 
-
-
-//        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                User user = documentSnapshot.toObject(User.class);
-//                Log.d(TAG, "" + user);
-//                MainActivity.setCurrentUser(user);
-//
-//                for (IUserObserver observer : FirestoreAdaptor.observers) {
-//                    observer.onUserChange(user);
-//                }
-//            }
-//        });
     }
 
-
-    @Override
-    public void register(IUserObserver observer) {
-        observers.add(observer);
-    }
-
-
-    @Override
-    public void unregister() {
-        for (IUserObserver observer: observers) {
-            // Removes every observer except the Main Activity when a different fragment is loaded
-            if (!observer.getObserverName().equals("MainActivity")) {
-                Log.wtf(TAG, "REMOVING OBSERVER" + observer);
-                observers.remove(observer);
-            }
-        }
-    }
 }
