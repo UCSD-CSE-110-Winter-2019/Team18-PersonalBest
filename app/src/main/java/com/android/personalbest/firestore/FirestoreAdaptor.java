@@ -5,9 +5,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
+import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -220,6 +223,76 @@ public class FirestoreAdaptor implements IFirestore {
 
     }
 
+    @Override
+    public void loginCheckIfUserExists(String otherUserEmail, LoginUI loginUI) {
+        Log.wtf(TAG, "In loginCheckIfUserExists");
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(otherUserEmail);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "Found " + otherUserEmail + " in database");
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        loginUI.launchHomeScreenActivity();
+                    } else {
+                        Log.d(TAG, "No user with email " + otherUserEmail + " in database");
+                        loginUI.launchGetToKnowYouActivity();
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
+        Log.wtf(TAG, "In getToKnowYouCheckIfUserExists");
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(otherUserEmail);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "Found " + otherUserEmail + " in database");
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        getToKnowYouUI.launchActivity();
+                    } else {
+                        Log.d(TAG, "No user with email " + otherUserEmail + " in database");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
+        fs.collection(USERS_COLLECTION_KEY).document(user.getEmail()).set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Toast.makeText(getToKnowYouUI, "Saved", Toast.LENGTH_SHORT);
+                        getToKnowYouUI.launchActivity();
+                }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.wtf(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
 
     // Method used to notify all observers that the User object may have been updated
     public void updatedUser() {
@@ -246,5 +319,4 @@ public class FirestoreAdaptor implements IFirestore {
         });
 
     }
-
 }

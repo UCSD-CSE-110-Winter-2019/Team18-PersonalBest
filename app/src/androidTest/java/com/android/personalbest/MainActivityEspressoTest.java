@@ -12,7 +12,9 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
@@ -248,6 +250,21 @@ public class MainActivityEspressoTest {
 
             MainActivity.setCurrentUser(user);
             mainActivity.loadFragment(homeUI);
+
+        }
+
+        @Override
+        public void loginCheckIfUserExists(String otherUserEmail, LoginUI loginUI) {
+
+        }
+
+        @Override
+        public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
+
+        }
+
+        @Override
+        public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
 
         }
 
