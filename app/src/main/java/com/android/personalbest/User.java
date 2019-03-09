@@ -11,6 +11,7 @@ public class User {
     private int heightFt;
     private int heightIn;
     private Map<String, Integer> intentionalSteps;
+    private Map<String, Integer> totalSteps;
     private List<String> friends;
     private Map<String, Boolean> pendingFriends;
 
@@ -56,6 +57,9 @@ public class User {
 
     public Map<String, Integer> getIntentionalSteps() {
         return intentionalSteps;
+    }
+    public Map<String, Integer> getTotalSteps() {
+        return totalSteps;
     }
     public void setIntentionalSteps(Map<String, Integer> intentionalSteps) { this.intentionalSteps= intentionalSteps;}
 
