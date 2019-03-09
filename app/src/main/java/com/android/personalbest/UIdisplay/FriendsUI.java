@@ -22,16 +22,28 @@ import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
+import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
+
+import org.w3c.dom.Text;
+
+import java.util.List;
+import java.util.Map;
 
 public class FriendsUI extends Fragment {
 
     final int TEXTVIEW_SIZE = 25;
-    String[] friendRequestArray;
-    String[] friendArray;
 
     static LayoutInflater layoutInflater;
     Dialog myDialog;
+    IFirestore firestore;
+    User user;
+
+    Map<String, Boolean> friendRequestList;
+    List<String> friendsList;
+    Activity activity;
+
+
 
     @Nullable
     @Override
@@ -46,9 +58,18 @@ public class FriendsUI extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         myDialog = new Dialog(this.getActivity());
+        activity = this.getActivity();
+
+        // Get instance of Firestore from MainActivity and get the current logged in user
+        firestore = MainActivity.getFirestore();
+        user = MainActivity.getCurrentUser();
+
+        friendRequestList = user.getPendingFriends();
+        friendsList = user.getFriends();
 
         LinearLayout myLinearLayout = getView().findViewById(R.id.friend_fragment_layout);
 
+        //Button to add a new friend
         Button addFriend = getView().findViewById(R.id.add_friend);
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,94 +78,94 @@ public class FriendsUI extends Fragment {
             }
         });
 
-        //Add textview for Pending Friend Requests
-        TextView friendsReqTextView = new TextView(this.getActivity());
+        //Add TextView for Pending Friend Requests
+        TextView friendsReqTextView = new TextView(activity);
         friendsReqTextView.setText("Friend Requests");
         friendsReqTextView.setTextSize(TEXTVIEW_SIZE);
         myLinearLayout.addView(friendsReqTextView);
 
-        //TODO: INITIALIZE ARRAY WITH PENDING FRIEND REQUESTS
-        //final Button[] myFriendRequests = new Button[]
-        final int numberOfFriendRequests = 3;
-        final Button[] myFriendRequests = new Button[numberOfFriendRequests]; // create an empty array;
 
         //Dynamically add pending friends
-        //for(int i = 0; i < friendRequestArray.length; i++)
-        for (int i = 0; i < numberOfFriendRequests; i++) {
-
+        for (Map.Entry<String, Boolean> entry : friendRequestList.entrySet() )
+        {
             // create a new button
-            final Button friendRequest = new Button(this.getActivity());
+            final Button friendRequest = new Button(activity);
+
+            //If user received friend request, create listener and setText for pending request
+            if(!entry.getValue()) {
+                // set some properties of rowTextView or something
+                friendRequest.setText(entry.getKey() + " ( Pending... )");
+
+                friendRequest.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ShowFriendRequestPopup(view, entry.getKey());
+                    }
+                });
+            }else
+            {
+                // set some properties of rowTextView or something
+                friendRequest.setText(entry.getKey() + " ( Request Sent )");
+            }
 
             //set id of button (to user id)
-            friendRequest.setId(i+1);
+            //friendRequest.setId(i);
 
-            // set some properties of rowTextView or something
-            friendRequest.setText("This is friend request #" + i);
-
-            // add the textview to the linearlayout
+            // add the button to the linearlayout
             myLinearLayout.addView(friendRequest);
 
             // save a reference to the textview for later
-            myFriendRequests[i] = friendRequest;
-
-            friendRequest.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ShowFriendRequestPopup(view);
-
-                    Log.wtf("Testing friends Request", "Id of friend Request: " + friendRequest.getId());
-                }
-            });
+            //myFriendRequests[i] = friendRequest;
         }
-
-        //TODO: INITILIAZE ARRAY WITH CURRENT FRIENDS FROM FIREBASE
-        //
-        final Button[] myFriends = new Button[numberOfFriendRequests]; // create an empty array;
 
 
         //Add textview for Friends
-        TextView friendsButton = new TextView(this.getActivity());
-        friendsButton.setText("Friends");
-        friendsButton.setTextSize(TEXTVIEW_SIZE);
-        myLinearLayout.addView(friendsButton);
+        TextView friendsTextView = new TextView(activity);
+        friendsTextView.setText("Friends");
+        friendsTextView.setTextSize(TEXTVIEW_SIZE);
+        myLinearLayout.addView(friendsTextView);
 
         //dynamically add friends
-        for (int i = 0; i < numberOfFriendRequests; i++) {
-
-            // create a new textview
-            final Button friend = new Button(this.getActivity());
-
-            //set id of button (to user id)
-            friend.setId(i+1);
+        for (String email : friendsList )
+        {
+            // create a new button
+            final Button friendDisplay = new Button(activity);
 
             // set some properties of rowTextView or something
-            friend.setText("This is friend #" + i);
+            friendDisplay.setText(email);
 
-            // add the textview to the linearlayout
-            myLinearLayout.addView(friend);
+            //set id of button (to user id)
+            //friendDisplay.setId(i);
+
+            // add the button to the linearlayout
+            myLinearLayout.addView(friendDisplay);
 
             // save a reference to the textview for later
-            myFriends[i] = friend;
+            //myFriendDisplay[i] = friendRequest;
 
-            friend.setOnClickListener(new View.OnClickListener() {
+            friendDisplay.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    Log.wtf("Testing friends", "Id of friend: " + friend.getId());
+                public void onClick(View view)
+                {
+                    //Launch messagingUI when user clicks on a friend
+                    Intent intent = new Intent(activity, MessagesUI.class);
+                    startActivity(intent);
                 }
             });
         }
     }
 
 
+    /**
+     * Shows edit text to input email of friend you want to add and a send
+     * friend request button.
+     */
     public void ShowAddFriendPopup(View v) {
-        Button btnClose;
+        Button sendRequest;
         myDialog.setContentView(R.layout.add_friend);
-        Context activity = this.getActivity().getBaseContext();
 
-
-        // go back to friends page when clicking the send button
-        btnClose = myDialog.findViewById(R.id.send_add);
-        btnClose.setOnClickListener(new View.OnClickListener() {
+        sendRequest = myDialog.findViewById(R.id.send_add);
+        sendRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -152,15 +173,23 @@ public class FriendsUI extends Fragment {
                 EditText editText = myDialog.findViewById(R.id.friend_email);
                 String email = editText.getText().toString();
 
+                //Check if email is valid
                 if( email.equals("") )
                 {
                     Toast.makeText(activity, "Not a valid email address.", Toast.LENGTH_SHORT).show();
                 }else
                 {
                     Toast.makeText(activity, "Updating...", Toast.LENGTH_LONG).show();
-                    //TODO: CHECK IF USER EXISTS
+                    //TODO: CHECK IF USER EXISTS IN OUR DATABASE
+
+                    //if user exists
+                    friendRequestList.put(email, true);
+                    //TODO: METHOD TO UPDATE FRIEND REQUEST LIST OF OTHER USER
+
+                    //if user doesn't exist
+                    Toast.makeText(activity, "User does not exist.", Toast.LENGTH_SHORT).show();
                 }
-                //TODO: SEND FRIEND REQUEST THEN DISMISS
+
                 myDialog.dismiss();
             }
         });
@@ -170,22 +199,30 @@ public class FriendsUI extends Fragment {
         myDialog.show();
     }
 
-    public void ShowFriendRequestPopup(View v) {
+    /**
+     * Show accept and decline buttons when user clicks on a friend request.
+     */
+    public void ShowFriendRequestPopup(View v, String username) {
         Button acceptbtn;
         Button declinebtn;
+        TextView requestText;
+
         myDialog.setContentView(R.layout.friend_request);
 
-
-        // go back to home page when clicking the close button
         acceptbtn = myDialog.findViewById(R.id.accept_friend);
         declinebtn = myDialog.findViewById(R.id.decline_friend);
+        requestText = myDialog.findViewById(R.id.request);
+
+        requestText.setText(username + " Would like to add you");
 
         acceptbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: add user to friends list
-                //user.pendingFriends[].search("");
-                // TODO: remove user from pending list
+                friendsList.add(username);
+                friendRequestList.remove(username);
+
+                //TODO: add user to other person's friends list
+                // TODO: remove user from other person's pending list
                 myDialog.dismiss();
             }
         });
@@ -193,8 +230,9 @@ public class FriendsUI extends Fragment {
         declinebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: add user to friends list
-                //TODO: remove user from pending list
+                friendRequestList.remove(username);
+
+                //TODO: remove user from other pending list
                 myDialog.dismiss();
             }
         });
