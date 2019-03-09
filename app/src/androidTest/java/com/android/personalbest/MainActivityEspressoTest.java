@@ -28,12 +28,15 @@ import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -51,15 +54,6 @@ public class MainActivityEspressoTest {
 
     @Before
     public void setUp() {
-//        Context targetContext = getInstrumentation().getTargetContext();
-//        SharedPrefData.setAccountId(targetContext, "testaccount");
-//        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
-//        editor = sharedPreferences.edit();
-//        editor.putInt("goal", 1000);
-//        editor.putString("name", "test");
-//        editor.putInt("heightft", 3);
-//        editor.putInt("heightin", 6);
-//        editor.commit();
         intent=new Intent();
         intent.putExtra("key", "test");
         intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
@@ -105,6 +99,55 @@ public class MainActivityEspressoTest {
                 allOf(withId(R.id.current_in),isDisplayed()));
         heightin.check(matches(withText("6")));
 
+    }
+
+    @Test
+    public void testChangeSynched(){
+        mActivityTestRule.launchActivity(intent);
+        ViewInteraction homegoal = onView(
+                allOf(withId(R.id.goal),
+                        isDisplayed()));
+        homegoal.check(matches(withText("2000")));
+
+        ViewInteraction totalStep = onView(
+                allOf(withId(R.id.display),isDisplayed()));
+        totalStep.check(matches(withText("200")));
+
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
+        bottomNavigationItemView.perform(click());
+
+        ViewInteraction name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
+
+        ViewInteraction profilegoal = onView(
+                allOf(withId(R.id.current_goal),isDisplayed()));
+        profilegoal.check(matches(withText("2000")));
+
+        ViewInteraction heightft = onView(
+                allOf(withId(R.id.current_ft),isDisplayed()));
+        heightft.check(matches(withText("3")));
+
+        ViewInteraction heightin = onView(
+                allOf(withId(R.id.current_in),isDisplayed()));
+        heightin.check(matches(withText("6")));
+
+        ViewInteraction edit_goal_btn = onView(
+                allOf(withId(R.id.edit_goal_btn)));
+        edit_goal_btn.perform(click());
+
+        ViewInteraction goal_edit = onView(
+                allOf(withId(R.id.goal_edit)));
+        goal_edit.perform(replaceText("3000"));
+
+        edit_goal_btn.perform(click());
+
+        bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_home)));
+        bottomNavigationItemView.perform(click());
+
+        homegoal.check(matches(withText("3000")));
     }
 
     @Test
