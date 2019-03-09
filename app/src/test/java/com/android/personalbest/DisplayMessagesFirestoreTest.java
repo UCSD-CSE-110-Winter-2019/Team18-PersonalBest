@@ -112,10 +112,5 @@ public class DisplayMessagesFirestoreTest {
 
         }
 
-        @Override
-        public void updatedUser() {
-
-        }
-
     }
 }
