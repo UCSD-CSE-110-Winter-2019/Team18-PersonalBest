@@ -2,19 +2,13 @@ package com.android.personalbest;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,17 +17,15 @@ import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -59,15 +51,15 @@ public class MainActivityEspressoTest {
 
     @Before
     public void setUp() {
-        Context targetContext = getInstrumentation().getTargetContext();
-        SharedPrefData.setAccountId(targetContext, "testaccount");
-        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        editor.putInt("goal", 1000);
-        editor.putString("name", "test");
-        editor.putInt("heightft", 3);
-        editor.putInt("heightin", 6);
-        editor.commit();
+//        Context targetContext = getInstrumentation().getTargetContext();
+//        SharedPrefData.setAccountId(targetContext, "testaccount");
+//        sharedPreferences=targetContext.getSharedPreferences("testaccount", Context.MODE_PRIVATE);
+//        editor = sharedPreferences.edit();
+//        editor.putInt("goal", 1000);
+//        editor.putString("name", "test");
+//        editor.putInt("heightft", 3);
+//        editor.putInt("heightin", 6);
+//        editor.commit();
         intent=new Intent();
         intent.putExtra("key", "test");
         intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
@@ -87,7 +79,7 @@ public class MainActivityEspressoTest {
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
-        homegoal.check(matches(withText("1000")));
+        homegoal.check(matches(withText("2000")));
 
         ViewInteraction totalStep = onView(
                 allOf(withId(R.id.display),isDisplayed()));
@@ -97,13 +89,13 @@ public class MainActivityEspressoTest {
                 allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-//        ViewInteraction name = onView(
-//                allOf(withId(R.id.user_txt), isDisplayed()));
-//        name.check(matches(withText("test")));
+        ViewInteraction name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
 
         ViewInteraction profilegoal = onView(
                 allOf(withId(R.id.current_goal),isDisplayed()));
-        profilegoal.check(matches(withText("1000")));
+        profilegoal.check(matches(withText("2000")));
 
         ViewInteraction heightft = onView(
                 allOf(withId(R.id.current_ft),isDisplayed()));
@@ -125,12 +117,12 @@ public class MainActivityEspressoTest {
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
-        homegoal.check(matches(withText("1000")));
+        homegoal.check(matches(withText("2000")));
 
         ViewInteraction totalStep = onView(
                 allOf(withId(R.id.display),isDisplayed()));
         totalStep.check(matches(withText("200")));
-        testFitService.setTotalDailySteps(1000);
+        testFitService.setTotalDailySteps(2000);
         HomeUI.async();
 
         ViewInteraction popup = onView(
@@ -144,15 +136,15 @@ public class MainActivityEspressoTest {
 
         ViewInteraction current_goal = onView(
                 allOf(withId(R.id.goal)));
-        current_goal.check(matches(withText("1500")));
+        current_goal.check(matches(withText("2500")));
 
     }
     private class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
+        private User user;
         private Activity activity;
         private String userEmail;
-
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
@@ -161,13 +153,23 @@ public class MainActivityEspressoTest {
 
 
         @Override
-        public void displayName(TextView view) {
-            Log.d(TAG, "Displaying name");
+        public void setName(String name) {
+            Log.d(TAG, "Setting name " + name + " to database");
         }
 
         @Override
-        public void setName(String name) {
-            Log.d(TAG, "Setting name " + name + " to database");
+        public void setGoal(int goal) {
+
+        }
+
+        @Override
+        public void setHeightFt(int heightFt) {
+
+        }
+
+        @Override
+        public void setHeightIn(int heightIn) {
+
         }
 
         @Override
@@ -191,6 +193,21 @@ public class MainActivityEspressoTest {
         public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
             Log.d(TAG, "Adding message to database");
         }
+
+        @Override
+        public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+            this.user=new User();
+            user.setName("testuser");
+            user.setEmail("testemail");
+            user.setGoal(2000);
+            user.setHeightFt(3);
+            user.setHeightIn(6);
+
+            MainActivity.setCurrentUser(user);
+            mainActivity.loadFragment(homeUI);
+
+        }
+
     }
 
 
