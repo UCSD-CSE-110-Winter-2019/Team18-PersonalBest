@@ -178,8 +178,7 @@ public class HomeUI extends Fragment {
 
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
-                gFit.readYesterdayStepData();
-                gFit.printRecentSteps();
+                gFit.getYesterdaySteps();
 
                 try {
                     publishProgress();
@@ -197,7 +196,7 @@ public class HomeUI extends Fragment {
                 Log.d("time", en.getTime());
 
                 // Checks for displaying encouragement at 8pm every night
-                numStepsOver = calculateImprovementInterval((int) updated_steps, en.getPreviousDayStep());
+                numStepsOver = calculateImprovementInterval((int) updated_steps, GoogleFitAdaptor.weekSteps[5]);
                 if (en.getTime().equals("20:00:00") && numStepsOver >= 500) {
                     return ("6");
                 }
@@ -229,12 +228,9 @@ public class HomeUI extends Fragment {
         @Override
         protected void onProgressUpdate(String... count) {
             display_goal.setText(Integer.toString(goal));
-            if(gFit.getIsTimeChanged())
-            {
-                display_steps.setText(Integer.toString(gFit.getRecentSteps()[1]));
-            }else {
-                display_steps.setText(Long.toString(updated_steps));
-            }
+            display_steps.setText(Long.toString(updated_steps));
+
+            Log.wtf("TESTING", "" + gFit.getTotalDailySteps() );
 
             for(int i = 0; i < gFit.getWeekSteps().length; i++)
             {
@@ -243,7 +239,7 @@ public class HomeUI extends Fragment {
 
             }
             for (int i = 0; i < 28; i++) {
-                ChartMonthDisplay.TOTAL_STEPS[i] = 0;
+                ChartMonthDisplay.TOTAL_STEPS[i] = gFit.getMonthSteps()[i];
 
             }
         }

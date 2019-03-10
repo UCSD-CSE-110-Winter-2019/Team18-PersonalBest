@@ -9,15 +9,15 @@ public interface IFitService {
     void subscribeForDailySteps();
     void subscribeForWeeklySteps();
     void readDailyStepData();
-    void readYesterdayStepData();
     void readWeeklyStepData();
     void updateToday();
     long getTotalDailySteps();
     void setTotalDailySteps(long total);
     void printWeekData(DataReadResponse dataReadResult);
-    void printRecentSteps();
     boolean getIsTimeChanged();
     void setIsTimeChanged(boolean timeChanged);
     int[] getWeekSteps();
-    int[] getRecentSteps();
+    int[] getMonthSteps();
+    int getYesterdaySteps();
+    Task<Void> updateData();
 }

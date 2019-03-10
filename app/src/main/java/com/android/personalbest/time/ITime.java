@@ -16,4 +16,9 @@ public interface ITime
      * @return time in milliseconds one week ago from now.
      */
     long timeOneWeekAgo();
+
+    /**
+     * @return time in milliseconds one month ago from now.
+     */
+    long timeOneMonthAgo();
 }
