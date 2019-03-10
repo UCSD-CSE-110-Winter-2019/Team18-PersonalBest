@@ -60,7 +60,8 @@ public class HistoryFragment extends Fragment{
         displayStepGoal();
         displayIntentionalSteps();
 
-        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+        gFit = FitServiceFactory.create("real", this.getActivity());
         gFit.subscribeForWeeklySteps();
 
         Button month_chart = getView().findViewById(R.id.monthly_chart);

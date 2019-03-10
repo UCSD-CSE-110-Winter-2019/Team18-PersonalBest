@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class TestMockTime
 {
     ITime mtime;
-    long mockedTime = 1548748800;
+    long mockedTime = 1548802800;
 
     /**
      * Initialize time variable
@@ -45,13 +45,23 @@ public class TestMockTime
     }
 
     @Test
-    public void testTimeOneWeekAgo()
+    public void testTimeOneWeekAgoStart()
     {
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
 
-        assertEquals("Jan 22, 2019 12:00:00 AM",dateFormat.format(mtime.timeOneWeekAgo() )
+        assertEquals("Jan 23, 2019 12:00:00 AM",dateFormat.format(mtime.timeOneWeekAgo() )
                      + " " + timeFormat.format(mtime.timeOneWeekAgo()));
+    }
+
+    @Test
+    public void testTimeOneMonthAgoStart()
+    {
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        DateFormat timeFormat = DateFormat.getTimeInstance();
+
+        assertEquals("Jan 2, 2019 12:00:00 AM",dateFormat.format(mtime.timeOneMonthAgo() )
+                + " " + timeFormat.format(mtime.timeOneWeekAgo()));
     }
 
 
