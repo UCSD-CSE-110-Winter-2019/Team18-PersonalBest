@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
+import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
@@ -46,6 +47,8 @@ public class FirestoreAdaptor implements IFirestore {
     String FROM_EMAIL_KEY = "fromEmail";
     String FROM_NAME_KEY = "fromName";
     String TEXT_KEY = "text";
+    String FRIENDS_KEY = "friends";
+    String PENDING_FRIENDS_KEY = "pendingFriends";
 
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
@@ -294,9 +297,126 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
 
-    // Method used to notify all observers that the User object may have been updated
-    public void updatedUser() {
-        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+    @Override
+    public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+        DocumentReference friendRef = fs.collection(USERS_COLLECTION_KEY).document(friendEmail);
+
+        friendRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+
+                // Friend's email exists in the database
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    Toast.makeText(friendsUI.getActivity(), "Sending Friend Request", Toast.LENGTH_LONG).show();
+
+                    // Update sender's & receiver's pendingFriends list
+                    addUserToPendingFriends(userEmail, friendEmail, true);
+                    addUserToPendingFriends(friendEmail, userEmail, false);
+
+                    // Update UI for the current user
+                    Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
+                    currentPendingFriends.put(friendEmail, true);
+                    user.setPendingFriends(currentPendingFriends);
+                    MainActivity.setCurrentUser(user);
+                    friendsUI.userHasBeenUpdated();
+
+
+                // Email inputted does not exist in the database
+                } else {
+                    Log.d(TAG, "Cannot send a friend request to " + friendEmail + ". User does not exist");
+                    Toast.makeText(friendsUI.getActivity(), "User does not exist.", Toast.LENGTH_SHORT).show();
+
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+    }
+
+
+    @Override
+    public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+        // Update UI for the current user
+        Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
+        currentPendingFriends.remove(friendEmail);
+        user.setPendingFriends(currentPendingFriends);
+
+        List<String> currentFriends = user.getFriends();
+        currentFriends.add(friendEmail);
+        user.setFriends(currentFriends);
+
+        MainActivity.setCurrentUser(user);
+        friendsUI.userHasBeenUpdated();
+
+        Toast.makeText(friendsUI.getActivity(), "Accepted friend request from " + friendEmail, Toast.LENGTH_SHORT).show();
+
+        // Remove each other from respective pendingFriends
+        removeUserFromPendingFriends(user.getEmail(), friendEmail);
+        removeUserFromPendingFriends(friendEmail, user.getEmail());
+
+        // Add each other to respective friends list
+        addUserToFriends(user.getEmail(), friendEmail);
+        addUserToFriends(friendEmail, user.getEmail());
+    }
+
+
+    @Override
+    public void declineFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+        // Update UI for the current user
+        Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
+        currentPendingFriends.remove(friendEmail);
+        user.setPendingFriends(currentPendingFriends);
+
+        MainActivity.setCurrentUser(user);
+        friendsUI.userHasBeenUpdated();
+
+        Toast.makeText(friendsUI.getActivity(), "Declined friend request from " + friendEmail, Toast.LENGTH_SHORT).show();
+
+        // Remove each other from respective pending friends
+        removeUserFromPendingFriends(user.getEmail(), friendEmail);
+        removeUserFromPendingFriends(friendEmail, user.getEmail());
+    }
+
+
+    // Adds emailToAdd to the pendingList of user
+    // sender is true if user is the one who sent the friend request
+    @Override
+    public void addUserToPendingFriends(String user, String emailToAdd, boolean sender) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
+
+        // Get the user we want to add the request to
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+
+                        // Update the pendingFriends map with the new friend request in Firestore
+                        Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
+                        currentPendingFriends.put(emailToAdd, sender);
+                        userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                    } else {
+                        Log.d(TAG, "No user with email " + user + " in database");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+
+    // Removes emailToRemove from the pendingFriends of user
+    @Override
+    public void removeUserFromPendingFriends(String user, String emailToRemove) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
 
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -306,17 +426,54 @@ public class FirestoreAdaptor implements IFirestore {
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         User user = document.toObject(User.class);
-                        Log.d(TAG, "" + user);
-                        MainActivity.setCurrentUser(user);
+
+                        // Update the pendingFriends map with the new friend request in Firestore
+                        Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
+                        currentPendingFriends.remove(emailToRemove);
+                        userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
                     } else {
-                        Log.d(TAG, "No such document");
+                        Log.d(TAG, "No user with email " + user + " in database");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
+    }
 
+
+    // Adds emailToAdd to user's friends
+    @Override
+    public void addUserToFriends(String user, String emailToAdd) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
+
+        // Get the user we want to add the request to
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+
+                        // Update the pendingFriends map with the new friend request in Firestore
+                        List<String> currentFriends = user.getFriends();
+                        currentFriends.add(emailToAdd);
+                        userRef.update(FRIENDS_KEY, currentFriends)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                    } else {
+                        Log.d(TAG, "No user with email " + user + " in database");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 }
