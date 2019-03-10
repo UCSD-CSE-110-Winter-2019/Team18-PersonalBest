@@ -8,6 +8,7 @@ import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.User;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public interface IFirestore{
     public void setName(String name);

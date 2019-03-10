@@ -1,13 +1,19 @@
 package com.android.personalbest;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.HistoryFragment;
@@ -19,6 +25,18 @@ import com.google.firebase.FirebaseApp;
 
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -30,7 +48,9 @@ public class MainActivity extends AppCompatActivity
     public static User currentUser;
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
-
+    String COLLECTION_KEY = "chats";
+    String DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
+    String MESSAGES_KEY = "messages";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +92,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
+
+
 
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);

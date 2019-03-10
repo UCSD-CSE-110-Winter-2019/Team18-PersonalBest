@@ -34,6 +34,7 @@
             android:name=".UIdisplay.TrackerActivityUI"
             android:label="TrackerActivity" />
         <activity android:name=".UIdisplay.GetToKnowYouUI" />
+
     </application>
 
 </manifest>

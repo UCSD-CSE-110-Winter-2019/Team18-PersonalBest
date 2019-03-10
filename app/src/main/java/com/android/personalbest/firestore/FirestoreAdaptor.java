@@ -64,7 +64,6 @@ public class FirestoreAdaptor implements IFirestore {
         return comparison < 0 ? userEmail.concat(otherUserEmail) : otherUserEmail.concat(userEmail);
     }
 
-
     public void setName(String name) {
         Map<String, Object> data = new HashMap<>();
         data.put("name", name);
