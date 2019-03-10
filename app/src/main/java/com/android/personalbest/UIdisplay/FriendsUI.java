@@ -35,6 +35,7 @@ public class FriendsUI extends Fragment {
     final int TEXTVIEW_SIZE = 25;
 
     static LayoutInflater layoutInflater;
+    LinearLayout myLinearLayout;
     Dialog myDialog;
     IFirestore firestore;
     User user;
@@ -42,6 +43,7 @@ public class FriendsUI extends Fragment {
     Map<String, Boolean> friendRequestList;
     List<String> friendsList;
     Activity activity;
+    FriendsUI currentFriendsUI;
 
 
 
@@ -67,7 +69,7 @@ public class FriendsUI extends Fragment {
         friendRequestList = user.getPendingFriends();
         friendsList = user.getFriends();
 
-        LinearLayout myLinearLayout = getView().findViewById(R.id.friend_fragment_layout);
+        myLinearLayout = getView().findViewById(R.id.friend_fragment_layout);
 
         //Button to add a new friend
         Button addFriend = getView().findViewById(R.id.add_friend);
@@ -77,6 +79,55 @@ public class FriendsUI extends Fragment {
                 ShowAddFriendPopup(view);
             }
         });
+
+        createPendingFriendsView();
+        createFriendsView();
+
+        currentFriendsUI = this;
+    }
+
+    public void createFriendsView() {
+        friendsList = user.getFriends();
+
+        //Add textview for Friends
+        TextView friendsTextView = new TextView(activity);
+        friendsTextView.setText("Friends");
+        friendsTextView.setTextSize(TEXTVIEW_SIZE);
+        myLinearLayout.addView(friendsTextView);
+
+        //dynamically add friends
+        for (String email : friendsList )
+        {
+            // create a new button
+            final Button friendDisplay = new Button(activity);
+
+            // set some properties of rowTextView or something
+            friendDisplay.setText(email);
+
+            //set id of button (to user id)
+            //friendDisplay.setId(i);
+
+            // add the button to the linearlayout
+            myLinearLayout.addView(friendDisplay);
+
+            // save a reference to the textview for later
+            //myFriendDisplay[i] = friendRequest;
+
+            friendDisplay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view)
+                {
+                    //Launch messagingUI when user clicks on a friend
+                    Intent intent = new Intent(activity, MessagesUI.class);
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+
+
+    public void createPendingFriendsView() {
+        friendRequestList = user.getPendingFriends();
 
         //Add TextView for Pending Friend Requests
         TextView friendsReqTextView = new TextView(activity);
@@ -117,42 +168,6 @@ public class FriendsUI extends Fragment {
             // save a reference to the textview for later
             //myFriendRequests[i] = friendRequest;
         }
-
-
-        //Add textview for Friends
-        TextView friendsTextView = new TextView(activity);
-        friendsTextView.setText("Friends");
-        friendsTextView.setTextSize(TEXTVIEW_SIZE);
-        myLinearLayout.addView(friendsTextView);
-
-        //dynamically add friends
-        for (String email : friendsList )
-        {
-            // create a new button
-            final Button friendDisplay = new Button(activity);
-
-            // set some properties of rowTextView or something
-            friendDisplay.setText(email);
-
-            //set id of button (to user id)
-            //friendDisplay.setId(i);
-
-            // add the button to the linearlayout
-            myLinearLayout.addView(friendDisplay);
-
-            // save a reference to the textview for later
-            //myFriendDisplay[i] = friendRequest;
-
-            friendDisplay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view)
-                {
-                    //Launch messagingUI when user clicks on a friend
-                    Intent intent = new Intent(activity, MessagesUI.class);
-                    startActivity(intent);
-                }
-            });
-        }
     }
 
 
@@ -174,20 +189,17 @@ public class FriendsUI extends Fragment {
                 String email = editText.getText().toString();
 
                 //Check if email is valid
-                if( email.equals("") )
+                if( email.equals("") || !email.contains("@") )
                 {
                     Toast.makeText(activity, "Not a valid email address.", Toast.LENGTH_SHORT).show();
-                }else
+                } else if (friendRequestList.containsKey(email)){
+                    Toast.makeText(activity, "Already a pending request with this email", Toast.LENGTH_SHORT).show();
+                }
+                else
                 {
-                    Toast.makeText(activity, "Updating...", Toast.LENGTH_LONG).show();
-                    //TODO: CHECK IF USER EXISTS IN OUR DATABASE
-
-                    //if user exists
-                    friendRequestList.put(email, true);
-                    //TODO: METHOD TO UPDATE FRIEND REQUEST LIST OF OTHER USER
-
-                    //if user doesn't exist
-                    Toast.makeText(activity, "User does not exist.", Toast.LENGTH_SHORT).show();
+                    // Calls Firestore method that checks if requestee email exists in Firestore, sending a friend request and
+                    // updating both pendingFriends if it does
+                    firestore.sendFriendRequest(user, email, currentFriendsUI);
                 }
 
                 myDialog.dismiss();
@@ -218,11 +230,8 @@ public class FriendsUI extends Fragment {
         acceptbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                friendsList.add(username);
-                friendRequestList.remove(username);
-
-                //TODO: add user to other person's friends list
-                // TODO: remove user from other person's pending list
+                // Update Firestore with the new user object
+                firestore.acceptFriendRequest(user, username, currentFriendsUI);
                 myDialog.dismiss();
             }
         });
@@ -230,9 +239,7 @@ public class FriendsUI extends Fragment {
         declinebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                friendRequestList.remove(username);
-
-                //TODO: remove user from other pending list
+                firestore.declineFriendRequest(user, username, currentFriendsUI);
                 myDialog.dismiss();
             }
         });
@@ -240,6 +247,15 @@ public class FriendsUI extends Fragment {
         // show the popup
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+
+
+    public void userHasBeenUpdated() {
+        user = MainActivity.getCurrentUser();
+        // Removes all views except the Add Friend button & re-draws it
+        myLinearLayout.removeViews(1, myLinearLayout.getChildCount() - 1);
+        createPendingFriendsView();
+        createFriendsView();
     }
 
 }
