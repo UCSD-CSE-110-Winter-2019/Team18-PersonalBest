@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.personalbest.UIdisplay.ProfileUI;
+import com.android.personalbest.time.ITime;
+import com.android.personalbest.time.TimeFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
@@ -38,13 +40,17 @@ public class GoogleFitAdaptor implements IFitService{
     public static final String TAG = "GoogleFitTag";
     private static final int REQUEST_OAUTH_REQUEST_CODE = 0x1001;
     public long total;
+    private ITime time;
     public static int weekSteps[] = new int[7];
-    public static int recentSteps[] = new int[2];
+    public static int monthSteps[] = new int[28];
+    //public static int recentSteps[] = new int[2];
     public boolean changeTime = false;
 
 
-    public GoogleFitAdaptor(Activity activity) {
+    public GoogleFitAdaptor(Activity activity, long time)
+    {
         this.activity = activity;
+        this.time = TimeFactory.create(time);
     }
 
 
@@ -124,7 +130,7 @@ public class GoogleFitAdaptor implements IFitService{
                                         dataSet.isEmpty()
                                                 ? 0
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
-                                Log.i(TAG, "Total daily steps: " + total);
+                                Log.i("readDailyStepData", "Total daily steps: " + total);
                                 setTotalDailySteps(total);
                             }
                         })
@@ -132,36 +138,8 @@ public class GoogleFitAdaptor implements IFitService{
                         new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "There was a problem getting the step count.", e);
+                                Log.w("readDailyStepData", "There was a problem getting the step count.", e);
                             }
-                        });
-    }
-
-    /**
-     * Read the history data. When the task succeeds, it will print out yesterday's data.
-     */
-    public void readYesterdayStepData() {
-        DataReadRequest readRequest = queryYesterdayFitnessData();
-
-        // Invoke the History API to fetch the data with the query
-        Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
-            .readData(readRequest)
-            .addOnSuccessListener(
-                    new OnSuccessListener<DataReadResponse>() {
-                        @Override
-                        public void onSuccess(DataReadResponse dataReadResponse) {
-                            // For the sake of the sample, we'll print the data so we can see what we just
-                            // added. In general, logging fitness information should be avoided for privacy
-                            // reasons.
-                            printRecentData(dataReadResponse);
-                        }
-                    })
-            .addOnFailureListener(
-                    new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "There was a problem reading the data.", e);
-                    }
                         });
     }
 
@@ -184,75 +162,89 @@ public class GoogleFitAdaptor implements IFitService{
                     new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "There was a problem reading the data.", e);
+                            Log.e("readWeeklyStepData", "There was a problem reading the data.", e);
                         }
                     });
     }
 
-    /** Returns a {@link DataReadRequest} for all step count changes in the past day. */
-    public DataReadRequest queryYesterdayFitnessData() {
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        if(this.changeTime)
-        {
-            cal.setTimeInMillis(ProfileUI.desiredTime);
-        }else {
-            cal.setTime(now);
-        }
-        long endTime = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.add(Calendar.DAY_OF_WEEK, -1);
-        long startTime = cal.getTimeInMillis();
+    /**
+     * Asynchronous task to read the history data. When the task succeeds, it will print out the month's data.
+     */
+    public void readMonthlyStepData() {
+        DataReadRequest readRequest = queryMonthFitnessData();
 
-        DateFormat dateFormat = DateFormat.getDateInstance();
-        DateFormat timeFormat = DateFormat.getTimeInstance();
-
-        Log.wtf(TAG, "Range Start of yesterday steps: " + dateFormat.format(startTime) + " " + timeFormat.format(startTime) );
-        Log.wtf(TAG, "Range End of yesterday steps: " + dateFormat.format(endTime) + " " + timeFormat.format(endTime) );
-
-
-        DataReadRequest readRequest =
-                new DataReadRequest.Builder()
-                        // The data request can specify multiple data types to return, effectively
-                        // combining multiple data queries into one call.
-                        // In this example, it's very unlikely that the request is for several hundred
-                        // datapoints each consisting of a few steps and a timestamp.  The more likely
-                        // scenario is wanting to see how many steps were walked per day, for 7 days.
-                        //.read(DataType.TYPE_STEP_COUNT_DELTA)
-                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        // Analogous to a "Group By" in SQL, defines how data should be aggregated.
-                        // bucketByTime allows for a time span, whereas bucketBySession would allow
-                        // bucketing by "sessions", which would need to be defined in code.
-                        .bucketByTime(1, TimeUnit.DAYS)
-                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                        .build();
-        // [END build_read_data_request]
-
-        return readRequest;
+        Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .readData(readRequest)
+                .addOnSuccessListener(
+                        new OnSuccessListener<DataReadResponse>() {
+                            @Override
+                            public void onSuccess(DataReadResponse dataReadResponse) {
+                                printWeekData(dataReadResponse);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("readMonthlyStepData", "There was a problem reading the data.", e);
+                            }
+                        });
     }
 
     /** Returns a {@link DataReadRequest} for all step count changes starting from the past Sunday */
     public DataReadRequest queryWeekFitnessData() {
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        if(this.changeTime)
-        {
-            cal.setTimeInMillis(ProfileUI.desiredTime);
-        }else {
-            cal.setTime(now);
-        }
-        long endTime = cal.getTimeInMillis();
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        long startTime = cal.getTimeInMillis();
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        if(this.changeTime)
+//        {
+//            cal.setTimeInMillis(ProfileUI.desiredTime);
+//        }else {
+//            cal.setTime(now);
+//        }
+//        long endTime = cal.getTimeInMillis();
+//        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        long startTime = cal.getTimeInMillis();
+        long startTime = time.timeOneWeekAgo();
+        long endTime = time.timeNow();
 
         java.text.DateFormat dateFormat = getDateInstance();
-        Log.i(TAG, "Range Start of weekly steps: " + dateFormat.format(startTime));
-        Log.i(TAG, "Range End of weekly steps: " + dateFormat.format(endTime));
+        Log.i("QueryWeekFitnessData", "Range Start of weekly steps: " + dateFormat.format(startTime));
+        Log.i("QueryWeekFitnessData", "Range End of weekly steps: " + dateFormat.format(endTime));
+
+        DataReadRequest readRequest =
+                new DataReadRequest.Builder()
+                        .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                        .bucketByTime(1, TimeUnit.DAYS)
+                        .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                        .build();
+        return readRequest;
+    }
+
+    /** Returns a {@link DataReadRequest} for all step count changes starting from the past 28 days */
+    public DataReadRequest queryMonthFitnessData() {
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        if(this.changeTime)
+//        {
+//            cal.setTimeInMillis(ProfileUI.desiredTime);
+//        }else {
+//            cal.setTime(now);
+//        }
+//        long endTime = cal.getTimeInMillis();
+//        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        long startTime = cal.getTimeInMillis();
+        long startTime = time.timeOneMonthAgo();
+        long endTime = time.timeNow();
+
+        java.text.DateFormat dateFormat = getDateInstance();
+        Log.i("QueryMonthFitnessData", "Range Start of monthly steps: " + dateFormat.format(startTime));
+        Log.i("QueryMonthFitnessData", "Range End of monthly steps: " + dateFormat.format(endTime));
 
         DataReadRequest readRequest =
                 new DataReadRequest.Builder()
@@ -267,8 +259,8 @@ public class GoogleFitAdaptor implements IFitService{
     public void printWeekData(DataReadResponse dataReadResult) {
         int counter = 0;
         if (dataReadResult.getBuckets().size() > 0) {
-            Log.i(
-                    TAG, "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
+            Log.i("printWeekData",
+                    "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
             for (Bucket bucket : dataReadResult.getBuckets()) {
                 List<DataSet> dataSets = bucket.getDataSets();
                 for (DataSet dataSet : dataSets) {
@@ -277,7 +269,8 @@ public class GoogleFitAdaptor implements IFitService{
                 }
             }
         } else if (dataReadResult.getDataSets().size() > 0) {
-            Log.i(TAG, "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
+            Log.i("printWeekData",
+                    "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
             for (DataSet dataSet : dataReadResult.getDataSets()) {
                 dumpWeekSteps(dataSet, counter);
                 counter++;
@@ -285,22 +278,24 @@ public class GoogleFitAdaptor implements IFitService{
         }
     }
 
-    public void printRecentData(DataReadResponse dataReadResult) {
+    /** Logs a record of the query results */
+    public void printMonthData(DataReadResponse dataReadResult) {
         int counter = 0;
         if (dataReadResult.getBuckets().size() > 0) {
-            Log.i(
-                    TAG, "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
+            Log.i("printMonthData",
+                    "Number of returned buckets of DataSets is: " + dataReadResult.getBuckets().size());
             for (Bucket bucket : dataReadResult.getBuckets()) {
                 List<DataSet> dataSets = bucket.getDataSets();
                 for (DataSet dataSet : dataSets) {
-                    dumpRecentSteps(dataSet, counter);
+                    dumpMonthSteps(dataSet, counter);
                     counter++;
                 }
             }
         } else if (dataReadResult.getDataSets().size() > 0) {
-            Log.i(TAG, "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
+            Log.i("printMonthData",
+                    "Number of returned DataSets is: " + dataReadResult.getDataSets().size());
             for (DataSet dataSet : dataReadResult.getDataSets()) {
-                dumpRecentSteps(dataSet, counter);
+                dumpMonthSteps(dataSet, counter);
                 counter++;
             }
         }
@@ -308,37 +303,35 @@ public class GoogleFitAdaptor implements IFitService{
 
 
     private void dumpWeekSteps(DataSet dataSet, int counter) {
-        Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
+        Log.i("dumpWeekSteps", "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
 
         for (DataPoint dp : dataSet.getDataPoints()) {
-            Log.i(TAG, "Data point:");
-            Log.i(TAG, "\tType: " + dp.getDataType().getName());
-            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+            Log.i("dumpWeekSteps", "Data point:");
+            Log.i("dumpWeekSteps", "\tType: " + dp.getDataType().getName());
+            Log.e("dumpWeekSteps", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.e("dumpWeekSteps", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
-                Log.i(TAG, "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
+                Log.i("dumpWeekSteps", "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
                 this.weekSteps[counter] = (dp.getValue(field)).asInt();
             }
         }
     }
 
-    private void dumpRecentSteps(DataSet dataSet, int counter) {
-        Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
+    private void dumpMonthSteps(DataSet dataSet, int counter) {
+        Log.i("dumpMonthSteps", "Data returned for Data type: " + dataSet.getDataType().getName());
         DateFormat dateFormat = DateFormat.getDateInstance();
         DateFormat timeFormat = DateFormat.getTimeInstance();
-        Log.wtf("size of data set", "" + dataSet.isEmpty());
-        this.recentSteps[counter] = 0;
 
         for (DataPoint dp : dataSet.getDataPoints()) {
-            Log.i(TAG, "Data point:");
-            Log.i(TAG, "\tType: " + dp.getDataType().getName());
-            Log.e("History", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            Log.e("History", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+            Log.i("dumpMonthSteps", "Data point:");
+            Log.i("dumpMonthSteps", "\tType: " + dp.getDataType().getName());
+            Log.e("dumpMonthSteps", "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.e("dumpMonthSteps", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
-                Log.i(TAG, "\tField: " + field.getName() + " Number of weekly steps " + dp.getValue(field));
-                this.recentSteps[counter] = (dp.getValue(field)).asInt();
+                Log.i("dumpMonthSteps", "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
+                this.monthSteps[counter] = (dp.getValue(field)).asInt();
             }
         }
     }
@@ -351,13 +344,6 @@ public class GoogleFitAdaptor implements IFitService{
         }
     }
 
-    /** Prints array contents for testing*/
-    public void printRecentSteps() {
-        for(int i = 0; i < recentSteps.length; i++)
-        {
-            Log.d("recentStep contents", "" + recentSteps[i] );
-        }
-    }
 
 
     /**
@@ -375,7 +361,7 @@ public class GoogleFitAdaptor implements IFitService{
             endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
         }
 
-        Log.i(TAG, "Updating the dataset in the History API.");
+        Log.i("updateData", "Updating the dataset in the History API.");
 
         DataUpdateRequest request =
                 new DataUpdateRequest.Builder()
@@ -392,9 +378,9 @@ public class GoogleFitAdaptor implements IFitService{
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     // At this point the data has been updated and can be read.
-                                    Log.i(TAG, "Data update was successful.");
+                                    Log.i("updateData", "Data update was successful.");
                                 } else {
-                                    Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+                                    Log.e("updateData", "There was a problem updating the dataset.", task.getException());
                                 }
                             }
                         });
@@ -412,7 +398,7 @@ public class GoogleFitAdaptor implements IFitService{
             endTime = dataPoint.getEndTime(TimeUnit.MILLISECONDS);
         }
 
-        Log.i(TAG, "Updating the dataset in the History API.");
+        Log.i("updateToday", "Updating the dataset in the History API.");
 
         DataUpdateRequest request =
                 new DataUpdateRequest.Builder()
@@ -429,44 +415,30 @@ public class GoogleFitAdaptor implements IFitService{
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // At this point the data has been updated and can be read.
-                            Log.i(TAG, "Data update was successful.");
+                            Log.i("updateToday", "Data update was successful.");
                         } else {
-                            Log.e(TAG, "There was a problem updating the dataset.", task.getException());
+                            Log.e("updateToday", "There was a problem updating the dataset.", task.getException());
                         }
                     }
                  });
     }
 
     private DataSet updateTodayFitnessData() {
-        Log.i(TAG, "Creating a new data update request.");
+        Log.i("updateTodayFitnessData", "Creating a new data update request.");
 
-        // [START build_update_data_request]
-        // Set a start and end time for the data that fits within the time range
-        // of the original insertion.
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        if(changeTime)
-        {
-            cal.setTimeInMillis(ProfileUI.desiredTime);
-        }else {
-            cal.setTime(now);
-        }
-        long endTime = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        long startTime = cal.getTimeInMillis();
+        long startTime = time.timeStartToday();
+        long endTime = time.timeNow();
 
         // Create a data source
         DataSource dataSource =
                 new DataSource.Builder()
                         .setAppPackageName(activity)
                         .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                        .setStreamName(TAG + " - step count")
+                        .setStreamName("updateTodayFitnessData" + " - step count")
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
-        int stepCountDelta = 500 + recentSteps[1];
+        int stepCountDelta = 500 + weekSteps[6];
         DataSet dataSet = DataSet.create(dataSource);
         // For each data point, specify a start time, end time, and the data value -- in this case,
         // the number of new steps.
@@ -484,23 +456,25 @@ public class GoogleFitAdaptor implements IFitService{
      * Used for testing
      * */
     private DataSet updateFitnessData() {
-        Log.i(TAG, "Creating a new data update request.");
+        Log.i("updateFitnessData", "Creating a new data update request.");
 
-        Calendar testCal = Calendar.getInstance();
-        Date now = new Date();
-        testCal.setTime(now);
-        long endTime = testCal.getTimeInMillis();
-        testCal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        testCal.set(Calendar.HOUR_OF_DAY, 0);
-        testCal.set(Calendar.MINUTE, 0);
-        testCal.set(Calendar.SECOND, 0);
-        long startTime = testCal.getTimeInMillis();
+//        Calendar testCal = Calendar.getInstance();
+//        Date now = new Date();
+//        testCal.setTime(now);
+//        long endTime = testCal.getTimeInMillis();
+//        testCal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+//        testCal.set(Calendar.HOUR_OF_DAY, 0);
+//        testCal.set(Calendar.MINUTE, 0);
+//        testCal.set(Calendar.SECOND, 0);
+//        long startTime = testCal.getTimeInMillis();
+        long startTime = time.timeOneWeekAgo();
+        long endTime = time.timeNow();
 
         DataSource dataSource =
                 new DataSource.Builder()
                         .setAppPackageName(activity)
                         .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                        .setStreamName(TAG + " - step count")
+                        .setStreamName("updateFitnessData" + " - step count")
                         .setType(DataSource.TYPE_RAW)
                         .build();
 
@@ -602,8 +576,10 @@ public class GoogleFitAdaptor implements IFitService{
     public int[] getWeekSteps() {
         return weekSteps;
     }
-    public int[] getRecentSteps(){
-        return recentSteps;
+    public int[] getMonthSteps(){ return monthSteps; }
+
+    public int getYesterdaySteps() {
+        return weekSteps[5];
     }
 }
 

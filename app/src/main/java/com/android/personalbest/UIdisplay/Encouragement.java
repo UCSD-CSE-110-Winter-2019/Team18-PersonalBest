@@ -41,9 +41,9 @@ public class Encouragement {
         return time;
     }
 
-    public int getPreviousDayStep() {
-        return GoogleFitAdaptor.recentSteps[0];
-    }
+//    public int getPreviousDayStep() {
+//        return GoogleFitAdaptor.recentSteps[0];
+//    }
 
 
 

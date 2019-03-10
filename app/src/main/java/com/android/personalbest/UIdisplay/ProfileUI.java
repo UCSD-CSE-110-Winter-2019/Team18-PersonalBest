@@ -179,7 +179,7 @@ public class ProfileUI extends Fragment {
             public void onClick(View view)
             {
                 gFit.updateToday();
-                gFit.printRecentSteps();
+                //gFit.printRecentSteps();
             }
         });
 
@@ -192,7 +192,7 @@ public class ProfileUI extends Fragment {
                 gFit.setIsTimeChanged(true);
                 edit_time = (EditText) getView().findViewById(R.id.edit_time);
                 desiredTime = Long.parseLong(edit_time.getText().toString());
-                gFit.readYesterdayStepData();
+                //gFit.readYesterdayStepData();
             }
         });
     }

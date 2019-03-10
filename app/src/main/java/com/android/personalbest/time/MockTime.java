@@ -46,7 +46,23 @@ public class MockTime implements ITime
         Calendar cal = Calendar.getInstance();
         Date now = new Date(mockTime);
         cal.setTime(now);
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_YEAR, -6);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
+
+    /**
+     * @return time in milliseconds one month ago from now.
+     */
+    public long timeOneMonthAgo()
+    {
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date(mockTime);
+        cal.setTime(now);
+        cal.add(Calendar.DAY_OF_YEAR, -27);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);

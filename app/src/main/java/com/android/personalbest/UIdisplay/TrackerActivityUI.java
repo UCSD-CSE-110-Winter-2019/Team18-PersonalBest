@@ -59,8 +59,8 @@ public class TrackerActivityUI extends AppCompatActivity {
         gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit.setup();
 
-        gFit.readYesterdayStepData();
-        start_step = GoogleFitAdaptor.recentSteps[1];
+        gFit.readWeeklyStepData();
+        start_step = GoogleFitAdaptor.weekSteps[6];
 
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
@@ -152,8 +152,8 @@ public class TrackerActivityUI extends AppCompatActivity {
 
                     if(gFit.getIsTimeChanged())
                     {
-                        gFit.readYesterdayStepData();
-                        curr_step = GoogleFitAdaptor.recentSteps[1];
+                        gFit.readWeeklyStepData();
+                        curr_step = GoogleFitAdaptor.weekSteps[6];
                     }else {
                         curr_step = gFit.getTotalDailySteps();
                     }
