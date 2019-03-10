@@ -22,6 +22,8 @@ import com.google.firebase.FirebaseApp;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
 
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -76,18 +78,31 @@ public class MainActivity extends AppCompatActivity
             firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
 
-        messaging = MessagingFactory.create(0, this, "s8leiucsd.eduxul078ucsd.edu");
-        messaging.setup();
-//        messaging.subscribeToNotificationsTopic();
-//        messaging.sendNotification("you've reached your goal");
-
-
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
+//        setUpMessaging();
 
 //        loadFragment(homeUI);
 
     }
+
+    public void setUpMessaging() {
+        User user = getCurrentUser();
+        List<String> friends = user.getFriends();
+
+        for (String email : friends) {
+            String chatID = firestore.getChatID(email);
+            messaging = MessagingFactory.create(0, this, chatID);
+            messaging.setup();
+            messaging.subscribeToNotificationsTopic();
+
+        }
+        messaging.addMessage("you've");
+
+//        messaging.sendNotification("you've reached your goal", this.getApplicationContext());
+    }
+
+
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {

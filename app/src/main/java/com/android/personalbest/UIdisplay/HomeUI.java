@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.User;
@@ -55,7 +57,7 @@ public class HomeUI extends Fragment {
         gFit.setup();
 
         firestore=MainActivity.getFirestore();
-        user=MainActivity.getCurrentUser();
+        user= MainActivity.getCurrentUser();
 
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);

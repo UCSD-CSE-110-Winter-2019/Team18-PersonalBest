@@ -1,25 +1,23 @@
 package com.android.personalbest.messaging;
 
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.personalbest.MainActivity;
-import com.android.personalbest.R;
-import com.android.personalbest.User;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.android.personalbest.fitness.GoogleFitAdaptor.TAG;
 
@@ -30,10 +28,12 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
     String MESSAGES_KEY = "messages";
     Activity activity;
 
+    private FirebaseFunctions mFunctions;
+
 
     public MessagingAdaptor(Activity activity, String chatID) {
         this.activity = activity;
-        DOCUMENT_KEY = chatID;
+        DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
     }
 
     public void setup() {
@@ -60,35 +60,76 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
             );
     }
 
-    public void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
 
-        String channelId = DOCUMENT_KEY;
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setContentTitle("notification")
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    public Task<String> addMessage(String text) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("text", text);
+        data.put("push", true);
 
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        mFunctions = FirebaseFunctions.getInstance();
+        Log.wtf("//////////////",mFunctions.toString());
+
+        return mFunctions
+                .getHttpsCallable("addMessage")
+                .call(data)
+                .continueWith(task -> {
+                    // This continuation runs on either success or failure, but if the task
+                    // has failed then getResult() will throw an Exception which will be
+                    // propagated down.
+                    Log.wtf("--------------",task.getResult().toString());
+                    String result = (String) task.getResult().getData();
+
+                    return result;
+                });
     }
 
+    public void sendNotification(String messageBody, Context context) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "getInstanceId failed", task.getException());
+                        return;
+                    }
 
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+
+                    // Log and toast
+                    Log.wtf("!!!!!!!!!!!",token);
+                    Toast.makeText(context, token, Toast.LENGTH_SHORT).show();
+
+                });
+
+
+
+//        String channelId = "cwguan@ucsd.edu";
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder =
+//                new NotificationCompat.Builder(this, channelId)
+//                        .setContentTitle("notification")
+//                        .setContentText(messageBody)
+//                        .setSound(defaultSoundUri);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+//
+//        Log.wtf("!!!!!!!!!!!!!!", notificationManager.toString());
+//
+//
+//        // Since android Oreo notification channel is needed.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            NotificationChannel channel = new NotificationChannel(channelId,
+//                    "goal",
+//                    NotificationManager.IMPORTANCE_DEFAULT);
+//            notificationManager.createNotificationChannel(channel);
+//            Log.wtf("@@@@@@@@@@@@@@@", channel.toString());
+//        }
+//
+//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+
+
+    }
 }

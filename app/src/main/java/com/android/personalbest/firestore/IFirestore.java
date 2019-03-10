@@ -7,11 +7,12 @@ import com.android.personalbest.MainActivity;
 import com.android.personalbest.UIdisplay.HomeUI;
 
 public interface IFirestore{
-    public void setName(String name);
-    public void setGoal(int goal);
-    public void setHeightFt(int heightFt);
-    public void setHeightIn(int heightIn);
-    public void initMessageUpdateListener(TextView chatView, String otherUserEmail);
-    public void addSentMessageToDatabase(EditText editText, String otherUserEmail);
-    public void initMainActivity(MainActivity mainActivity, HomeUI homeUI);
+    void setName(String name);
+    void setGoal(int goal);
+    void setHeightFt(int heightFt);
+    void setHeightIn(int heightIn);
+    void initMessageUpdateListener(TextView chatView, String otherUserEmail);
+    void addSentMessageToDatabase(EditText editText, String otherUserEmail);
+    void initMainActivity(MainActivity mainActivity, HomeUI homeUI);
+    String getChatID(String otherUserEmail);
 }

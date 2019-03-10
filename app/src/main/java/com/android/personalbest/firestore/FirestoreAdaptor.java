@@ -49,18 +49,20 @@ public class FirestoreAdaptor implements IFirestore {
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
-        this.userEmail = userEmail;
+        this.userEmail = "cwguan@ucsd.edu";
         this.fs = FirebaseFirestore.getInstance();
     }
 
 
     // IDs for chats between friends are generated via concatenating emails in alphabetical order
-    private String getChatID(String otherUserEmail) {
-        int comparison = this.userEmail.compareToIgnoreCase(otherUserEmail);
+    public String getChatID(String otherUserEmail) {
+        String email1 = this.userEmail.replace("@","");
+        String email2 = otherUserEmail.replace("@", "");
+        int comparison = email1.compareToIgnoreCase(email2);
 
         // If userEmail comes before otherUserEmail, compareToIgnoreCase will return -1,
         // concatenate userEmail in front of otherUserEmail
-        return comparison < 0 ? userEmail.concat(otherUserEmail) : otherUserEmail.concat(userEmail);
+        return comparison < 0 ? email1.concat(email2) : email2.concat(email1);
     }
 
 
@@ -70,18 +72,8 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     @Override
@@ -91,18 +83,8 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
 
@@ -113,18 +95,8 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
 
@@ -135,18 +107,8 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
 
@@ -200,26 +162,23 @@ public class FirestoreAdaptor implements IFirestore {
     public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        User user = document.toObject(User.class);
-                        MainActivity.setCurrentUser(user);
-                        mainActivity.loadFragment(homeUI);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User user = document.toObject(User.class);
+                    MainActivity.setCurrentUser(user);
+                    mainActivity.setUpMessaging();
+                    mainActivity.loadFragment(homeUI);
 
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "No such document");
                 }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
-
     }
 
 
