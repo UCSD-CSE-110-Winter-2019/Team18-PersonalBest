@@ -2,7 +2,6 @@ package com.android.personalbest.UIdisplay;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,8 +23,6 @@ import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.Map;
@@ -104,22 +101,15 @@ public class FriendsUI extends Fragment {
             // set some properties of rowTextView or something
             friendDisplay.setText(email);
 
-            //set id of button (to user id)
-            //friendDisplay.setId(i);
-
             // add the button to the linearlayout
             myLinearLayout.addView(friendDisplay);
-
-            // save a reference to the textview for later
-            //myFriendDisplay[i] = friendRequest;
 
             friendDisplay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view)
                 {
-                    //Launch messagingUI when user clicks on a friend
-                    Intent intent = new Intent(activity, MessagesUI.class);
-                    startActivity(intent);
+                    showFriendOptionsPopup(view, email);
+                    Log.wtf("TESTER", ""+ email);
                 }
             });
         }
@@ -249,6 +239,38 @@ public class FriendsUI extends Fragment {
         myDialog.show();
     }
 
+    /**
+     * show option to delete friend popup
+     */
+    public void showFriendOptionsPopup(View v, String username) {
+        Button deleteBtn;
+        Button goMsg;
+
+        myDialog.setContentView(R.layout.remove_or_go_to_msg);
+
+        deleteBtn = myDialog.findViewById(R.id.delete_friend_btn);
+        goMsg = myDialog.findViewById(R.id.go_msg);
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firestore.removeFriend(user, username, currentFriendsUI);
+            }
+        });
+
+        goMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Launch messagingUI when user clicks on a friend
+                Intent intent = new Intent(activity, MessagesUI.class);
+                startActivity(intent);
+            }
+        });
+
+        // show the popup
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
+    }
 
     public void userHasBeenUpdated() {
         user = MainActivity.getCurrentUser();
