@@ -27,7 +27,9 @@ import com.google.android.gms.tasks.Task;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +45,7 @@ public class GoogleFitAdaptor implements IFitService{
     private ITime time;
     public static int weekSteps[] = new int[7];
     public static int monthSteps[] = new int[28];
-    //public static int recentSteps[] = new int[2];
+    public static Map<Long, Integer> monthMap = new HashMap<>();
     public boolean changeTime = false;
 
 
@@ -332,6 +334,7 @@ public class GoogleFitAdaptor implements IFitService{
             for (Field field : dp.getDataType().getFields()) {
                 Log.i("dumpMonthSteps", "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
                 this.monthSteps[counter] = (dp.getValue(field)).asInt();
+                this.monthMap.put(dp.getStartTime(TimeUnit.MILLISECONDS), (dp.getValue(field)).asInt());
             }
         }
     }
@@ -577,6 +580,7 @@ public class GoogleFitAdaptor implements IFitService{
         return weekSteps;
     }
     public int[] getMonthSteps(){ return monthSteps; }
+    public Map<Long, Integer> getMonthMap(){return monthMap; }
 
     public int getYesterdaySteps() {
         return weekSteps[5];

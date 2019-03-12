@@ -9,9 +9,13 @@ import com.android.personalbest.Chart;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
+import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
+
+import java.util.Map;
 
 
 public class ChartMonthDisplay extends AppCompatActivity {
@@ -19,7 +23,10 @@ public class ChartMonthDisplay extends AppCompatActivity {
     private int[] total_steps;
     private int[] intentional_steps;
     private int[] incidental_steps;
+    private Map<Long, Integer> monthSteps;
     private int goal;
+    IFirestore firestore;
+    User user;
 
     public static int[] TOTAL_STEPS = new int[28];
     IFitService gFit;
@@ -30,6 +37,11 @@ public class ChartMonthDisplay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chart_month);
+
+        // Get instance of Firestore from MainActivity and get the current logged in user
+        firestore = MainActivity.getFirestore();
+        user = MainActivity.getCurrentUser();
+
         Toolbar header = findViewById(R.id.header);
 
         header.setTitle("Monthly Report");
@@ -46,11 +58,12 @@ public class ChartMonthDisplay extends AppCompatActivity {
         }
 
 
-        //gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
+//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit = FitServiceFactory.create("real", this);
-        // TODO: change to month steps
-        // TODO: fetch monthly data based on the key
         gFit.subscribeForWeeklySteps();
+        gFit.readMonthlyStepData();
+        gFit.readWeeklyStepData();
+        monthSteps = gFit.getMonthMap();
 
 //        intentional_steps = SharedPrefData.getIntentionalSteps(this);
         intentional_steps = new int[28];
