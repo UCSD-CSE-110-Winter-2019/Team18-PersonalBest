@@ -27,6 +27,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class FirestoreAdaptor implements IFirestore {
     String TEXT_KEY = "text";
     String FRIENDS_KEY = "friends";
     String PENDING_FRIENDS_KEY = "pendingFriends";
+    String INTENTIONAL_STEPS_KEY = "intentionalSteps";
 
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
@@ -67,6 +69,17 @@ public class FirestoreAdaptor implements IFirestore {
         return comparison < 0 ? userEmail.concat(otherUserEmail) : otherUserEmail.concat(userEmail);
     }
 
+    // Retrieves the timestamp of the current day at 12:00am in milliseconds
+    private long getTodayInMilliseconds() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        return cal.getTimeInMillis();
+    }
+
 
     public void setName(String name) {
         Map<String, Object> data = new HashMap<>();
@@ -77,7 +90,7 @@ public class FirestoreAdaptor implements IFirestore {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        Log.d(TAG, "Name successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -98,7 +111,7 @@ public class FirestoreAdaptor implements IFirestore {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        Log.d(TAG, "Goal successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -120,7 +133,7 @@ public class FirestoreAdaptor implements IFirestore {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        Log.d(TAG, "Height Feet successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -142,7 +155,7 @@ public class FirestoreAdaptor implements IFirestore {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                        Log.d(TAG, "Height Inch successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -298,6 +311,28 @@ public class FirestoreAdaptor implements IFirestore {
 
 
     @Override
+    public void setIntentionalSteps(User user, long intentionalSteps) {
+        String currentDayKey = Long.toString(getTodayInMilliseconds());
+        Map<String, Integer> currentIntentionalSteps = user.getIntentionalSteps();
+
+        if (!currentIntentionalSteps.containsKey(currentDayKey)) {
+            currentIntentionalSteps.put(currentDayKey, (int) intentionalSteps);
+        } else {
+            int oldNumSteps = currentIntentionalSteps.get(currentDayKey);
+            currentIntentionalSteps.put(currentDayKey, oldNumSteps + (int) intentionalSteps);
+        }
+
+        user.setIntentionalSteps(currentIntentionalSteps);
+        MainActivity.setCurrentUser(user);
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());
+        userRef.update(INTENTIONAL_STEPS_KEY, currentIntentionalSteps)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Intentional Steps successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+    }
+
+
+    @Override
     public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         DocumentReference friendRef = fs.collection(USERS_COLLECTION_KEY).document(friendEmail);
 
@@ -399,7 +434,7 @@ public class FirestoreAdaptor implements IFirestore {
                         Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
                         currentPendingFriends.put(emailToAdd, sender);
                         userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Pending Friends (Add) successfully updated!"))
                                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
                     } else {
@@ -431,7 +466,7 @@ public class FirestoreAdaptor implements IFirestore {
                         Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
                         currentPendingFriends.remove(emailToRemove);
                         userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Pending Friends (Remove) successfully updated!"))
                                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
                     } else {
@@ -464,7 +499,7 @@ public class FirestoreAdaptor implements IFirestore {
                         List<String> currentFriends = user.getFriends();
                         currentFriends.add(emailToAdd);
                         userRef.update(FRIENDS_KEY, currentFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Friends (Add) successfully updated!"))
                                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
                     } else {
