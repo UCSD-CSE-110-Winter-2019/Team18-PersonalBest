@@ -23,6 +23,8 @@ public interface IFirestore{
     public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI);
     public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI);
 
+    public void setIntentionalSteps(User user, long intentionalSteps);
+
     public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI);
     public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI);
     public void declineFriendRequest(User user, String friendEmail, FriendsUI friendsUI);

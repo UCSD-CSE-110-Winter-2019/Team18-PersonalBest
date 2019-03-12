@@ -255,6 +255,7 @@ public class FriendsUI extends Fragment {
             @Override
             public void onClick(View v) {
                 firestore.removeFriend(user, username, currentFriendsUI);
+                myDialog.dismiss();
             }
         });
 
@@ -270,6 +271,7 @@ public class FriendsUI extends Fragment {
         // show the popup
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+
     }
 
     public void userHasBeenUpdated() {
