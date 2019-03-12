@@ -15,11 +15,14 @@ import android.widget.TextView;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
+import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.fitness.FitServiceFactory;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 
 public class TrackerActivityUI extends AppCompatActivity {
     Dialog myDialog;
@@ -47,6 +50,9 @@ public class TrackerActivityUI extends AppCompatActivity {
 
     IFitService gFit;
 
+    IFirestore firestore;
+    User user;
+
 
 
 
@@ -62,6 +68,9 @@ public class TrackerActivityUI extends AppCompatActivity {
         gFit.readWeeklyStepData();
         start_step = GoogleFitAdaptor.weekSteps[6];
 
+        firestore = MainActivity.getFirestore();
+        user = MainActivity.getCurrentUser();
+
         setContentView(R.layout.activity_tracker);
         myDialog = new Dialog(this);
         real_time = findViewById(R.id.time_elapsed);
@@ -75,7 +84,8 @@ public class TrackerActivityUI extends AppCompatActivity {
         timer = new TrackTime();
         timer.execute("0");
 
-        height_inch = SharedPrefData.getHeightFt(this)*12 + SharedPrefData.getHeightIn(this);
+//        height_inch = SharedPrefData.getHeightFt(this)*12 + SharedPrefData.getHeightIn(this);
+        height_inch = (user.getHeightIn() * 12) + user.getHeightIn();
 
         ((TextView)findViewById(R.id.steps)).setText(Long.toString(curr_step));
 
@@ -86,7 +96,9 @@ public class TrackerActivityUI extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                display_total_steps = ((TextView)findViewById(R.id.steps)).getText().toString();
-                SharedPrefData.saveIntentionalSteps(context, (int) difference);
+//                SharedPrefData.saveIntentionalSteps(context, (int) difference);
+                // Update current user & Firestore with the activity result
+                firestore.setIntentionalSteps(user, difference);
                 ShowPopup(view);
             }
         });
