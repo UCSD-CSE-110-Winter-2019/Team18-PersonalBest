@@ -59,7 +59,6 @@ public class FirestoreAdaptor implements IFirestore {
         this.fs = FirebaseFirestore.getInstance();
     }
 
-
     // IDs for chats between friends are generated via concatenating emails in alphabetical order
     private String getChatID(String otherUserEmail) {
         int comparison = this.userEmail.compareToIgnoreCase(otherUserEmail);
@@ -79,7 +78,6 @@ public class FirestoreAdaptor implements IFirestore {
         cal.set(year, month, date);
         return cal.getTimeInMillis();
     }
-
 
     public void setName(String name) {
         Map<String, Object> data = new HashMap<>();
@@ -122,7 +120,6 @@ public class FirestoreAdaptor implements IFirestore {
                 });
     }
 
-
     @Override
     public void setHeightFt(int heightFt) {
         Map<String, Object> data = new HashMap<>();
@@ -144,7 +141,6 @@ public class FirestoreAdaptor implements IFirestore {
                 });
     }
 
-
     @Override
     public void setHeightIn(int heightIn) {
         Map<String, Object> data = new HashMap<>();
@@ -165,7 +161,6 @@ public class FirestoreAdaptor implements IFirestore {
                     }
                 });
     }
-
 
     // Adds listener for any new messages and appends to the given TextView
     public void initMessageUpdateListener(TextView chatView, String otherUserEmail) {
@@ -197,7 +192,6 @@ public class FirestoreAdaptor implements IFirestore {
                 });
 
     }
-
 
     public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
         CollectionReference chat = fs.collection(CHATS_COLLECTION_KEY).document(getChatID(otherUserEmail)).collection(MESSAGES_KEY);
@@ -264,7 +258,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
         Log.wtf(TAG, "In getToKnowYouCheckIfUserExists");
@@ -289,7 +282,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
         fs.collection(USERS_COLLECTION_KEY).document(user.getEmail()).set(user)
@@ -308,7 +300,6 @@ public class FirestoreAdaptor implements IFirestore {
                     }
                 });
     }
-
 
     @Override
     public void setIntentionalSteps(User user, long intentionalSteps) {
@@ -369,7 +360,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         // Update UI for the current user
@@ -395,7 +385,6 @@ public class FirestoreAdaptor implements IFirestore {
         addUserToFriends(friendEmail, user.getEmail());
     }
 
-
     @Override
     public void declineFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         // Update UI for the current user
@@ -413,6 +402,22 @@ public class FirestoreAdaptor implements IFirestore {
         removeUserFromPendingFriends(friendEmail, user.getEmail());
     }
 
+    @Override
+    public void removeFriend(User user, String friendEmail, FriendsUI friendsUI) {
+        // update UI for current user
+        List<String> currentFriends = user.getFriends();
+        currentFriends.remove(friendEmail);
+        user.setFriends(currentFriends);
+
+        MainActivity.setCurrentUser(user);
+        friendsUI.userHasBeenUpdated();
+
+        Toast.makeText(friendsUI.getActivity(), friendEmail + " has been removed", Toast.LENGTH_SHORT).show();
+
+        //Remove each other from respective friends lists
+        removeUserFromFriendsList(user.getEmail(), friendEmail);
+        removeUserFromFriendsList(friendEmail, user.getEmail());
+    }
 
     // Adds emailToAdd to the pendingList of user
     // sender is true if user is the one who sent the friend request
@@ -447,7 +452,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     // Removes emailToRemove from the pendingFriends of user
     @Override
     public void removeUserFromPendingFriends(String user, String emailToRemove) {
@@ -479,6 +483,35 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
+    // Removes emailToRemove from the pendingFriends of user
+    @Override
+    public void removeUserFromFriendsList(String user, String emailToRemove) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+
+                        List<String> currentFriends = user.getFriends();
+                        currentFriends.remove(emailToRemove);
+                        userRef.update(FRIENDS_KEY, currentFriends)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                    } else {
+                        Log.d(TAG, "No user with email " + user + " in database");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
 
     // Adds emailToAdd to user's friends
     @Override

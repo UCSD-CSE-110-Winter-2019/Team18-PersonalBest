@@ -164,5 +164,15 @@ public class DisplayMessagesFirestoreTest {
         public void addUserToFriends(String user, String emailToAdd) {
 
         }
+
+        @Override
+        public void removeUserFromFriendsList(String user, String emailToRemove) {
+
+        }
+
+        @Override
+        public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
+
+        }
     }
 }
