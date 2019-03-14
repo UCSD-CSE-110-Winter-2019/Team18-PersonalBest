@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
-import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
@@ -142,6 +141,7 @@ public class HomeUI extends Fragment {
 
         Encouragement e =new Encouragement(activity);
         e.showChangeGoal(user);
+
     }
 
 
@@ -218,6 +218,8 @@ public class HomeUI extends Fragment {
 
             if(Integer.parseInt(result)==5){
                 show();
+
+
             }
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);

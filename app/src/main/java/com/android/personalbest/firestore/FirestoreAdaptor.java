@@ -171,7 +171,6 @@ public class FirestoreAdaptor implements IFirestore {
                     MainActivity.setCurrentUser(user);
                     mainActivity.setUpMessaging();
                     mainActivity.loadFragment(homeUI);
-
                 } else {
                     Log.d(TAG, "No such document");
                 }

@@ -1,6 +1,10 @@
 package com.android.personalbest;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.android.personalbest.UIdisplay.HistoryFragment;
 import com.android.personalbest.UIdisplay.FriendsFragment;
@@ -41,7 +46,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         FirebaseApp.initializeApp(this);
+
+
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
         // works correctly with the right associations
 //        String TAG = HomeUI.class.getName();
@@ -80,9 +88,10 @@ public class MainActivity extends AppCompatActivity
 
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
-//        setUpMessaging();
 
 //        loadFragment(homeUI);
+
+        starter(findViewById(R.id.content));
 
     }
 
@@ -97,10 +106,11 @@ public class MainActivity extends AppCompatActivity
             messaging.subscribeToNotificationsTopic();
 
         }
-        messaging.addMessage("you've");
+//        messaging.addMessage("you've");
 
 //        messaging.sendNotification("you've reached your goal", this.getApplicationContext());
     }
+
 
 
 
@@ -152,5 +162,10 @@ public class MainActivity extends AppCompatActivity
 
     public static void setCurrentUser(User user) {
         currentUser = user;
+    }
+
+    public void starter(View view) {
+        Intent intent = new Intent(MainActivity.this, FitnessService.class);
+        startService(intent);
     }
 }
