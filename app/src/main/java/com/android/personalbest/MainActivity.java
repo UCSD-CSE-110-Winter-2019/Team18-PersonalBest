@@ -36,6 +36,7 @@ import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -51,10 +52,11 @@ public class MainActivity extends AppCompatActivity
     String COLLECTION_KEY = "chats";
     String DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
     String MESSAGES_KEY = "messages";
-
+    public static MainActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setActivity();
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
@@ -135,7 +137,15 @@ public class MainActivity extends AppCompatActivity
         return loadFragment(fragment);
     }
 
-
+    public static MainActivity getMainActivity(){
+        return activity;
+    }
+    public Calendar getCalendar(){
+        return Calendar.getInstance();
+    }
+    public void setActivity(){
+        activity=this;
+    }
     public static IFirestore getFirestore() {
         return firestore;
     }

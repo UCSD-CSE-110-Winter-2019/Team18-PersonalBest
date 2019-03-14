@@ -34,7 +34,7 @@ public class Encouragement {
     }
 
     public String getTime() {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = MainActivity.getMainActivity().getCalendar();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         time = sdf.format(cal.getTime());
         Log.wtf("time", time);

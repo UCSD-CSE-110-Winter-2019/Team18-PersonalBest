@@ -25,7 +25,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,9 +156,6 @@ public class MainActivityEspressoTest {
     public void testReachGoalPopup(){
 
         mActivityTestRule.launchActivity(intent);
-
-        //CountingIdlingResource componentIdlingResource = MainActivity.getResource();
-        //IdlingRegistry.getInstance().register(componentIdlingResource);
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
@@ -185,7 +181,7 @@ public class MainActivityEspressoTest {
         current_goal.check(matches(withText("2500")));
 
     }
-    private class TestFirestore implements IFirestore {
+    public class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
         private User user;

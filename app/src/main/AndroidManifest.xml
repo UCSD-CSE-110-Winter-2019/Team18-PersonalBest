@@ -34,7 +34,7 @@
             android:name=".UIdisplay.TrackerActivityUI"
             android:label="TrackerActivity" />
         <activity android:name=".UIdisplay.GetToKnowYouUI" />
-
+        <activity android:name=".mockTimeTest$testMainActivity" />
     </application>
 
 </manifest>
