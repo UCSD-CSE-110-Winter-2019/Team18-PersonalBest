@@ -60,4 +60,12 @@ public class TimeAdapter implements ITime
         cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
+    public Date getTime(){
+        return Calendar.getInstance().getTime();
+    }
+
+    @Override
+    public void setTime(String date) {
+
+    }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -19,6 +20,8 @@ import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
+import com.android.personalbest.time.ITime;
+import com.android.personalbest.time.MockTime;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,22 +38,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertTrue;
 
 @LargeTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class mockTimeTest {
     Intent intent;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     TestFitService testFitService;
+    MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
 
     @Rule
-    public ActivityTestRule<testMainActivity> mActivityTestRule = new ActivityTestRule<>(testMainActivity.class
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
             ,true,
             false);
-
     @Before
     public void setUp() {
         intent=new Intent();
@@ -63,31 +70,52 @@ public class mockTimeTest {
             }
         });
         testFitService=new TestFitService(mActivityTestRule.getActivity());
-        testFitService.setTotalDailySteps(200);
+        testFitService.setTotalDailySteps(500);
+        mockTime = new MockTime();
+        mockTime.setTime("2018-03-18 20:00:00");
     }
 
     @Test
     public void testTime(){
         mActivityTestRule.launchActivity(intent);
+//        mockCal=Mockito.mock(Calendar.class);
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        Date d=new Date();
+//        try {
+//            d = sf.parse("2018-03-18 20:00:00");
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        Mockito.when(mockCal.getTime()).thenReturn(d);
+//        long a=2;
+//        Mockito.when(mockCal.getTimeInMillis()).thenReturn(a);
+//        mActivityTestRule.getActivity().setCalendar(mockCal);
         Encouragement encouragement=new Encouragement(mActivityTestRule.getActivity());
         assertTrue(encouragement.getTime().equals("20:00:00"));
+        ViewInteraction popup = onView(
+                allOf(withId(R.id.title)));
+        popup.check(matches(withText("BRAVO!")));
     }
-    public class testMainActivity extends MainActivity{
-        @Mock
-        Calendar mockCal;
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        public Calendar getCalendar(Calendar cal){
-            mockCal=Mockito.mock(Calendar.class);
-            Date d=new Date();
-            try {
-                d = sf.parse("2018-03-18 20:00:00");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Mockito.when(mockCal.getTime()).thenReturn(d);
-            return mockCal;
-        }
-    }
+//    public class TestMainActivity extends MainActivity{
+//        @Mock
+//        Calendar mockCal;
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        public TestMainActivity(){
+//
+//        }
+//        public Calendar getCalendar(){
+//            mockCal=Mockito.mock(Calendar.class);
+//            Date d=new Date();
+//            try {
+//                d = sf.parse("2018-03-18 20:00:00");
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//            Mockito.when(mockCal.getTime()).thenReturn(d);
+//            return mockCal;
+//        }
+//    }
+
     private class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";

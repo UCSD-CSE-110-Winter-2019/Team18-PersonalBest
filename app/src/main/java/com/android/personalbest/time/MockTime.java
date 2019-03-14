@@ -1,16 +1,20 @@
 package com.android.personalbest.time;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class MockTime implements ITime
 {
     private long mockTime;
+    public static String time;
 
     /**
      * Constructor - Initialize the mock time passed in by tester
      * Pass in time in seconds then convert to milliseconds
      */
+    public MockTime(){}
     MockTime(long mockTime)
     {
         this.mockTime = mockTime;
@@ -67,5 +71,18 @@ public class MockTime implements ITime
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
+    }
+    public Date getTime(){
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date d=new Date();
+        try {
+            d = sf.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return d;
+    }
+    public void setTime(String date){
+        time=date;
     }
 }

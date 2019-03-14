@@ -20,6 +20,8 @@ import com.android.personalbest.UIdisplay.HistoryFragment;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
+import com.android.personalbest.time.ITime;
+import com.android.personalbest.time.TimeFactory;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.FirebaseApp;
 
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     String DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
     String MESSAGES_KEY = "messages";
     public static MainActivity activity;
+    public static ITime time;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity
         args = new Bundle();
         args.putString("key", key);
         homeUI.setArguments(args);
-
+        if(key==null)
+            key="";
+        setCalendar(TimeFactory.create(key));
 
         String email="testemail";
         if (key == null || (key != null && !key.equals("test"))) {
@@ -140,8 +145,9 @@ public class MainActivity extends AppCompatActivity
     public static MainActivity getMainActivity(){
         return activity;
     }
-    public Calendar getCalendar(){
-        return Calendar.getInstance();
+    public void setCalendar(ITime itime) {time=itime;}
+    public static ITime getITime(){
+        return time;
     }
     public void setActivity(){
         activity=this;

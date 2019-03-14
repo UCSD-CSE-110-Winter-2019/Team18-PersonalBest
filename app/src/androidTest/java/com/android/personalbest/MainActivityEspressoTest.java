@@ -19,6 +19,7 @@ import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
+import com.android.personalbest.time.MockTime;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,9 +45,8 @@ import static org.hamcrest.Matchers.is;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityEspressoTest {
     Intent intent;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
     TestFitService testFitService;
+    MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
 
     @Rule
@@ -67,6 +67,8 @@ public class MainActivityEspressoTest {
         });
         testFitService=new TestFitService(mActivityTestRule.getActivity());
         testFitService.setTotalDailySteps(200);
+        mockTime = new MockTime();
+        mockTime.setTime("2018-03-18 21:00:00");
 
     }
     @Test

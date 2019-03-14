@@ -45,7 +45,7 @@ public class TestFitService implements IFitService {
     public int[] getWeekSteps() {
         int[] weekStep= new int[7];
         for(int i=0;i<7;i++){
-            weekStep[i]=100;
+            weekStep[i]=0;
         }
         return weekStep;
     }

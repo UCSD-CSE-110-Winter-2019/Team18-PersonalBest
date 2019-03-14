@@ -193,7 +193,7 @@ public class HomeUI extends Fragment {
                     return("5");
                 }
 
-                Log.d("time", en.getTime());
+                Log.wtf("time", en.getTime());
 
                 // Checks for displaying encouragement at 8pm every night
                 numStepsOver = calculateImprovementInterval((int) updated_steps, GoogleFitAdaptor.weekSteps[5]);

@@ -1,5 +1,7 @@
 package com.android.personalbest.time;
 
+import java.util.Date;
+
 public interface ITime
 {
     /**
@@ -21,4 +23,7 @@ public interface ITime
      * @return time in milliseconds one month ago from now.
      */
     long timeOneMonthAgo();
+
+    Date getTime();
+    void setTime(String date);
 }
