@@ -10,8 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
-import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 
 import java.text.SimpleDateFormat;
@@ -40,14 +41,12 @@ public class Encouragement {
         return time;
     }
 
-    public int getPreviousDayStep() {
-        return GoogleFitAdaptor.recentSteps[0];
-    }
+//    public int getPreviousDayStep() {
+//        return GoogleFitAdaptor.recentSteps[0];
+//    }
 
 
-    public void setGoal(int goal){
-        SharedPrefData.setGoal(HomeUI.ct, goal);
-    }
+
 
     // call the set goal function from GoogleFitAdaptor class
 //    public static void incGoal(int inc) {
@@ -57,7 +56,7 @@ public class Encouragement {
 //    }
 
 
-     public void showChangeGoal () {
+     public void showChangeGoal (User user) {
 
          myDialog = new Dialog(activity);
          myDialog.setContentView(R.layout.activity_encouragement_reachgoal);
@@ -75,13 +74,15 @@ public class Encouragement {
 
          // Displays the correct goal in pop-up
          TextView currentGoalView = myDialog.findViewById(R.id.current_goal);
-         currentGoalView.setText(Integer.toString(SharedPrefData.getGoal(HomeUI.ct)));
+         currentGoalView.setText(Integer.toString(user.getGoal()));
 
          incGoal.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
                  myDialog.dismiss();
-                 setGoal(500+SharedPrefData.getGoal(HomeUI.ct));
+                 int cur_goal=500+user.getGoal();
+                 user.setGoal(cur_goal);
+                 MainActivity.getFirestore().setGoal(cur_goal);
                  HomeUI.async();
              }
          });

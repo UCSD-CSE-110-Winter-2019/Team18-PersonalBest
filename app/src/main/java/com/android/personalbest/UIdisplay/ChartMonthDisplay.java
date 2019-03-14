@@ -46,7 +46,8 @@ public class ChartMonthDisplay extends AppCompatActivity {
         }
 
 
-        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
+        //gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
+        gFit = FitServiceFactory.create("real", this);
         // TODO: change to month steps
         // TODO: fetch monthly data based on the key
         gFit.subscribeForWeeklySteps();

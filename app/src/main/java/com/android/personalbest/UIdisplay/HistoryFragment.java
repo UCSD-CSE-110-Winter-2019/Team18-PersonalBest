@@ -15,17 +15,20 @@ import com.android.personalbest.Chart;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.User;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 
-public class HistoryFragment extends Fragment {
+import static com.android.personalbest.UIdisplay.HomeUI.user;
+
+public class HistoryFragment extends Fragment{
     private final int NUM_DAYS_IN_WEEK = 7;
     private int[] total_steps;
     private int[] intentional_steps;
     private int[] incidental_steps;
     private int goal;
-
+    User user;
 
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
@@ -38,7 +41,8 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
-        goal = SharedPrefData.getGoal(this.getActivity());
+        user=MainActivity.getCurrentUser();
+        goal = user.getGoal();
         incidental_steps = new int[NUM_DAYS_IN_WEEK];
         calculateIncidentalSteps();
         return inflater.inflate(R.layout.fragment_history, null);
@@ -56,7 +60,8 @@ public class HistoryFragment extends Fragment {
         displayStepGoal();
         displayIntentionalSteps();
 
-        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
+        gFit = FitServiceFactory.create("real", this.getActivity());
         gFit.subscribeForWeeklySteps();
 
         Button month_chart = getView().findViewById(R.id.monthly_chart);
@@ -107,7 +112,5 @@ public class HistoryFragment extends Fragment {
             incidental_steps[i] = numIncidentalSteps;
         }
     }
-
-
 
 }

@@ -1,5 +1,6 @@
 package com.android.personalbest.UIdisplay;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,13 +12,18 @@ import android.widget.Button;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.SharedPrefData;
+import com.android.personalbest.firestore.FirestoreAdaptor;
+import com.android.personalbest.firestore.FirestoreFactory;
+import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.signin.GoogleSignAndOut;
 import com.android.personalbest.signin.ISignIn;
 import com.android.personalbest.signin.SignInFactory;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 
 /**
  * A login screen that offers login via email/password.
@@ -29,6 +35,11 @@ public class LoginUI extends AppCompatActivity {
     String TAG = LoginUI.class.getName();
     private static int RC_SIGN_IN = RC_SIGN_IN_KEY;
 
+    IFirestore firestore;
+    String email = "login@login.com";
+    public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
+    public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
+
 
     /**
      * Begins at the start of the Login Activity to see if user has an account already.
@@ -38,6 +49,24 @@ public class LoginUI extends AppCompatActivity {
     {
         super.onStart();
         gSignInAndOut = SignInFactory.create(MainActivity.signin_indicator,this, TAG);
+
+        FirebaseApp.initializeApp(this);
+
+        // Determine what implementation of IFirestore to use
+        String firestoreKey = getIntent().getStringExtra(FIRESTORE_SERVICE_KEY);
+        if (firestoreKey == null) {
+            FirestoreFactory.put(FIRESTORE_ADAPTOR_KEY, new FirestoreFactory.BluePrint() {
+                @Override
+                public IFirestore create(Activity activity, String userEmail) {
+                    return new FirestoreAdaptor(activity, userEmail);
+                }
+            });
+            // Default Firestore implementation using our adaptor
+            firestore = new FirestoreAdaptor(this, email);
+        } else {
+            firestore = FirestoreFactory.create(firestoreKey, this, email);
+        }
+
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null and user can sign in.
@@ -63,15 +92,8 @@ public class LoginUI extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             if ( gSignInAndOut.handleSignInResult(task) )
             {
-                SharedPrefData.setAccountId(this, GoogleSignIn.getLastSignedInAccount(this).getId());
-                // Checks if users sign-in on their first use without creating an account first,
-                // redirects them to collect info such as their name and height
-                if (SharedPrefData.userSharedPrefExists(this.getApplicationContext())) {
-                    launchHomeScreenActivity();
-                } else {
-                    launchGetToKnowYouActivity();
-                }
-
+                // If the user already has an account, goes to MainActivity; otherwise, goes to GetToKnowYou
+                firestore.loginCheckIfUserExists(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail(), this);
             }
         }
     }
