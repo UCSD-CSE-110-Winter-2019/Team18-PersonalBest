@@ -79,20 +79,7 @@ public class ProfileUI extends Fragment {
 
         nametext=(TextView)getView().findViewById(R.id.user_txt);
 
-<<<<<<< HEAD
-        String name= SharedPrefData.getName(this.getContext());
-        int heightfeet=SharedPrefData.getHeightFt(this.getContext());
-        int heightinch=SharedPrefData.getHeightIn(this.getContext());
-        TextView nametext=(TextView)getView().findViewById(R.id.user_txt);
-//        nametext.setText(name);
-//        firestore.displayName(nametext);
-
-        nametext.setText(firestore.displayName());
-
-        //edit height and goal
-=======
         // Initialize all the views & display correct values
->>>>>>> 805a9ab97b40503b74b4918226d357917460d697
         heightft=(TextView)getView().findViewById(R.id.current_ft);
         heightin=(TextView)getView().findViewById(R.id.current_in);
         feet_edit=(EditText) getView().findViewById(R.id.ft_edit);

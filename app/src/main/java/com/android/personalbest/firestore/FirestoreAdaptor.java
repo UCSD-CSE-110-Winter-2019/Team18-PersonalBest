@@ -8,10 +8,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import static android.content.ContentValues.TAG;
 
 
 public class FirestoreAdaptor implements IFirestore {
@@ -88,12 +93,7 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Name successfully updated!");
-                    }
-                })
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Name successfully updated!"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -189,7 +189,6 @@ public class FirestoreAdaptor implements IFirestore {
                             sb.append("---\n");
                         }
 
-
                         chatView.append(sb.toString());
                     }
                 });
@@ -198,6 +197,7 @@ public class FirestoreAdaptor implements IFirestore {
 
     public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
         CollectionReference chat = fs.collection(CHATS_COLLECTION_KEY).document(getChatID(otherUserEmail)).collection(MESSAGES_KEY);
+
 
         Map<String, String> newMessage = new HashMap<>();
         newMessage.put(FROM_EMAIL_KEY, userEmail);
@@ -210,6 +210,7 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
+    /* ****************************** Activity ********************************************** */
     @Override
     public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
@@ -326,6 +327,8 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
 
+
+    /* *********************************** Friend ************************************************ */
     @Override
     public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         DocumentReference friendRef = fs.collection(USERS_COLLECTION_KEY).document(friendEmail);
