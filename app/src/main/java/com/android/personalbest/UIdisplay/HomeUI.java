@@ -178,6 +178,7 @@ public class HomeUI extends Fragment {
 
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
+                gFit.readMonthlyStepData();
                 gFit.getYesterdaySteps();
 
                 try {
