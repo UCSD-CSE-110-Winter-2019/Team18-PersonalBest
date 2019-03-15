@@ -230,8 +230,6 @@ public class HomeUI extends Fragment {
             display_goal.setText(Integer.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
 
-            Log.wtf("TESTING", "" + gFit.getTotalDailySteps() );
-
             for(int i = 0; i < gFit.getWeekSteps().length; i++)
             {
 

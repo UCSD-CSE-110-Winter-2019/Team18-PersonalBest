@@ -2,6 +2,7 @@ package com.android.personalbest.time;
 
 public interface ITime
 {
+    int SECONDS_IN_DAY = 86400000;
     /**
      * @return current time in milliseconds
      */
@@ -21,4 +22,9 @@ public interface ITime
      * @return time in milliseconds one month ago from now.
      */
     long timeOneMonthAgo();
+
+    /**
+     * @return start time of some day
+     */
+    long getDay(int i);
 }
