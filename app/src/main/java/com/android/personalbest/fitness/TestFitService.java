@@ -55,5 +55,5 @@ public class TestFitService implements IFitService {
     }
 
     @Override
-    public Map<Long, Integer> getMonthMap() { return null; }
+    public Map<String, Integer> getMonthMap() { return null; }
 }

@@ -21,4 +21,9 @@ public interface ITime
      * @return time in milliseconds one month ago from now.
      */
     long timeOneMonthAgo();
+
+    /**
+     * @return start time of some day
+     */
+    long getDay(int i);
 }

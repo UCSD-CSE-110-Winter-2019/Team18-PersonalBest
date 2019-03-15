@@ -60,4 +60,27 @@ public class TimeAdapter implements ITime
         cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
+
+    /**
+     * @return start time of some day
+     */
+    public long getDay(int i)
+    {
+        int secondsInDay = i * 86400000;
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        return cal.getTimeInMillis() - secondsInDay;
+//        Calendar cal = Calendar.getInstance();
+//        Date now = new Date();
+//        cal.setTime(now);
+//        cal.add(Calendar.DAY_OF_YEAR, -i);
+//        cal.set(Calendar.HOUR_OF_DAY, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        return cal.getTimeInMillis();
+    }
 }

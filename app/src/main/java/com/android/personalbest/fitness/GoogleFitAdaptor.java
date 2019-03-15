@@ -45,7 +45,7 @@ public class GoogleFitAdaptor implements IFitService{
     private ITime time;
     public static int weekSteps[] = new int[7];
     public static int monthSteps[] = new int[28];
-    public static Map<Long, Integer> monthMap = new HashMap<>();
+    public static Map<String, Integer> monthMap = new HashMap<>();
     public boolean changeTime = false;
 
 
@@ -132,7 +132,6 @@ public class GoogleFitAdaptor implements IFitService{
                                         dataSet.isEmpty()
                                                 ? 0
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
-                                Log.i("readDailyStepData", "Total daily steps: " + total);
                                 setTotalDailySteps(total);
                             }
                         })
@@ -181,7 +180,7 @@ public class GoogleFitAdaptor implements IFitService{
                         new OnSuccessListener<DataReadResponse>() {
                             @Override
                             public void onSuccess(DataReadResponse dataReadResponse) {
-                                printWeekData(dataReadResponse);
+                                printMonthData(dataReadResponse);
                             }
                         })
                 .addOnFailureListener(
@@ -334,7 +333,7 @@ public class GoogleFitAdaptor implements IFitService{
             for (Field field : dp.getDataType().getFields()) {
                 Log.i("dumpMonthSteps", "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
                 this.monthSteps[counter] = (dp.getValue(field)).asInt();
-                this.monthMap.put(dp.getStartTime(TimeUnit.MILLISECONDS), (dp.getValue(field)).asInt());
+                this.monthMap.put(Long.toString( dp.getStartTime(TimeUnit.MILLISECONDS) ), (dp.getValue(field)).asInt());
             }
         }
     }
@@ -580,7 +579,7 @@ public class GoogleFitAdaptor implements IFitService{
         return weekSteps;
     }
     public int[] getMonthSteps(){ return monthSteps; }
-    public Map<Long, Integer> getMonthMap(){return monthMap; }
+    public Map<String, Integer> getMonthMap(){return monthMap; }
 
     public int getYesterdaySteps() {
         return weekSteps[5];

@@ -22,7 +22,7 @@ public interface IFitService {
     void setIsTimeChanged(boolean timeChanged);
     int[] getWeekSteps();
     int[] getMonthSteps();
-    Map<Long, Integer> getMonthMap();
+    Map<String, Integer> getMonthMap();
     int getYesterdaySteps();
     Task<Void> updateData();
 }

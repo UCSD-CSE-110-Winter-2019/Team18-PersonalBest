@@ -68,4 +68,19 @@ public class MockTime implements ITime
         cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
+
+    /**
+     * @return start time of some day
+     */
+    public long getDay(int i)
+    {
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date(mockTime);
+        cal.setTime(now);
+        cal.add(Calendar.DAY_OF_YEAR, -i);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        return cal.getTimeInMillis();
+    }
 }
