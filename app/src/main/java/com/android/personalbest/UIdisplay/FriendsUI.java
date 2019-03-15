@@ -91,6 +91,12 @@ public class FriendsUI extends Fragment {
         friendsTextView.setText("Friends");
         friendsTextView.setTextSize(TEXTVIEW_SIZE);
         myLinearLayout.addView(friendsTextView);
+        if(friendsList==null||friendsList.isEmpty()){
+            TextView nofriends = new TextView(activity);
+            nofriends.setText("No Friends");
+            nofriends.setTextSize(TEXTVIEW_SIZE);
+            myLinearLayout.addView(nofriends);
+        }
 
         //dynamically add friends
         for (String email : friendsList )
@@ -118,7 +124,6 @@ public class FriendsUI extends Fragment {
 
     public void createPendingFriendsView() {
         friendRequestList = user.getPendingFriends();
-
         //Add TextView for Pending Friend Requests
         TextView friendsReqTextView = new TextView(activity);
         friendsReqTextView.setText("Friend Requests");
