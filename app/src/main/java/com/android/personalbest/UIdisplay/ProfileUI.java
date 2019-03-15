@@ -79,7 +79,6 @@ public class ProfileUI extends Fragment {
 
         nametext=(TextView)getView().findViewById(R.id.user_txt);
 
-
         // Initialize all the views & display correct values
         heightft=(TextView)getView().findViewById(R.id.current_ft);
         heightin=(TextView)getView().findViewById(R.id.current_in);
@@ -180,7 +179,7 @@ public class ProfileUI extends Fragment {
             public void onClick(View view)
             {
                 gFit.updateToday();
-                gFit.printRecentSteps();
+                //gFit.printRecentSteps();
             }
         });
 
@@ -193,7 +192,7 @@ public class ProfileUI extends Fragment {
                 gFit.setIsTimeChanged(true);
                 edit_time = (EditText) getView().findViewById(R.id.edit_time);
                 desiredTime = Long.parseLong(edit_time.getText().toString());
-                gFit.readYesterdayStepData();
+                //gFit.readYesterdayStepData();
             }
         });
     }

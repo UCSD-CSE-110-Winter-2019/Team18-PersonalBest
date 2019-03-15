@@ -18,8 +18,6 @@ public class TestFitService implements IFitService {
     public void subscribeForDailySteps(){}
     public void subscribeForWeeklySteps(){}
     public void readDailyStepData(){}
-    public void readYesterdayStepData(){
-    }
     public void readWeeklyStepData(){}
     public void updateToday(){}
     public void setTotalDailySteps(long total){TotalDailySteps=total;}
@@ -27,19 +25,20 @@ public class TestFitService implements IFitService {
         return TotalDailySteps;
     }
     public void printWeekData(DataReadResponse dataReadResult){}
-    public void printRecentSteps(){}
     public boolean getIsTimeChanged(){
         return false;
     }
     public void setIsTimeChanged(boolean timeChanged){}
+    public Task<Void> updateData(){return null;}
+    public int getYesterdaySteps(){return 0;}
 
     @Override
-    public int[] getRecentSteps() {
-        int[] recentStep= new int[2];
-        for(int i=0;i<2;i++){
-            recentStep[i]=100;
+    public int[] getMonthSteps() {
+        int[] monthStep= new int[28];
+        for(int i=0; i<monthStep.length; i++){
+            monthStep[i]=100;
         }
-        return recentStep;
+        return monthStep;
     }
 
     @Override

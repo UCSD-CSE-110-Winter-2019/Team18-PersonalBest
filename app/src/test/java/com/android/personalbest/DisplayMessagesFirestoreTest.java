@@ -5,7 +5,10 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.personalbest.UIdisplay.FriendsUI;
+import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
+import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 
@@ -112,5 +115,64 @@ public class DisplayMessagesFirestoreTest {
 
         }
 
+        @Override
+        public void loginCheckIfUserExists(String otherUserEmail, LoginUI loginUI) {
+
+        }
+
+        @Override
+        public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
+
+        }
+
+        @Override
+        public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
+
+        }
+
+        @Override
+        public void setIntentionalSteps(User user, long intentionalSteps) {
+
+        }
+
+        @Override
+        public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+
+        }
+
+        @Override
+        public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+
+        }
+
+        @Override
+        public void declineFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
+
+        }
+
+        @Override
+        public void addUserToPendingFriends(String user, String emailToAdd, boolean sender) {
+
+        }
+
+        @Override
+        public void removeUserFromPendingFriends(String user, String emailToRemove) {
+
+        }
+
+        @Override
+        public void addUserToFriends(String user, String emailToAdd) {
+
+        }
+
+        @Override
+        public void removeUserFromFriendsList(String user, String emailToRemove) {
+
+        }
+
+        @Override
+        public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
+
+        }
     }
 }

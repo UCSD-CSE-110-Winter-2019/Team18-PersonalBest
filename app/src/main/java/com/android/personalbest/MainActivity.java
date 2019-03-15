@@ -14,8 +14,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.HistoryFragment;
-import com.android.personalbest.UIdisplay.FriendsFragment;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.navigation_friends:
-                fragment = new FriendsFragment();
+                fragment = new FriendsUI();
                 break;
         }
         fragment.setArguments(args);
