@@ -25,12 +25,12 @@ import java.util.Map;
 
 public class ChartMonthDisplay extends AppCompatActivity {
     private final int NUM_DAYS_IN_MONTH = 28;
+    private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
     private int[] total_steps;
     private Map<String, Integer> intentional_stepsMap;
     private int[] intentional_steps;
     private int[] incidental_steps;
     private Map<String, Integer> userMonthSteps;
-    private Map<String, Integer> monthStepsDisplay;
     private int goal;
     IFirestore firestore;
     User user;
@@ -56,11 +56,12 @@ public class ChartMonthDisplay extends AppCompatActivity {
         intentional_steps = new int[NUM_DAYS_IN_MONTH];
         incidental_steps = new int[NUM_DAYS_IN_MONTH];
 
+        //Get month step data from user
         userMonthSteps = user.getTotalSteps();
         intentional_stepsMap = user.getIntentionalSteps();
-        monthStepsDisplay = new HashMap<>();
         goal = user.getGoal();
 
+        //Create Chart UI
         Toolbar header = findViewById(R.id.header);
 
         header.setTitle("Monthly Report");
@@ -77,24 +78,25 @@ public class ChartMonthDisplay extends AppCompatActivity {
         }
 
 
+        //Initialize gFit
 //        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit = FitServiceFactory.create("real", this);
-        gFit.subscribeForWeeklySteps();
-        gFit.readMonthlyStepData();
-        gFit.readWeeklyStepData();
+
+        //Get intentional and incidental steps
+        intentional_steps = iin.getIntArrayExtra(MONTH_INTENTIONAL_STEPS_KEY);
         calculateIncidentalSteps();
-        createMapOfThisMonth();
-        setIntSteps();
 
         BarChart stepChart = findViewById(R.id.chart_month);
 
         Chart chart = new Chart("month", intentional_steps, incidental_steps, goal, stepChart);
         chart.createChart();
-        displayIntentionalSteps();
+        displayTotalSteps();
     }
 
 
-    // Subtracts intentional steps from total steps to be able to calculate the incidental steps
+    /**
+     * Subtracts intentional steps from total steps to be able to calculate the incidental steps
+     */
     public void calculateIncidentalSteps()
     {
         int monthCounter = 27;
@@ -111,7 +113,10 @@ public class ChartMonthDisplay extends AppCompatActivity {
     }
 
 
-    public void displayIntentionalSteps() {
+    /**
+     * Display total steps of the entire month
+     */
+    public void displayTotalSteps() {
         TextView total_steps = findViewById(R.id.total_month_steps);
         int totalMonthSteps = 0;
 
@@ -120,29 +125,6 @@ public class ChartMonthDisplay extends AppCompatActivity {
         }
 
         total_steps.setText(Integer.toString(totalMonthSteps));
-    }
-
-    //Create a map with keys that are the past 28 days.
-    private void createMapOfThisMonth()
-    {
-        for( int i = 0; i < NUM_DAYS_IN_MONTH; i++ )
-        {
-            monthStepsDisplay.put(Long.toString(time.getDay(i)), 0);
-        }
-    }
-
-    private void setIntSteps()
-    {
-        int monthCounter = 27;
-        for( int i = 0; i < NUM_DAYS_IN_MONTH; i++ )
-        {
-            long day = time.getDay(i);
-            if( intentional_stepsMap.containsKey(day) )
-            {
-                this.intentional_steps[monthCounter] = intentional_stepsMap.get(day);
-            }
-            monthCounter--;
-        }
     }
 
 

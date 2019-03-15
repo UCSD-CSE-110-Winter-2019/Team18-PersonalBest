@@ -8,10 +8,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
+import com.android.personalbest.R;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,12 +27,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
+import static android.content.ContentValues.TAG;
 
 
 public class FirestoreAdaptor implements IFirestore {
@@ -52,13 +58,13 @@ public class FirestoreAdaptor implements IFirestore {
     String PENDING_FRIENDS_KEY = "pendingFriends";
     String INTENTIONAL_STEPS_KEY = "intentionalSteps";
 
+    public String user_name;
 
     public FirestoreAdaptor(Activity activity, String userEmail) {
         this.activity = activity;
         this.userEmail = userEmail;
         this.fs = FirebaseFirestore.getInstance();
     }
-
 
     // IDs for chats between friends are generated via concatenating emails in alphabetical order
     private String getChatID(String otherUserEmail) {
@@ -87,12 +93,7 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Name successfully updated!");
-                    }
-                })
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Name successfully updated!"))
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -122,7 +123,6 @@ public class FirestoreAdaptor implements IFirestore {
                 });
     }
 
-
     @Override
     public void setHeightFt(int heightFt) {
         Map<String, Object> data = new HashMap<>();
@@ -144,7 +144,6 @@ public class FirestoreAdaptor implements IFirestore {
                 });
     }
 
-
     @Override
     public void setHeightIn(int heightIn) {
         Map<String, Object> data = new HashMap<>();
@@ -165,7 +164,6 @@ public class FirestoreAdaptor implements IFirestore {
                     }
                 });
     }
-
 
     // Adds listener for any new messages and appends to the given TextView
     public void initMessageUpdateListener(TextView chatView, String otherUserEmail) {
@@ -191,16 +189,15 @@ public class FirestoreAdaptor implements IFirestore {
                             sb.append("---\n");
                         }
 
-
                         chatView.append(sb.toString());
                     }
                 });
 
     }
 
-
     public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
         CollectionReference chat = fs.collection(CHATS_COLLECTION_KEY).document(getChatID(otherUserEmail)).collection(MESSAGES_KEY);
+
 
         Map<String, String> newMessage = new HashMap<>();
         newMessage.put(FROM_EMAIL_KEY, userEmail);
@@ -213,6 +210,7 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
+    /* ****************************** Activity ********************************************** */
     @Override
     public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
@@ -264,7 +262,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void getToKnowYouCheckIfUserExists(String otherUserEmail, GetToKnowYouUI getToKnowYouUI) {
         Log.wtf(TAG, "In getToKnowYouCheckIfUserExists");
@@ -289,7 +286,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI) {
         fs.collection(USERS_COLLECTION_KEY).document(user.getEmail()).set(user)
@@ -308,7 +304,6 @@ public class FirestoreAdaptor implements IFirestore {
                     }
                 });
     }
-
 
     @Override
     public void setIntentionalSteps(User user, long intentionalSteps) {
@@ -332,6 +327,8 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
 
+
+    /* *********************************** Friend ************************************************ */
     @Override
     public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         DocumentReference friendRef = fs.collection(USERS_COLLECTION_KEY).document(friendEmail);
@@ -369,7 +366,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     @Override
     public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         // Update UI for the current user
@@ -395,7 +391,6 @@ public class FirestoreAdaptor implements IFirestore {
         addUserToFriends(friendEmail, user.getEmail());
     }
 
-
     @Override
     public void declineFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
         // Update UI for the current user
@@ -413,6 +408,22 @@ public class FirestoreAdaptor implements IFirestore {
         removeUserFromPendingFriends(friendEmail, user.getEmail());
     }
 
+    @Override
+    public void removeFriend(User user, String friendEmail, FriendsUI friendsUI) {
+        // update UI for current user
+        List<String> currentFriends = user.getFriends();
+        currentFriends.remove(friendEmail);
+        user.setFriends(currentFriends);
+
+        MainActivity.setCurrentUser(user);
+        friendsUI.userHasBeenUpdated();
+
+        Toast.makeText(friendsUI.getActivity(), friendEmail + " has been removed", Toast.LENGTH_SHORT).show();
+
+        //Remove each other from respective friends lists
+        removeUserFromFriendsList(user.getEmail(), friendEmail);
+        removeUserFromFriendsList(friendEmail, user.getEmail());
+    }
 
     // Adds emailToAdd to the pendingList of user
     // sender is true if user is the one who sent the friend request
@@ -447,7 +458,6 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-
     // Removes emailToRemove from the pendingFriends of user
     @Override
     public void removeUserFromPendingFriends(String user, String emailToRemove) {
@@ -479,6 +489,35 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
+    // Removes emailToRemove from the pendingFriends of user
+    @Override
+    public void removeUserFromFriendsList(String user, String emailToRemove) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
+
+        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        User user = document.toObject(User.class);
+
+                        List<String> currentFriends = user.getFriends();
+                        currentFriends.remove(emailToRemove);
+                        userRef.update(FRIENDS_KEY, currentFriends)
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                    } else {
+                        Log.d(TAG, "No user with email " + user + " in database");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
 
     // Adds emailToAdd to user's friends
     @Override
