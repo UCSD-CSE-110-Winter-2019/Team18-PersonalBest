@@ -208,6 +208,7 @@ public class FirestoreAdaptor implements IFirestore {
         newMessage.put(TEXT_KEY, editText.getText().toString());
 
         chat.add(newMessage).addOnSuccessListener(result -> {
+            Log.d(TAG, "Successfully added a message to " + getChatID(otherUserEmail) + " chat!");
             editText.setText("");
         }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
