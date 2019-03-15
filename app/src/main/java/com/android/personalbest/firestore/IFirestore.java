@@ -3,7 +3,6 @@ package com.android.personalbest.firestore;
 import android.app.Activity;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
