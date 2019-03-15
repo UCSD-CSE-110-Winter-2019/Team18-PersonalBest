@@ -59,6 +59,7 @@ public class FirestoreAdaptor implements IFirestore {
     String FRIENDS_KEY = "friends";
     String PENDING_FRIENDS_KEY = "pendingFriends";
     String INTENTIONAL_STEPS_KEY = "intentionalSteps";
+    String TOTAL_STEPS_KEY = "totalSteps";
 
     public String user_name;
 
@@ -326,6 +327,16 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());
         userRef.update(INTENTIONAL_STEPS_KEY, currentIntentionalSteps)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Intentional Steps successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+    }
+
+    @Override
+    public void setTotalSteps(User user) {
+        Map<String, Integer> currentTotalSteps = user.getTotalSteps();
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());
+        userRef.update(TOTAL_STEPS_KEY, currentTotalSteps)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Intentional Steps successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }

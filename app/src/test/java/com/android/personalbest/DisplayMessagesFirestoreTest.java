@@ -137,6 +137,11 @@ public class DisplayMessagesFirestoreTest {
         }
 
         @Override
+        public void setTotalSteps(User user) {
+
+        }
+
+        @Override
         public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
 
         }

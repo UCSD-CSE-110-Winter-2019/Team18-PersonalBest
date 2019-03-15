@@ -56,6 +56,7 @@ public class FriendsUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         myDialog = new Dialog(this.getActivity());
         activity = this.getActivity();
 
