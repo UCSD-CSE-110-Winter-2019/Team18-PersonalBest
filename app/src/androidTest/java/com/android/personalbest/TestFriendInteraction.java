@@ -151,9 +151,9 @@ public class TestFriendInteraction {
 
         friends=new ArrayList<>();
 
-//        ViewInteraction no_friends = onView(
-//                allOf(withText("No Friends")));
-//        no_friends.check(matches(withText("No Friends")));
+        ViewInteraction no_friends = onView(
+                allOf(withText("No Friends")));
+        no_friends.check(matches(withText("No Friends")));
 
     }
 
@@ -286,16 +286,16 @@ public class TestFriendInteraction {
 
         @Override
         public void removeUserFromFriendsList(String user, String emailToRemove) {
+
+        }
+
+        @Override
+        public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
             friends.remove(emailToRemove);
             this.user.setFriends(friends);
 
             MainActivity.setCurrentUser(this.user);
             friendsUI.userHasBeenUpdated();
-        }
-
-        @Override
-        public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
-
         }
     }
 }
