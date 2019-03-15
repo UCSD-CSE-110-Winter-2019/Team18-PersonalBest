@@ -74,7 +74,7 @@ public class HomeUI extends Fragment {
         activity=getActivity();
 
         display_goal = getView().findViewById(R.id.goal);
-        display_steps = ((TextView)getView().findViewById(R.id.display));
+        display_steps = getView().findViewById(R.id.display);
 
 
         if(first){

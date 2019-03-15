@@ -74,12 +74,7 @@ public class MainActivity extends AppCompatActivity
         // Determine what implementation of IFirestore to use
         String firestoreKey = getIntent().getStringExtra(FIRESTORE_SERVICE_KEY);
         if (firestoreKey == null) {
-            FirestoreFactory.put(FIRESTORE_ADAPTOR_KEY, new FirestoreFactory.BluePrint() {
-                @Override
-                public IFirestore create(Activity activity, String userEmail) {
-                    return new FirestoreAdaptor(activity, userEmail);
-                }
-            });
+            FirestoreFactory.put(FIRESTORE_ADAPTOR_KEY, (activity, userEmail) -> new FirestoreAdaptor(activity, userEmail));
             // Default Firestore implementation using our adaptor
             firestore = new FirestoreAdaptor(this, email);
         } else {
@@ -101,10 +96,9 @@ public class MainActivity extends AppCompatActivity
 
         for (String email : friends) {
             String chatID = firestore.getChatID(email);
-            messaging = MessagingFactory.create(0, this, chatID);
+            messaging = MessagingFactory.create("MAIN_ACTIVITY", this, "chats", chatID, "messages");
             messaging.setup();
             messaging.subscribeToNotificationsTopic();
-
         }
 //        messaging.addMessage("you've");
 

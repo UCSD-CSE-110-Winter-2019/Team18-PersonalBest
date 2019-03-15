@@ -5,13 +5,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -23,26 +19,43 @@ import static com.android.personalbest.fitness.GoogleFitAdaptor.TAG;
 
 public class MessagingAdaptor  extends FirebaseMessagingService implements IMessaging  {
     CollectionReference chat;
-    String COLLECTION_KEY = "chats";
+    DocumentReference goal_for_user;
+    String COLLECTION_KEY;
     String DOCUMENT_KEY;
-    String MESSAGES_KEY = "messages";
+    String MESSAGES_KEY;
     Activity activity;
 
-    private FirebaseFunctions mFunctions;
+//    private FirebaseFunctions mFunctions;
 
 
-    public MessagingAdaptor(Activity activity, String chatID) {
+    public MessagingAdaptor(Activity activity,String collection, String document, String messages_key) {
         this.activity = activity;
-        DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
+        DOCUMENT_KEY = document;
+        COLLECTION_KEY = collection;
+        MESSAGES_KEY = messages_key;
+    }
+
+    public MessagingAdaptor(Activity activity,String collection, String document) {
+        this.activity = activity;
+        DOCUMENT_KEY = document;
+        COLLECTION_KEY = collection;
+        MESSAGES_KEY = "";
     }
 
     public void setup() {
-        chat = FirebaseFirestore.getInstance()
-                .collection(COLLECTION_KEY)
-                .document(DOCUMENT_KEY)
-                .collection(MESSAGES_KEY);
-        Toast.makeText(activity, chat.getPath().toString(), Toast.LENGTH_LONG).show();
-        Log.wtf("@@@@@@@@@@@@@", chat.getPath());
+        if (MESSAGES_KEY.equals("")) {
+            goal_for_user = FirebaseFirestore.getInstance()
+                    .collection(COLLECTION_KEY)
+                    .document(DOCUMENT_KEY);
+        }
+        else {
+            chat = FirebaseFirestore.getInstance()
+                    .collection(COLLECTION_KEY)
+                    .document(DOCUMENT_KEY)
+                    .collection(MESSAGES_KEY);
+            Toast.makeText(activity, chat.getPath(), Toast.LENGTH_LONG).show();
+            Log.wtf("@@@@@@@@@@@@@", chat.getPath());
+        }
     }
 
 
@@ -62,29 +75,29 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
 
 
 
-    public Task<String> addMessage(String text) {
-        // Create the arguments to the callable function.
-        Map<String, Object> data = new HashMap<>();
-        data.put("text", text);
-        data.put("push", true);
-
-
-        mFunctions = FirebaseFunctions.getInstance();
-        Log.wtf("//////////////",mFunctions.toString());
-
-        return mFunctions
-                .getHttpsCallable("addMessage")
-                .call(data)
-                .continueWith(task -> {
-                    // This continuation runs on either success or failure, but if the task
-                    // has failed then getResult() will throw an Exception which will be
-                    // propagated down.
-                    Log.wtf("--------------",task.getResult().toString());
-                    String result = (String) task.getResult().getData();
-
-                    return result;
-                });
-    }
+//    public Task<String> addMessage(String text) {
+//        // Create the arguments to the callable function.
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("text", text);
+//        data.put("push", true);
+//
+//
+//        mFunctions = FirebaseFunctions.getInstance();
+//        Log.wtf("//////////////",mFunctions.toString());
+//
+//        return mFunctions
+//                .getHttpsCallable("addMessage")
+//                .call(data)
+//                .continueWith(task -> {
+//                    // This continuation runs on either success or failure, but if the task
+//                    // has failed then getResult() will throw an Exception which will be
+//                    // propagated down.
+//                    Log.wtf("--------------",task.getResult().toString());
+//                    String result = (String) task.getResult().getData();
+//
+//                    return result;
+//                });
+//    }
 
     public void sendNotification(String messageBody, Context context) {
         FirebaseInstanceId.getInstance().getInstanceId()

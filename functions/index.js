@@ -48,6 +48,41 @@ exports.sendChatNotifications = functions.firestore
 
 
 
+exports.sendChatNotifications = functions.firestore
+   .document('goal/{user}/{messageId}')
+   .onCreate((snap, context) => {
+     // Get an object with the current document value.
+     // If the document does not exist, it has been deleted.
+     const document = snap.exists ? snap.data() : null;
+
+     if (document) {
+       var message = {
+         notification: {
+           title: document.from + ' sent you a message',
+           body: document.text
+         },
+         topic: context.params.chatId
+       };
+
+       return admin.messaging().send(message)
+         .then((response) => {
+           // Response is a message ID string.
+           console.log('Successfully sent message:', response);
+           return response;
+         })
+         .catch((error) => {
+           console.log('Error sending message:', error);
+           return error;
+         });
+     }
+
+     return "document was null or emtpy";
+   });
+
+
+
+
+
 const {google} = require('googleapis');
 
 exports.reply = (req, res) => {
@@ -71,25 +106,6 @@ function getJwt() {
 function getApiKey() {
   var apiKeyFile = require("./api_key.json");
   return apiKeyFile.key;
-}
-
-function appendSheetRow(jwt, apiKey, spreadsheetId, range, row) {
-  const sheets = google.sheets({version: 'v4'});
-  sheets.spreadsheets.values.append({
-    spreadsheetId: spreadsheetId,
-    range: range,
-    auth: jwt,
-    key: apiKey,
-    valueInputOption: 'RAW',
-    resource: {values: [row]}
-  }, function(err, result) {
-    if (err) {
-      throw err;
-    }
-    else {
-      console.log('Updated sheet: ' + result.data.updates.updatedRange);
-    }
-  });
 }
 
 

@@ -8,5 +8,5 @@ public interface IMessaging {
     void subscribeToNotificationsTopic();
     void sendNotification(String messageBody, Context context);
     void setup();
-    Task<String> addMessage(String text);
+//    Task<String> addMessage(String text);
 }

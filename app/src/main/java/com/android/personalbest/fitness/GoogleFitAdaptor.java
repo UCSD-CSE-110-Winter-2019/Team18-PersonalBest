@@ -117,16 +117,13 @@ public class GoogleFitAdaptor implements IFitService{
         Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
                 .addOnSuccessListener(
-                        new OnSuccessListener<DataSet>() {
-                            @Override
-                            public void onSuccess(DataSet dataSet) {
-                                long total =
-                                        dataSet.isEmpty()
-                                                ? 0
-                                                : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
-                                Log.i(TAG, "Total daily steps: " + total);
-                                setTotalDailySteps(total);
-                            }
+                        dataSet -> {
+                            long total =
+                                    dataSet.isEmpty()
+                                            ? 0
+                                            : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+                            Log.i(TAG, "Total daily steps: " + total);
+                            setTotalDailySteps(total);
                         })
                 .addOnFailureListener(
                         new OnFailureListener() {
