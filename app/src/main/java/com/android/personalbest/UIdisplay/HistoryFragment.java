@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +14,18 @@ import android.widget.TextView;
 import com.android.personalbest.Chart;
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
-import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.User;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
-
-import static com.android.personalbest.UIdisplay.HomeUI.user;
 
 public class HistoryFragment extends Fragment{
     private final int NUM_DAYS_IN_WEEK = 7;
-    private final int NUM_DAYS_IN_4_WEEKS = 28;
+    private final int NUM_DAYS_IN_MONTH = 28;
     private final int NUM_MILLISECONDS_IN_DAY = 86400000;
-    private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
     private int[] total_steps;
     private int[] intentional_steps;
     private int[] incidental_steps;
@@ -44,6 +36,11 @@ public class HistoryFragment extends Fragment{
     private TextView intentionalStepsCountView;
     IFitService gFit;
     public static int[] TOTAL_STEPS = new int[7];
+
+    private final String IS_FRIEND_CHART_KEY = "IS_FRIEND_CHART_KEY";
+    private final String MONTH_TOTAL_STEPS_KEY = "MONTH_TOTAL_STEPS";
+    private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
+    private final String GOAL_KEY = "GOAL";
 
 
     @Nullable
@@ -94,8 +91,9 @@ public class HistoryFragment extends Fragment{
             intent.putExtra("key","id");
 
             // Pass in the user's monthly information
-            // TODO: Pass in total steps too; need to account for logged in user AND friend
-            intent.putExtra(MONTH_INTENTIONAL_STEPS_KEY, prepareIntentionalStepsForMonthView(this.user));
+            intent.putExtra(IS_FRIEND_CHART_KEY, false);
+            intent.putExtra(MONTH_INTENTIONAL_STEPS_KEY, ChartMonthDisplay.prepareIntentionalStepsForMonthView(this.user));
+            intent.putExtra(GOAL_KEY, this.user.getGoal());
             startActivity(intent);
         });
     }
@@ -150,25 +148,5 @@ public class HistoryFragment extends Fragment{
             incidental_steps[i] = numIncidentalSteps;
         }
     }
-
-
-    // Creates an array of 28 days of intentional steps to prepare for month view
-    private int[] prepareIntentionalStepsForMonthView(User curUser) {
-        Map<String, Integer> intentionalSteps = curUser.getIntentionalSteps();
-        long curDayInMilliseconds = getTodayInMilliseconds();
-
-        int[] monthIntentionalSteps = new int[NUM_DAYS_IN_4_WEEKS];
-        for (int i = NUM_DAYS_IN_4_WEEKS - 1; i >= 0; i--) {
-            if (intentionalSteps.containsKey(Long.toString(curDayInMilliseconds))) {
-                monthIntentionalSteps[i] = intentionalSteps.get(Long.toString(curDayInMilliseconds));
-            } else {
-                monthIntentionalSteps[i] = 0;
-            }
-            curDayInMilliseconds -= NUM_MILLISECONDS_IN_DAY;
-        }
-
-        return monthIntentionalSteps;
-    }
-
 
 }

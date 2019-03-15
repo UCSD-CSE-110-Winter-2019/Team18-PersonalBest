@@ -9,6 +9,7 @@ import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 
@@ -162,6 +163,11 @@ public class DisplayMessagesFirestoreTest {
 
         @Override
         public void addUserToFriends(String user, String emailToAdd) {
+
+        }
+
+        @Override
+        public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
 
         }
 

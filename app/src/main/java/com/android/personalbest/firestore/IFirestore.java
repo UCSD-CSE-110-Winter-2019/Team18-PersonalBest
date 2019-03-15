@@ -8,6 +8,7 @@ import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 
 public interface IFirestore{
@@ -33,4 +34,5 @@ public interface IFirestore{
     public void removeUserFromPendingFriends(String user, String emailToRemove);
     public void removeUserFromFriendsList(String user, String emailToRemove);
     public void addUserToFriends(String user, String emailToAdd);
+    public void initMessagesUI(MessagesUI messagesUI, String friendEmail);
 }
