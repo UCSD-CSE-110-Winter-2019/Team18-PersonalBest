@@ -23,11 +23,11 @@ public class TimeAdapter implements ITime
     public long timeStartToday()
     {
         Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         return cal.getTimeInMillis();
     }
 
@@ -37,12 +37,12 @@ public class TimeAdapter implements ITime
     public long timeOneWeekAgo()
     {
         Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         cal.add(Calendar.DAY_OF_YEAR, -6);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
 
@@ -52,12 +52,12 @@ public class TimeAdapter implements ITime
     public long timeOneMonthAgo()
     {
         Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         cal.add(Calendar.DAY_OF_YEAR, -27);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
 
@@ -66,21 +66,13 @@ public class TimeAdapter implements ITime
      */
     public long getDay(int i)
     {
-        int secondsInDay = i * 86400000;
+        int daysAgo = i * SECONDS_IN_DAY;
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int date = cal.get(Calendar.DATE);
         cal.clear();
         cal.set(year, month, date);
-        return cal.getTimeInMillis() - secondsInDay;
-//        Calendar cal = Calendar.getInstance();
-//        Date now = new Date();
-//        cal.setTime(now);
-//        cal.add(Calendar.DAY_OF_YEAR, -i);
-//        cal.set(Calendar.HOUR_OF_DAY, 0);
-//        cal.set(Calendar.MINUTE, 0);
-//        cal.set(Calendar.SECOND, 0);
-//        return cal.getTimeInMillis();
+        return cal.getTimeInMillis() - daysAgo;
     }
 }

@@ -2,6 +2,7 @@ package com.android.personalbest.time;
 
 public interface ITime
 {
+    int SECONDS_IN_DAY = 86400000;
     /**
      * @return current time in milliseconds
      */
