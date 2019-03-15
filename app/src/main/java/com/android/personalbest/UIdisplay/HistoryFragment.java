@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,19 @@ import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
 import com.github.mikephil.charting.charts.BarChart;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
 import static com.android.personalbest.UIdisplay.HomeUI.user;
 
 public class HistoryFragment extends Fragment{
     private final int NUM_DAYS_IN_WEEK = 7;
+    private final int NUM_DAYS_IN_4_WEEKS = 28;
+    private final int NUM_MILLISECONDS_IN_DAY = 86400000;
+    private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
     private int[] total_steps;
     private int[] intentional_steps;
     private int[] incidental_steps;
@@ -40,8 +50,21 @@ public class HistoryFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
+//        intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
         user=MainActivity.getCurrentUser();
+
+        Map<String, Integer> intentionalSteps = user.getIntentionalSteps();
+        long curDayInMilliseconds = getTodayInMilliseconds();
+        intentional_steps = new int[NUM_DAYS_IN_WEEK];
+        for (int i = NUM_DAYS_IN_WEEK - 1; i >= 0; i--) {
+            if (intentionalSteps.containsKey(Long.toString(curDayInMilliseconds))) {
+                intentional_steps[i] = intentionalSteps.get(Long.toString(curDayInMilliseconds));
+            } else {
+                intentional_steps[i] = 0;
+            }
+            curDayInMilliseconds -= NUM_MILLISECONDS_IN_DAY;
+        }
+
         goal = user.getGoal();
         incidental_steps = new int[NUM_DAYS_IN_WEEK];
         calculateIncidentalSteps();
@@ -69,10 +92,25 @@ public class HistoryFragment extends Fragment{
             Intent intent = new Intent(getActivity(), ChartMonthDisplay.class);
             // TODO: PASS USER ID
             intent.putExtra("key","id");
+
+            // Pass in the user's monthly information
+            // TODO: Pass in total steps too; need to account for logged in user AND friend
+            intent.putExtra(MONTH_INTENTIONAL_STEPS_KEY, prepareIntentionalStepsForMonthView(this.user));
             startActivity(intent);
         });
     }
 
+
+    // Retrieves the timestamp of the current day at 12:00am in milliseconds
+    private long getTodayInMilliseconds() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        return cal.getTimeInMillis();
+    }
 
 
     // Display the Step Goal on the History Fragment
@@ -112,5 +150,25 @@ public class HistoryFragment extends Fragment{
             incidental_steps[i] = numIncidentalSteps;
         }
     }
+
+
+    // Creates an array of 28 days of intentional steps to prepare for month view
+    private int[] prepareIntentionalStepsForMonthView(User curUser) {
+        Map<String, Integer> intentionalSteps = curUser.getIntentionalSteps();
+        long curDayInMilliseconds = getTodayInMilliseconds();
+
+        int[] monthIntentionalSteps = new int[NUM_DAYS_IN_4_WEEKS];
+        for (int i = NUM_DAYS_IN_4_WEEKS - 1; i >= 0; i--) {
+            if (intentionalSteps.containsKey(Long.toString(curDayInMilliseconds))) {
+                monthIntentionalSteps[i] = intentionalSteps.get(Long.toString(curDayInMilliseconds));
+            } else {
+                monthIntentionalSteps[i] = 0;
+            }
+            curDayInMilliseconds -= NUM_MILLISECONDS_IN_DAY;
+        }
+
+        return monthIntentionalSteps;
+    }
+
 
 }

@@ -16,6 +16,7 @@ import com.github.mikephil.charting.charts.BarChart;
 
 public class ChartMonthDisplay extends AppCompatActivity {
     private final int NUM_DAYS_IN_MONTH = 28;
+    private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
     private int[] total_steps;
     private int[] intentional_steps;
     private int[] incidental_steps;
@@ -54,6 +55,7 @@ public class ChartMonthDisplay extends AppCompatActivity {
 
 //        intentional_steps = SharedPrefData.getIntentionalSteps(this);
         intentional_steps = new int[28];
+        intentional_steps = iin.getIntArrayExtra(MONTH_INTENTIONAL_STEPS_KEY);
         goal = SharedPrefData.getGoal(this);
         incidental_steps = new int[NUM_DAYS_IN_MONTH];
         calculateIncidentalSteps();
