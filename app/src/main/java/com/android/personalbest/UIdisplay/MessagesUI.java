@@ -17,8 +17,6 @@ public class MessagesUI extends AppCompatActivity {
     User user;
     String id;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +49,6 @@ public class MessagesUI extends AppCompatActivity {
         });
 
         firestore.initMessageUpdateListener(findViewById(R.id.chat), id);
-        findViewById(R.id.btn_send).setOnClickListener(view -> {
-            firestore.addSentMessageToDatabase(findViewById(R.id.input_msg), id);
-        });
-
+        findViewById(R.id.btn_send).setOnClickListener(view -> firestore.addSentMessageToDatabase(findViewById(R.id.input_msg), id));
     }
-
 }

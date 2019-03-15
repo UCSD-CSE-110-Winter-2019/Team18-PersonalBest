@@ -8,12 +8,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
-import com.android.personalbest.R;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
-import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,16 +25,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import static android.content.ContentValues.TAG;
 
 
 public class FirestoreAdaptor implements IFirestore {
@@ -96,12 +89,7 @@ public class FirestoreAdaptor implements IFirestore {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Name successfully updated!"))
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     @Override
@@ -114,13 +102,8 @@ public class FirestoreAdaptor implements IFirestore {
 
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e))
-                .addOnSuccessListener((OnSuccessListener<Void>) aVoid -> Log.d(TAG, "Goal successfully updated!"))
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Goal successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     @Override
@@ -151,20 +134,12 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Height Inch successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Height Inch successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
+
+    /* ******************************** Send Notifications ************************* */
     // Adds listener for any new messages and appends to the given TextView
     public void initMessageUpdateListener(TextView chatView, String otherUserEmail) {
         CollectionReference chat = fs.collection(CHATS_COLLECTION_KEY).document(getChatID(otherUserEmail)).collection(MESSAGES_KEY);
@@ -203,12 +178,28 @@ public class FirestoreAdaptor implements IFirestore {
         newMessage.put(FROM_EMAIL_KEY, userEmail);
         newMessage.put(TEXT_KEY, editText.getText().toString());
 
+        Log.e(TAG + "-Chat", "Storing message: " + newMessage.toString());
         chat.add(newMessage).addOnSuccessListener(result -> {
+            Log.e(TAG + "-Chat", "Sent succesfully!");
             editText.setText("");
         }).addOnFailureListener(error -> {
-            Log.e(TAG, error.getLocalizedMessage());
+            Log.e(TAG + "-Chat", error.getLocalizedMessage());
         });
     }
+
+    public void addGoalToDatabase() {
+        DocumentReference userRef = fs.collection("goal").document(userEmail.replace("@", ""));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("has_reached_goal", "True");
+//        Log.wtf("----------------",userEmail.replace("@", ""));
+
+        userRef.set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.wtf(TAG, "Goal successfully updated!"))
+                .addOnFailureListener(e -> Log.wtf(TAG, "Error updating document", e));
+    }
+
+
 
     /* ****************************** Activity ********************************************** */
     @Override
@@ -222,7 +213,9 @@ public class FirestoreAdaptor implements IFirestore {
                     Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     User user = document.toObject(User.class);
                     MainActivity.setCurrentUser(user);
-                    mainActivity.setUpMessaging();
+                    mainActivity.setUpMessagingNot();
+                    mainActivity.setUpGoalNot();
+//                    mainActivity.setUpService();
                     mainActivity.loadFragment(homeUI);
                 } else {
                     Log.d(TAG, "No such document");
@@ -234,26 +227,45 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
     @Override
+    public void getUser() {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User user = document.toObject(User.class);
+                    MainActivity.setCurrentUser(user);
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+    }
+
+
+
+    @Override
     public void loginCheckIfUserExists(String otherUserEmail, LoginUI loginUI) {
         Log.wtf(TAG, "In loginCheckIfUserExists");
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(otherUserEmail);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "Found " + otherUserEmail + " in database");
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        loginUI.launchHomeScreenActivity();
-                    } else {
-                        Log.d(TAG, "No user with email " + otherUserEmail + " in database");
-                        loginUI.launchGetToKnowYouActivity();
-                    }
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "Found " + otherUserEmail + " in database");
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    loginUI.launchHomeScreenActivity();
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "No user with email " + otherUserEmail + " in database");
+                    loginUI.launchGetToKnowYouActivity();
                 }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
     }
@@ -428,28 +440,25 @@ public class FirestoreAdaptor implements IFirestore {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
 
         // Get the user we want to add the request to
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        User user = document.toObject(User.class);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User user1 = document.toObject(User.class);
 
-                        // Update the pendingFriends map with the new friend request in Firestore
-                        Map<String, Boolean> currentPendingFriends = user.getPendingFriends();
-                        currentPendingFriends.put(emailToAdd, sender);
-                        userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Pending Friends (Add) successfully updated!"))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                    // Update the pendingFriends map with the new friend request in Firestore
+                    Map<String, Boolean> currentPendingFriends = user1.getPendingFriends();
+                    currentPendingFriends.put(emailToAdd, sender);
+                    userRef.update(PENDING_FRIENDS_KEY, currentPendingFriends)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Pending Friends (Add) successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
-                    } else {
-                        Log.d(TAG, "No user with email " + user + " in database");
-                    }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "No user with email " + user + " in database");
                 }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
     }
@@ -490,27 +499,24 @@ public class FirestoreAdaptor implements IFirestore {
     public void removeUserFromFriendsList(String user, String emailToRemove) {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        User user = document.toObject(User.class);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User user1 = document.toObject(User.class);
 
-                        List<String> currentFriends = user.getFriends();
-                        currentFriends.remove(emailToRemove);
-                        userRef.update(FRIENDS_KEY, currentFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                    List<String> currentFriends = user1.getFriends();
+                    currentFriends.remove(emailToRemove);
+                    userRef.update(FRIENDS_KEY, currentFriends)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
-                    } else {
-                        Log.d(TAG, "No user with email " + user + " in database");
-                    }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "No user with email " + user + " in database");
                 }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
     }
@@ -521,28 +527,25 @@ public class FirestoreAdaptor implements IFirestore {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user);
 
         // Get the user we want to add the request to
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        User user = document.toObject(User.class);
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User user1 = document.toObject(User.class);
 
-                        // Update the pendingFriends map with the new friend request in Firestore
-                        List<String> currentFriends = user.getFriends();
-                        currentFriends.add(emailToAdd);
-                        userRef.update(FRIENDS_KEY, currentFriends)
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Friends (Add) successfully updated!"))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                    // Update the pendingFriends map with the new friend request in Firestore
+                    List<String> currentFriends = user1.getFriends();
+                    currentFriends.add(emailToAdd);
+                    userRef.update(FRIENDS_KEY, currentFriends)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Friends (Add) successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
-                    } else {
-                        Log.d(TAG, "No user with email " + user + " in database");
-                    }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Log.d(TAG, "No user with email " + user + " in database");
                 }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
     }

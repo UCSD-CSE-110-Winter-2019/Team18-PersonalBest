@@ -14,7 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UIdisplay.MessagesUI"></activity>
+
+
+
+        <activity android:name=".UIdisplay.MessagesUI">
+
+        </activity>
+
         <activity android:name=".UIdisplay.ChartMonthDisplay"></activity>
 
         <activity
@@ -29,11 +35,18 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" />
+            android:label="@string/title_activity_main" >
+        </activity>
+
         <activity
             android:name=".UIdisplay.TrackerActivityUI"
             android:label="TrackerActivity" />
         <activity android:name=".UIdisplay.GetToKnowYouUI" />
+
+        <service
+            android:name=".FitnessService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

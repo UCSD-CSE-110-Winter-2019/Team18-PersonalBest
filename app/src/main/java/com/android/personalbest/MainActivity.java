@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.HistoryFragment;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
     public static IMessaging messaging;
-
+    public static MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
+
+        if (getIntent().getExtras() != null) {
+            Log.d("MAIN_ACTIVITY", "onCreate");
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("MAIN_ACTIVITY", "Key: " + key + " Value: " + value);
+            }
+        }
 
 
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
@@ -64,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         args = new Bundle();
         args.putString("key", key);
         homeUI.setArguments(args);
-
+        mainActivity=this;
 
         String email="testemail";
         if (key == null || (key != null && !key.equals("test"))) {
@@ -81,16 +90,61 @@ public class MainActivity extends AppCompatActivity
             firestore = FirestoreFactory.create(firestoreKey, this, email);
         }
 
+
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
 
 //        loadFragment(homeUI);
 
-        starter(findViewById(R.id.content));
+
 
     }
 
-    public void setUpMessaging() {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d("MAIN_ACTIVITY", "onNewIntent");
+        if (intent.getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("MAIN_ACTIVITY", "Key: " + key + " Value: " + value);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if (getIntent().getExtras() != null) {
+            Log.d("MAIN_ACTIVITY", "onResume");
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d("MAIN_ACTIVITY", "Key: " + key + " Value: " + value);
+            }
+        }
+
+        if(b!=null) {
+            String indicator =(String) b.get("go_to");
+            Log.wtf("indiaiehtae", indicator);
+            if (indicator.equals("message")) {
+                Intent intent = new Intent(this, MessagesUI.class);
+                startActivity(intent);
+            }
+        }
+    }
+
+    public void setUpService() {
+        Intent intent = new Intent(this, FitnessService.class);
+        startService(intent);
+    }
+
+    public static Activity getActivity() {
+        return mainActivity;
+    }
+
+    public void setUpMessagingNot() {
         User user = getCurrentUser();
         List<String> friends = user.getFriends();
 
@@ -100,11 +154,16 @@ public class MainActivity extends AppCompatActivity
             messaging.setup();
             messaging.subscribeToNotificationsTopic();
         }
-//        messaging.addMessage("you've");
-
-//        messaging.sendNotification("you've reached your goal", this.getApplicationContext());
     }
 
+
+    public void setUpGoalNot() {
+        User user = getCurrentUser();
+        messaging = MessagingFactory.create(
+                "SERVICE", getActivity(), "goal", user.getEmail().replace("@", ""), "");
+        messaging.setup();
+        messaging.subscribeToNotificationsTopic();
+    }
 
 
 
@@ -158,8 +217,4 @@ public class MainActivity extends AppCompatActivity
         currentUser = user;
     }
 
-    public void starter(View view) {
-        Intent intent = new Intent(MainActivity.this, FitnessService.class);
-        startService(intent);
-    }
 }

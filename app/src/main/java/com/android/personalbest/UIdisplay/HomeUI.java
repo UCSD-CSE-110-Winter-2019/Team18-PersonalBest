@@ -14,13 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
+import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.messaging.IMessaging;
+import com.android.personalbest.messaging.MessagingFactory;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class HomeUI extends Fragment {
     IFitService gFit;
@@ -28,7 +36,6 @@ public class HomeUI extends Fragment {
     static User user;
     static TextView display_goal;
     static TextView display_steps;
-    private  int dsteps;
     private static int goal;
     static long curr_steps;
     static AsyncTaskRunner runner;
@@ -56,7 +63,24 @@ public class HomeUI extends Fragment {
         gFit.setup();
 
         firestore=MainActivity.getFirestore();
+
         user= MainActivity.getCurrentUser();
+
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(task -> {
+//                    if (!task.isSuccessful()) {
+//                        Log.w(TAG, "getInstanceId failed", task.getException());
+//                        return;
+//                    }
+//
+//                    // Get new Instance ID token
+//                    String token = task.getResult().getToken();
+//
+//                    // Log and toast
+//                    String msg = getString(R.string.msg_token_fmt, token);
+//                    Log.d(TAG, msg);
+//                });
+
 
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
@@ -65,11 +89,9 @@ public class HomeUI extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
-        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
-        gFit.setup();
+//
+//        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
+//        gFit.setup();
         ct=getContext();
         activity=getActivity();
 
@@ -81,7 +103,7 @@ public class HomeUI extends Fragment {
             runner = new AsyncTaskRunner();
             first=false;
         }
-        //goal = SharedPrefData.getGoal(getContext());
+
         curr_steps = gFit.getTotalDailySteps();
         goal = user.getGoal();
         //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
@@ -124,7 +146,6 @@ public class HomeUI extends Fragment {
     }
 
     public static void async(){
-
         goal=user.getGoal();
         runner.execute("0");
     }
@@ -135,7 +156,6 @@ public class HomeUI extends Fragment {
 
         Encouragement e =new Encouragement(activity);
         e.showChangeGoal(user);
-
     }
 
 
@@ -161,13 +181,13 @@ public class HomeUI extends Fragment {
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;
+        Boolean hasShown = false;
 
         @Override
         protected String doInBackground(String... params) {
-            int i=0;
+
             //MainActivity.getResource().increment();
             while(true) {
-                i++;
                 Encouragement en=new Encouragement(getActivity());
                 if(en.getTime().equals("23:59:59")){
                     Encouragement.first_pg=true;
@@ -178,10 +198,32 @@ public class HomeUI extends Fragment {
                 gFit.readWeeklyStepData();
                 gFit.getYesterdaySteps();
 
+                Log.wtf("!!!!!!!!", Long.toString(updated_steps));
+
+
+
+
                 try {
                     publishProgress();
-                    Thread.sleep(1000);
+
+//                    firestore.getUser();
+//                    Log.wtf("wait 5 sec", "wait 5 sec");
+                    Thread.sleep(5000);
+//
                     goal = user.getGoal();
+//                    Log.wtf("GOOOOOOOAL", Integer.toString(goal));
+//
+//                    Thread.sleep(50000);
+//                    Log.wtf("finish wait 50 sec", "wait 50 sec");
+//
+//                    if (updated_steps == user.getGoal() && !hasShown) {
+//                        Log.wtf("yes", "yes");
+//
+//                        firestore.addGoalToDatabase();
+//                        hasShown = true;
+//                    }
+
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -201,6 +243,7 @@ public class HomeUI extends Fragment {
                 if(fitnessServiceKey.equals("test"))
                     break;
             }
+
             return ("10");
         }
 
@@ -211,8 +254,6 @@ public class HomeUI extends Fragment {
 
             if(Integer.parseInt(result)==5){
                 show();
-
-
             }
             if(Integer.parseInt(result)==6)
                 improve(numStepsOver);
@@ -222,6 +263,7 @@ public class HomeUI extends Fragment {
 
         @Override
         protected void onPreExecute() {
+
             gFit.subscribeForWeeklySteps();
         }
 

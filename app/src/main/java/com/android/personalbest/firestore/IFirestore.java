@@ -1,12 +1,7 @@
 package com.android.personalbest.firestore;
 
-import android.app.Activity;
 import android.widget.EditText;
 import android.widget.TextView;
-<<<<<<< HEAD
-
-=======
->>>>>>> dea891d516a33988d2ed4160821d448d6b054db6
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
@@ -36,5 +31,8 @@ public interface IFirestore{
     public void addUserToPendingFriends(String user, String emailToAdd, boolean sender);
     public void removeUserFromPendingFriends(String user, String emailToRemove);
     public void removeUserFromFriendsList(String user, String emailToRemove);
-    public void addUserToFriends(String user, String emailToAdd);
+    void addUserToFriends(String user, String emailToAdd);
+    void addGoalToDatabase();
+    String getChatID(String otherUserEmail);
+    void getUser();
 }

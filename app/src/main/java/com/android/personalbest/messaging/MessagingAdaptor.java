@@ -47,6 +47,7 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
             goal_for_user = FirebaseFirestore.getInstance()
                     .collection(COLLECTION_KEY)
                     .document(DOCUMENT_KEY);
+            Log.wtf("----------", goal_for_user.getPath());
         }
         else {
             chat = FirebaseFirestore.getInstance()
@@ -54,7 +55,7 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
                     .document(DOCUMENT_KEY)
                     .collection(MESSAGES_KEY);
             Toast.makeText(activity, chat.getPath(), Toast.LENGTH_LONG).show();
-            Log.wtf("@@@@@@@@@@@@@", chat.getPath());
+
         }
     }
 
@@ -63,7 +64,7 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
     public void subscribeToNotificationsTopic(){
         FirebaseMessaging.getInstance().subscribeToTopic(DOCUMENT_KEY)
             .addOnCompleteListener(task -> {
-                        String msg = "Subscribed to notifications";
+                        String msg = "Subscribed to notifications " + DOCUMENT_KEY;
                         if (!task.isSuccessful()) {
                             msg = "Subscribe to notifications failed";
                         }
@@ -72,6 +73,7 @@ public class MessagingAdaptor  extends FirebaseMessagingService implements IMess
                     }
             );
     }
+
 
 
 
