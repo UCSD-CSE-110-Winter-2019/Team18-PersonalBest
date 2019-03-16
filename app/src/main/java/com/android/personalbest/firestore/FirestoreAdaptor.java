@@ -12,6 +12,7 @@ import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +31,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
+import io.opencensus.trace.MessageEvent;
+
+import static android.content.ContentValues.TAG;
+
 
 
 public class FirestoreAdaptor implements IFirestore {
@@ -50,6 +57,7 @@ public class FirestoreAdaptor implements IFirestore {
     String FRIENDS_KEY = "friends";
     String PENDING_FRIENDS_KEY = "pendingFriends";
     String INTENTIONAL_STEPS_KEY = "intentionalSteps";
+    String TOTAL_STEPS_KEY = "totalSteps";
 
     public String user_name;
 
@@ -60,6 +68,7 @@ public class FirestoreAdaptor implements IFirestore {
     }
 
     // IDs for chats between friends are generated via concatenating emails in alphabetical order
+
     public String getChatID(String otherUserEmail) {
         String email1 = this.userEmail.replace("@","");
         String email2 = otherUserEmail.replace("@", "");
@@ -181,6 +190,7 @@ public class FirestoreAdaptor implements IFirestore {
         Log.e(TAG + "-Chat", "Storing message: " + newMessage.toString());
         chat.add(newMessage).addOnSuccessListener(result -> {
             Log.e(TAG + "-Chat", "Sent succesfully!");
+            Log.d(TAG, "Successfully added a message to " + getChatID(otherUserEmail) + " chat!");
             editText.setText("");
         }).addOnFailureListener(error -> {
             Log.e(TAG + "-Chat", error.getLocalizedMessage());
@@ -330,6 +340,16 @@ public class FirestoreAdaptor implements IFirestore {
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());
         userRef.update(INTENTIONAL_STEPS_KEY, currentIntentionalSteps)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Intentional Steps successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+    }
+
+    @Override
+    public void setTotalSteps(User user) {
+        Map<String, Integer> currentTotalSteps = user.getTotalSteps();
+
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());
+        userRef.update(TOTAL_STEPS_KEY, currentTotalSteps)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Intentional Steps successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
@@ -548,5 +568,28 @@ public class FirestoreAdaptor implements IFirestore {
                 Log.d(TAG, "get failed with ", task.getException());
             }
         });
+    }
+
+
+    @Override
+    public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
+        DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(friendEmail);
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    User friend = document.toObject(User.class);
+                    MessagesUI.setCurrentFriend(friend);
+
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
+
     }
 }

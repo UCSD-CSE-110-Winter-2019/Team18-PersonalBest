@@ -5,6 +5,8 @@ import android.app.Activity;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Map;
+
 public class TestFitService implements IFitService {
     private static final String TAG = "[TestFitService]: ";
     private Activity activity;
@@ -19,12 +21,14 @@ public class TestFitService implements IFitService {
     public void subscribeForWeeklySteps(){}
     public void readDailyStepData(){}
     public void readWeeklyStepData(){}
+    public void readMonthlyStepData(){}
     public void updateToday(){}
     public void setTotalDailySteps(long total){TotalDailySteps=total;}
     public long getTotalDailySteps(){
         return TotalDailySteps;
     }
     public void printWeekData(DataReadResponse dataReadResult){}
+    public void printMonthData(DataReadResponse dataReadResult){}
     public boolean getIsTimeChanged(){
         return false;
     }
@@ -49,4 +53,7 @@ public class TestFitService implements IFitService {
         }
         return weekStep;
     }
+
+    @Override
+    public Map<String, Integer> getMonthMap() { return null; }
 }

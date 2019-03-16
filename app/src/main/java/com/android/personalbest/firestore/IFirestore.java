@@ -7,6 +7,7 @@ import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.User;
 
 public interface IFirestore{
@@ -22,6 +23,7 @@ public interface IFirestore{
     public void addUserToFirestore(User user, GetToKnowYouUI getToKnowYouUI);
 
     public void setIntentionalSteps(User user, long intentionalSteps);
+    public void setTotalSteps(User user);
 
     public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI);
     public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI);
@@ -31,8 +33,11 @@ public interface IFirestore{
     public void addUserToPendingFriends(String user, String emailToAdd, boolean sender);
     public void removeUserFromPendingFriends(String user, String emailToRemove);
     public void removeUserFromFriendsList(String user, String emailToRemove);
-    void addUserToFriends(String user, String emailToAdd);
+
     void addGoalToDatabase();
     String getChatID(String otherUserEmail);
     void getUser();
+    public void addUserToFriends(String user, String emailToAdd);
+    public void initMessagesUI(MessagesUI messagesUI, String friendEmail);
+
 }
