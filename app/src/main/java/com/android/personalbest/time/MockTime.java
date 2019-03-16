@@ -36,9 +36,11 @@ public class MockTime implements ITime
         Calendar cal = Calendar.getInstance();
         Date now = new Date(mockTime);
         cal.setTime(now);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         return cal.getTimeInMillis();
     }
 
@@ -50,10 +52,12 @@ public class MockTime implements ITime
         Calendar cal = Calendar.getInstance();
         Date now = new Date(mockTime);
         cal.setTime(now);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         cal.add(Calendar.DAY_OF_YEAR, -6);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
 
@@ -66,10 +70,12 @@ public class MockTime implements ITime
         Calendar cal = Calendar.getInstance();
         Date now = new Date(mockTime);
         cal.setTime(now);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
         cal.add(Calendar.DAY_OF_YEAR, -27);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
     public Date getTime(){
@@ -82,7 +88,24 @@ public class MockTime implements ITime
         }
         return d;
     }
-    public void setTime(String date){
-        time=date;
+    public void setTime(String date) {
+        time = date;
+    }
+    public void setMockTime(Long mockTime) {this.mockTime=mockTime;}
+    /**
+     * @return start time of some day
+     */
+    public long getDay(int i)
+    {
+        int daysAgo = i * SECONDS_IN_DAY;
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date(mockTime);
+        cal.setTime(now);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        return cal.getTimeInMillis() - daysAgo;
     }
 }

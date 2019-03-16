@@ -1,19 +1,14 @@
 package com.android.personalbest;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.test.espresso.Root;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
@@ -25,23 +20,15 @@ import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
 import com.android.personalbest.time.MockTime;
 
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -51,13 +38,12 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class TestFriendInteraction {
+public class TestDataUnchange {
     Intent intent;
     TestFitService testFitService;
     MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
-    Map<String, Boolean> pendingFriends=new HashMap<>();
-    List<String> friends = new ArrayList<>();
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
             ,true,
@@ -71,133 +57,80 @@ public class TestFriendInteraction {
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
-                return new TestFirestore(activity, userEmail);
+                return new TestDataUnchange.TestFirestore(activity, userEmail);
             }
         });
-        mockTime = new MockTime();
-        mockTime.setTime("2018-03-18 21:00:00");
         testFitService=new TestFitService(mActivityTestRule.getActivity());
         testFitService.setTotalDailySteps(200);
+        mockTime = new MockTime();
+        mockTime.setTime("2018-03-18 21:00:00");
 
     }
 
     @Test
-    public void testNoFriends(){
-        friends=new ArrayList<>();
+    public void testReloginDataUnchange(){
 
         mActivityTestRule.launchActivity(intent);
-        ViewInteraction navigation_friends = onView(
-                allOf(withId(R.id.navigation_friends)));
-        navigation_friends.perform(click());
+        ViewInteraction homegoal = onView(
+                allOf(withId(R.id.goal),
+                        isDisplayed()));
+        homegoal.check(matches(withText("2000")));
 
-        ViewInteraction textView = onView(
-                allOf(withText("No Friends")));
-        textView.check(matches(withText("No Friends")));
+        ViewInteraction totalStep = onView(
+                allOf(withId(R.id.display),isDisplayed()));
+        totalStep.check(matches(withText("200")));
 
-    }
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
+        bottomNavigationItemView.perform(click());
 
-    @Test
-    public void testShowPending(){
-        pendingFriends=new HashMap<>();
-        pendingFriends.put("testfriend", false);
+        ViewInteraction name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
+
+        ViewInteraction profilegoal = onView(
+                allOf(withId(R.id.current_goal),isDisplayed()));
+        profilegoal.check(matches(withText("2000")));
+
+        ViewInteraction heightft = onView(
+                allOf(withId(R.id.current_ft),isDisplayed()));
+        heightft.check(matches(withText("3")));
+
+        ViewInteraction heightin = onView(
+                allOf(withId(R.id.current_in),isDisplayed()));
+        heightin.check(matches(withText("6")));
+        mActivityTestRule.finishActivity();
         mActivityTestRule.launchActivity(intent);
-        ViewInteraction navigation_friends = onView(
-                allOf(withId(R.id.navigation_friends)));
-        navigation_friends.perform(click());
+        homegoal = onView(
+                allOf(withId(R.id.goal),
+                        isDisplayed()));
+        homegoal.check(matches(withText("2000")));
 
-        ViewInteraction pendingTest = onView(
-                allOf(withText("testfriend ( Pending... )")));
-        pendingTest.check(matches(isDisplayed()));
-    }
+        totalStep = onView(
+                allOf(withId(R.id.display),isDisplayed()));
+        totalStep.check(matches(withText("200")));
 
-    @Test
-    public void testAcceptPending(){
-        pendingFriends=new HashMap<>();
-        friends=new ArrayList<>();
-        pendingFriends.put("testfriend", false);
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction navigation_friends = onView(
-                allOf(withId(R.id.navigation_friends)));
-        navigation_friends.perform(click());
+        bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
+        bottomNavigationItemView.perform(click());
 
-        ViewInteraction testfriend = onView(
-                allOf(withText("testfriend ( Pending... )")));
-        testfriend.perform(scrollTo(), click());
+        name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
 
-        ViewInteraction popup = onView(
-                allOf(withText("testfriend Would like to add you")));
-        popup.check(matches(withText("testfriend Would like to add you")));
+        profilegoal = onView(
+                allOf(withId(R.id.current_goal),isDisplayed()));
+        profilegoal.check(matches(withText("2000")));
 
-        ViewInteraction accept = onView(
-                allOf(withText("ACCEPT")));
-        accept.perform(click());
-        testfriend = onView(
-                allOf(withText("testfriend")));
-        testfriend.check(matches(isDisplayed()));
+        heightft = onView(
+                allOf(withId(R.id.current_ft),isDisplayed()));
+        heightft.check(matches(withText("3")));
 
+        heightin = onView(
+                allOf(withId(R.id.current_in),isDisplayed()));
+        heightin.check(matches(withText("6")));
 
     }
-
-    @Test
-    public void testRemoveFriend(){
-        friends=new ArrayList<>();
-        friends.add("testfriend");
-        pendingFriends=new HashMap<>();
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction navigation_friends = onView(
-                allOf(withId(R.id.navigation_friends)));
-        navigation_friends.perform(click());
-        ViewInteraction testfriend = onView(
-                allOf(withText("testfriend")));
-        testfriend.check(matches(isDisplayed()));
-        testfriend.perform(scrollTo(), click());
-
-        ViewInteraction textView = onView(
-                allOf(withText("What would you like to do?")));
-        textView.check(matches(withText("What would you like to do?")));
-        ViewInteraction remove_friend = onView(
-                allOf(withId(R.id.delete_friend_btn), withText("Remove Friend")));
-        remove_friend.perform(click());
-
-        friends=new ArrayList<>();
-
-        ViewInteraction no_friends = onView(
-                allOf(withText("No Friends")));
-        no_friends.check(matches(withText("No Friends")));
-
-    }
-
-    @Test
-    public void testMessageFriend(){
-        friends=new ArrayList<>();
-        friends.add("testfriend");
-        pendingFriends=new HashMap<>();
-
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction navigation_friends = onView(
-                allOf(withId(R.id.navigation_friends)));
-        navigation_friends.perform(click());
-        ViewInteraction testfriend = onView(
-                allOf(withText("testfriend")));
-        testfriend.check(matches(isDisplayed()));
-        testfriend.perform(scrollTo(), click());
-
-        ViewInteraction textView = onView(
-                allOf(withText("What would you like to do?")));
-        textView.check(matches(withText("What would you like to do?")));
-        ViewInteraction message_friend = onView(
-                allOf(withId(R.id.go_msg)));
-        message_friend.perform(click());
-        ViewInteraction input_msg = onView(
-                allOf(withId(R.id.input_msg)));
-        input_msg.perform(replaceText("hi"), closeSoftKeyboard());
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.btn_send), withText("send")));
-        appCompatButton2.perform(click());
-
-
-    }
-
     public class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
@@ -251,7 +184,6 @@ public class TestFriendInteraction {
         @Override
         public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
             Log.d(TAG, "Adding message to database");
-
         }
 
         @Override
@@ -262,8 +194,7 @@ public class TestFriendInteraction {
             user.setGoal(2000);
             user.setHeightFt(3);
             user.setHeightIn(6);
-            user.setPendingFriends(pendingFriends);
-            user.setFriends(friends);
+
             MainActivity.setCurrentUser(user);
             mainActivity.loadFragment(homeUI);
 
@@ -301,12 +232,7 @@ public class TestFriendInteraction {
 
         @Override
         public void acceptFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
-            pendingFriends.remove(friendEmail);
-            friends.add(friendEmail);
-            user.setFriends(friends);
-            user.setPendingFriends(pendingFriends);
-            MainActivity.setCurrentUser(user);
-            friendsUI.userHasBeenUpdated();
+
         }
 
         @Override
@@ -330,22 +256,19 @@ public class TestFriendInteraction {
         }
 
         @Override
+        public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
+
+        }
+
+        @Override
         public void removeUserFromFriendsList(String user, String emailToRemove) {
 
         }
 
         @Override
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
-            friends.remove(emailToRemove);
-            user.setFriends(friends);
 
-            MainActivity.setCurrentUser(user);
-            friendsUI.userHasBeenUpdated();
-        }
-        @Override
-        public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
         }
 
     }
-
 }

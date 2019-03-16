@@ -25,6 +25,10 @@ import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
 import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.time.ITime;
+import com.android.personalbest.time.TimeFactory;
+
+import static com.android.personalbest.fitness.GoogleFitAdaptor.monthMap;
 
 public class HomeUI extends Fragment {
     IFitService gFit;
@@ -40,6 +44,7 @@ public class HomeUI extends Fragment {
     static boolean first=true;
     static LayoutInflater temp;
     static Context ct;
+    ITime time;
 
     private static String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = HomeUI.class.getName();
@@ -74,8 +79,7 @@ public class HomeUI extends Fragment {
         gFit.setup();
         ct=getContext();
         activity=getActivity();
-
-
+        time = TimeFactory.create("test");
         display_goal = getView().findViewById(R.id.goal);
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -85,7 +89,8 @@ public class HomeUI extends Fragment {
             first=false;
         }
         //goal = SharedPrefData.getGoal(getContext());
-        curr_steps = gFit.getTotalDailySteps();
+//        curr_steps = gFit.getTotalDailySteps();
+        curr_steps = gFit.getMonthSteps()[27];
         goal = user.getGoal();
         //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         //((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
@@ -178,7 +183,16 @@ public class HomeUI extends Fragment {
 
                 updated_steps=gFit.getTotalDailySteps();
                 gFit.readWeeklyStepData();
+                gFit.readMonthlyStepData();
                 gFit.getYesterdaySteps();
+
+                user.setTotalSteps(gFit.getMonthMap());
+                firestore.setTotalSteps(user);
+
+//                if( user.getTotalSteps().get(time.timeStartToday()) != gFit.getMonthMap().get(time.timeStartToday()) ) {
+//                    user.setTotalSteps(gFit.getMonthMap());
+//                    firestore.setTotalSteps(user);
+//                }
 
                 try {
                     publishProgress();
@@ -229,8 +243,6 @@ public class HomeUI extends Fragment {
         protected void onProgressUpdate(String... count) {
             display_goal.setText(Integer.toString(goal));
             display_steps.setText(Long.toString(updated_steps));
-
-            Log.wtf("TESTING", "" + gFit.getTotalDailySteps() );
 
             for(int i = 0; i < gFit.getWeekSteps().length; i++)
             {

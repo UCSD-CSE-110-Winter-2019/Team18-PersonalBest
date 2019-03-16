@@ -4,6 +4,7 @@ import java.util.Date;
 
 public interface ITime
 {
+    int SECONDS_IN_DAY = 86400000;
     /**
      * @return current time in milliseconds
      */
@@ -26,4 +27,9 @@ public interface ITime
 
     Date getTime();
     void setTime(String date);
+    void setMockTime(Long mockTime);
+    /**
+     * @return start time of some day
+     */
+    long getDay(int i);
 }

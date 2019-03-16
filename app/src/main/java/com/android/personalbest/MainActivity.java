@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
         setActivity();
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
+
         // Uncomment and run once to log out manually and then create a new account so that SharedPref
         // works correctly with the right associations
 //        String TAG = HomeUI.class.getName();

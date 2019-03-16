@@ -56,9 +56,10 @@ public class FriendsUI extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         myDialog = new Dialog(this.getActivity());
         activity = this.getActivity();
-
+        Toast.makeText(activity, "test", Toast.LENGTH_LONG);
         // Get instance of Firestore from MainActivity and get the current logged in user
         firestore = MainActivity.getFirestore();
         user = MainActivity.getCurrentUser();
@@ -70,12 +71,7 @@ public class FriendsUI extends Fragment {
 
         //Button to add a new friend
         Button addFriend = getView().findViewById(R.id.add_friend);
-        addFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ShowAddFriendPopup(view);
-            }
-        });
+        addFriend.setOnClickListener(view1 -> ShowAddFriendPopup(view1));
 
         createPendingFriendsView();
         createFriendsView();
@@ -110,13 +106,9 @@ public class FriendsUI extends Fragment {
             // add the button to the linearlayout
             myLinearLayout.addView(friendDisplay);
 
-            friendDisplay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view)
-                {
-                    showFriendOptionsPopup(view, email);
-                    Log.wtf("TESTER", ""+ email);
-                }
+            friendDisplay.setOnClickListener(view -> {
+                showFriendOptionsPopup(view, email);
+                Log.wtf("TESTER", ""+ email);
             });
         }
     }
@@ -175,30 +167,26 @@ public class FriendsUI extends Fragment {
         myDialog.setContentView(R.layout.add_friend);
 
         sendRequest = myDialog.findViewById(R.id.send_add);
-        sendRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
+        sendRequest.setOnClickListener(v1 -> {
+            //Get email from edit text
+            EditText editText = myDialog.findViewById(R.id.friend_email);
+            String email = editText.getText().toString();
+
+            //Check if email is valid
+            if( email.equals("") || !email.contains("@") )
             {
-                //Get email from edit text
-                EditText editText = myDialog.findViewById(R.id.friend_email);
-                String email = editText.getText().toString();
-
-                //Check if email is valid
-                if( email.equals("") || !email.contains("@") )
-                {
-                    Toast.makeText(activity, "Not a valid email address.", Toast.LENGTH_SHORT).show();
-                } else if (friendRequestList.containsKey(email)){
-                    Toast.makeText(activity, "Already a pending request with this email", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    // Calls Firestore method that checks if requestee email exists in Firestore, sending a friend request and
-                    // updating both pendingFriends if it does
-                    firestore.sendFriendRequest(user, email, currentFriendsUI);
-                }
-
-                myDialog.dismiss();
+                Toast.makeText(activity, "Not a valid email address.", Toast.LENGTH_SHORT).show();
+            } else if (friendRequestList.containsKey(email)){
+                Toast.makeText(activity, "Already a pending request with this email", Toast.LENGTH_SHORT).show();
             }
+            else
+            {
+                // Calls Firestore method that checks if requestee email exists in Firestore, sending a friend request and
+                // updating both pendingFriends if it does
+                firestore.sendFriendRequest(user, email, currentFriendsUI);
+            }
+
+            myDialog.dismiss();
         });
 
         // show the popup
@@ -222,21 +210,15 @@ public class FriendsUI extends Fragment {
 
         requestText.setText(username + " Would like to add you");
 
-        acceptbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Update Firestore with the new user object
-                firestore.acceptFriendRequest(user, username, currentFriendsUI);
-                myDialog.dismiss();
-            }
+        acceptbtn.setOnClickListener(v1 -> {
+            // Update Firestore with the new user object
+            firestore.acceptFriendRequest(user, username, currentFriendsUI);
+            myDialog.dismiss();
         });
 
-        declinebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firestore.declineFriendRequest(user, username, currentFriendsUI);
-                myDialog.dismiss();
-            }
+        declinebtn.setOnClickListener(v12 -> {
+            firestore.declineFriendRequest(user, username, currentFriendsUI);
+            myDialog.dismiss();
         });
 
         // show the popup
@@ -256,21 +238,16 @@ public class FriendsUI extends Fragment {
         deleteBtn = myDialog.findViewById(R.id.delete_friend_btn);
         goMsg = myDialog.findViewById(R.id.go_msg);
 
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firestore.removeFriend(user, username, currentFriendsUI);
-                myDialog.dismiss();
-            }
+        deleteBtn.setOnClickListener(v1 -> {
+            firestore.removeFriend(user, username, currentFriendsUI);
+            myDialog.dismiss();
         });
 
-        goMsg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Launch messagingUI when user clicks on a friend
-                Intent intent = new Intent(activity, MessagesUI.class);
-                startActivity(intent);
-            }
+        goMsg.setOnClickListener(v12 -> {
+            //Launch messagingUI when user clicks on a friend
+            Intent intent = new Intent(activity, MessagesUI.class);
+            intent.putExtra("friend_id", username);
+            startActivity(intent);
         });
 
         // show the popup

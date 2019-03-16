@@ -1,6 +1,8 @@
 package com.android.personalbest;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,56 +14,50 @@ import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
+import com.android.personalbest.fitness.TestFitService;
+import com.android.personalbest.time.MockTime;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowToast;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
-public class DisplayMessagesFirestoreTest {
-
+public class TestMessageFriend {
+    Intent intent;
+    TestFitService testFitService;
+    MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
-    private static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
-    private Activity activity;
-
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    public void test(){
+        intent=new Intent();
+        intent.putExtra("key", "test");
+        intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
                 return new TestFirestore(activity, userEmail);
             }
         });
-
-//        // TODO Change the MainActivity.class to whatever class we decide to test on
-//        // Might need to load all the services in MainActivity in order to get the intent
-//        Intent intent = new Intent(RuntimeEnvironment.application, MainActivity.class);
-//        intent.putExtra(FIRESTORE_SERVICE_KEY, TEST_SERVICE);
-//        activity = Robolectric.buildActivity(MainActivity.class, intent).create().get();
-    }
-
-
-    @Test
-    public void testMessagesInCorrectOrder() {
-        // TODO Change the way to get the TextView once UI is finalized
-        // Might have an error with fragments?
-        String expectedOrder = "user1:\nthis is a test message\n---\nuser2:\nthis is a test reply\n---\n";
-        assertEquals(expectedOrder, expectedOrder);
-        // Commented out for now to keep lint happy
-//        assertEquals(this.activity.getChatView().getText().toString(), expectedOrder);
+        mockTime = new MockTime();
+        mockTime.setTime("2018-03-18 21:00:00");
+        //MainActivity activity=Robolectric.setupActivity(MainActivity.class);
+        //MainActivity activity= Robolectric.buildActivity(MainActivity.class, intent).create().get();
+        //activity.loadFragment(new FriendsUI());
+//
 
     }
 
-
-    private class TestFirestore implements IFirestore {
+    public class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
+        private User user;
         private Activity activity;
         private String userEmail;
-
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
@@ -113,6 +109,15 @@ public class DisplayMessagesFirestoreTest {
 
         @Override
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
+            this.user=new User();
+            user.setName("testuser");
+            user.setEmail("testemail");
+            user.setGoal(2000);
+            user.setHeightFt(3);
+            user.setHeightIn(6);
+
+            MainActivity.setCurrentUser(user);
+            mainActivity.loadFragment(homeUI);
 
         }
 
@@ -185,5 +190,6 @@ public class DisplayMessagesFirestoreTest {
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
 
         }
+
     }
 }

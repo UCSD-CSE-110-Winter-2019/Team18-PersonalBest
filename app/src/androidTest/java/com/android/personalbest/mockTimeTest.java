@@ -17,6 +17,7 @@ import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.LoginUI;
+import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
@@ -244,5 +245,10 @@ public class mockTimeTest {
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
 
         }
+        @Override
+        public void initMessagesUI(MessagesUI messagesUI, String friendEmail){}
+
+        @Override
+        public void setTotalSteps(User user){}
     }
 }
