@@ -88,6 +88,7 @@ public class ProfileUI extends Fragment {
         goal_edit=(EditText) getView().findViewById(R.id.goal_edit);
         updateViews();
 
+        // button to edit height in feet and inch
         edit_height=getView().findViewById(R.id.edit_height_btn);
         edit_height.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +96,7 @@ public class ProfileUI extends Fragment {
                 invalid=false;
                 if(edit_height.getText().toString().equals("save")){
 
-
+                    //check input validity
                     int ft= CheckInvalid.checkForHeightft(feet_edit.getText());
                     int in=CheckInvalid.checkForHeightin(inch_edit.getText());
                     if(ft<0||in<0)
@@ -129,7 +130,7 @@ public class ProfileUI extends Fragment {
             }
         });
 
-
+        //button to edit/save goal
         edit_goal=getView().findViewById(R.id.edit_goal_btn);
 
         edit_goal.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +160,7 @@ public class ProfileUI extends Fragment {
             }
         });
 
+        //logout button
         Button logOutButton = getView().findViewById(R.id.logout_btn);
         logOutButton.setOnClickListener(new View.OnClickListener()
         {
@@ -172,30 +174,7 @@ public class ProfileUI extends Fragment {
             }
         });
 
-        Button addStepsButton = getView().findViewById(R.id.add_500_steps);
-        addStepsButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                gFit.updateToday();
-                gFit.readWeeklyStepData();
-                //gFit.printRecentSteps();
-            }
-        });
 
-        Button changeTimeBtn = getView().findViewById(R.id.change_time_button);
-        changeTimeBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                gFit.setIsTimeChanged(true);
-                edit_time = (EditText) getView().findViewById(R.id.edit_time);
-                desiredTime = Long.parseLong(edit_time.getText().toString());
-                //gFit.readYesterdayStepData();
-            }
-        });
     }
 
     public void launchLoginScreenActivity()

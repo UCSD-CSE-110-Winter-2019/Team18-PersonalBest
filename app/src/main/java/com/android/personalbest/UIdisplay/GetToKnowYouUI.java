@@ -116,6 +116,7 @@ public class GetToKnowYouUI extends AppCompatActivity {
             if ( gSignInAndOut.handleSignInResult(task) == true )
             {
                 firestore.getToKnowYouCheckIfUserExists(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail(), this);
+
             }
         }
     }

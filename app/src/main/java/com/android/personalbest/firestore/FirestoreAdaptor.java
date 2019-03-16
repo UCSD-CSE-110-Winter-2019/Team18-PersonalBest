@@ -31,11 +31,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import io.opencensus.trace.MessageEvent;
-
-import static android.content.ContentValues.TAG;
 
 
 
@@ -109,8 +104,6 @@ public class FirestoreAdaptor implements IFirestore {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
         userRef.set(data, SetOptions.merge())
 
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e))
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Goal successfully updated!"))
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }

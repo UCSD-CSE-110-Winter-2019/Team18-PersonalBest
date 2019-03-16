@@ -65,7 +65,6 @@ public class HomeUI extends Fragment {
 
         user= MainActivity.getCurrentUser();
 
-
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
     }
@@ -169,7 +168,6 @@ public class HomeUI extends Fragment {
         @Override
         protected String doInBackground(String... params) {
 
-            //MainActivity.getResource().increment();
             while(true) {
                 Encouragement en=new Encouragement(getActivity());
                 if(en.getTime().equals("23:59:59")){
@@ -186,12 +184,14 @@ public class HomeUI extends Fragment {
                 firestore.setTotalSteps(user);
 
 
+
                 try {
                     publishProgress();
+
                     Thread.sleep(1000);
 
                     goal = user.getGoal();
-                    firestore.addGoalToDatabase();
+                    //firestore.addGoalToDatabase();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();

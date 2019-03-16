@@ -4,11 +4,19 @@ import android.app.Activity;
 
 public class MessagingFactory {
     public static IMessaging create(String i, Activity activity, String collections, String document, String message) {
-        if (i.equals("test")) {
+
+        // create a test messaging adaptor if the key is "test"
+        if (i!= null && i.equals("test")) {
             return new MessagingAdaptor(activity, collections, document, message);
-        } else if (i.equals("SERIVCE")){
+        }
+
+        // create a messaging adaptor without document key if the key is "service"
+        else if (i.equals("SERIVCE")){
             return new MessagingAdaptor(activity, collections, document);
-        } else {
+        }
+
+        // create a messaging adaptor with document key otherwise
+        else {
             return new MessagingAdaptor(activity, collections, document, message);
         }
     }

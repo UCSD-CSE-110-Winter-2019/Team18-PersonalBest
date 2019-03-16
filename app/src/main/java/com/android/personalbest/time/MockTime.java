@@ -108,4 +108,5 @@ public class MockTime implements ITime
         cal.set(year, month, date);
         return cal.getTimeInMillis() - daysAgo;
     }
+    public long getTodayInMilliseconds(){ return 100;}
 }

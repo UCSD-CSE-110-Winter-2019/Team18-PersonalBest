@@ -1,5 +1,6 @@
 package com.android.personalbest.time;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public interface ITime
@@ -32,4 +33,5 @@ public interface ITime
      * @return start time of some day
      */
     long getDay(int i);
+    long getTodayInMilliseconds();
 }

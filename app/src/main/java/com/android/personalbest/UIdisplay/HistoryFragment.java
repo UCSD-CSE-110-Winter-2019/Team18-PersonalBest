@@ -17,9 +17,9 @@ import com.android.personalbest.R;
 import com.android.personalbest.User;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.time.ITime;
 import com.github.mikephil.charting.charts.BarChart;
 
-import java.util.Calendar;
 import java.util.Map;
 
 public class HistoryFragment extends Fragment{
@@ -31,12 +31,12 @@ public class HistoryFragment extends Fragment{
     private int[] incidental_steps;
     private int goal;
     User user;
-
+    ITime time;
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
     IFitService gFit;
     public static int[] TOTAL_STEPS = new int[7];
-
+    String fitnessServiceKey;
     private final String IS_FRIEND_CHART_KEY = "IS_FRIEND_CHART_KEY";
     private final String MONTH_TOTAL_STEPS_KEY = "MONTH_TOTAL_STEPS";
     private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
@@ -47,12 +47,15 @@ public class HistoryFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
         user=MainActivity.getCurrentUser();
-
+        time=MainActivity.getITime();
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
         Map<String, Integer> intentionalSteps = user.getIntentionalSteps();
         long curDayInMilliseconds = getTodayInMilliseconds();
         intentional_steps = new int[NUM_DAYS_IN_WEEK];
+
+        // get the intentional steps for the week
         for (int i = NUM_DAYS_IN_WEEK - 1; i >= 0; i--) {
             if (intentionalSteps.containsKey(Long.toString(curDayInMilliseconds))) {
                 intentional_steps[i] = intentionalSteps.get(Long.toString(curDayInMilliseconds));
@@ -63,6 +66,8 @@ public class HistoryFragment extends Fragment{
         }
 
         goal = user.getGoal();
+
+        // get the incidental steps for the week
         incidental_steps = new int[NUM_DAYS_IN_WEEK];
         calculateIncidentalSteps();
         return inflater.inflate(R.layout.fragment_history, null);
@@ -74,17 +79,19 @@ public class HistoryFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
         BarChart stepChart = getView().findViewById(R.id.chart);
 
+        // create a chart and get steps
         Chart chart = new Chart("week", intentional_steps, incidental_steps, goal, stepChart);
         chart.createChart();
 
         displayStepGoal();
         displayIntentionalSteps();
 
-//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
-        gFit = FitServiceFactory.create("real", this.getActivity());
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.subscribeForWeeklySteps();
 
         Button month_chart = getView().findViewById(R.id.monthly_chart);
+
+        // go to the monthly chart page when clicking on the button
         month_chart.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(), ChartMonthDisplay.class);
             // TODO: PASS USER ID
@@ -101,13 +108,7 @@ public class HistoryFragment extends Fragment{
 
     // Retrieves the timestamp of the current day at 12:00am in milliseconds
     private long getTodayInMilliseconds() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
+        return time.getTodayInMilliseconds();
     }
 
 
