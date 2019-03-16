@@ -157,6 +157,7 @@ public class HomeUI extends Fragment {
         runner.cancel(true);
         runner=new AsyncTaskRunner();
 
+
         Encouragement e =new Encouragement(activity);
         e.showChangeGoal(user);
     }

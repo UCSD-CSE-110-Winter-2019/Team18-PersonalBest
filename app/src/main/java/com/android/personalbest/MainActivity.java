@@ -151,8 +151,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
-        Intent iin= getIntent();
-        Bundle b = iin.getExtras();
 
         if (getIntent().getExtras() != null) {
             Log.d("MAIN_ACTIVITY", "onResume");
@@ -162,14 +160,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        if(b!=null) {
-            String indicator =(String) b.get("go_to");
-            Log.wtf("indiaiehtae", indicator);
-            if (indicator.equals("message")) {
-                Intent intent = new Intent(this, MessagesUI.class);
-                startActivity(intent);
-            }
-        }
     }
 
     public void setUpService() {
