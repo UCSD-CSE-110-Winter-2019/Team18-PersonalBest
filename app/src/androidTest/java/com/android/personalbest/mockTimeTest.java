@@ -250,5 +250,13 @@ public class mockTimeTest {
 
         @Override
         public void setTotalSteps(User user){}
+
+        @Override
+        public void addGoalToDatabase() {}
+
+        @Override
+        public String getChatID(String otherUserEmail) {
+            return "";
+        }
     }
 }

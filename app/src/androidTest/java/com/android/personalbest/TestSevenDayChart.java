@@ -219,5 +219,13 @@ public class TestSevenDayChart {
 
         }
 
+        @Override
+        public String getChatID(String otherUserEmail) {
+            return "";
+        }
+
+        @Override
+        public void addGoalToDatabase() {}
+
     }
 }

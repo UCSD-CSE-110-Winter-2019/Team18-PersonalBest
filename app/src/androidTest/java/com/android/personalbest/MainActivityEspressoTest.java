@@ -323,6 +323,15 @@ public class MainActivityEspressoTest {
 
         }
 
+        @Override
+        public void addGoalToDatabase() {}
+
+        @Override
+        public String getChatID(String otherUserEmail) {
+            return "";
+        }
+
+
     }
 
 

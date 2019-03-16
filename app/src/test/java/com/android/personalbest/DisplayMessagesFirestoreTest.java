@@ -212,5 +212,13 @@ public class DisplayMessagesFirestoreTest {
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
 
         }
+
+        @Override
+        public String getChatID(String otherUserEmail) {
+            return "";
+        }
+
+        @Override
+        public void addGoalToDatabase() {}
     }
 }

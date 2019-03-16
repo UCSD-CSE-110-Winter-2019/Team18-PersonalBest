@@ -28,8 +28,6 @@ public class MessagesUI extends AppCompatActivity {
     private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
     private final String GOAL_KEY = "GOAL";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +67,7 @@ public class MessagesUI extends AppCompatActivity {
         });
 
         firestore.initMessageUpdateListener(findViewById(R.id.chat), id);
+
         EditText text=findViewById(R.id.input_msg);
         Log.wtf("text", text.getText().toString());
         findViewById(R.id.btn_send).setOnClickListener(view -> {
@@ -76,9 +75,7 @@ public class MessagesUI extends AppCompatActivity {
             firestore.addSentMessageToDatabase(findViewById(R.id.input_msg), id);
 
         });
-
     }
-
 
     public static void setCurrentFriend(User friend) {
         currentFriend = friend;
