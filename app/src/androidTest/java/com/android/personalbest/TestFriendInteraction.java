@@ -58,6 +58,8 @@ public class TestFriendInteraction {
     private static final String TEST_SERVICE = "TEST_SERVICE";
     Map<String, Boolean> pendingFriends=new HashMap<>();
     List<String> friends = new ArrayList<>();
+    User friend;
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
             ,true,
@@ -137,6 +139,27 @@ public class TestFriendInteraction {
 
 
     }
+    @Test
+    public void testSendRequest(){
+        friends=new ArrayList<>();
+        pendingFriends=new HashMap<>();
+        mActivityTestRule.launchActivity(intent);
+
+        ViewInteraction navigation_friends = onView(
+                allOf(withId(R.id.navigation_friends)));
+        navigation_friends.perform(click());
+        ViewInteraction add_friend = onView(
+                allOf(withId(R.id.add_friend)));
+        add_friend.perform(click());
+
+        ViewInteraction friend_email = onView(
+                allOf(withId(R.id.friend_email)));
+        friend_email.perform(replaceText("testfriend@ucsd.edu"), closeSoftKeyboard());
+
+        ViewInteraction sendRequest = onView(
+                allOf(withId(R.id.send_add)));
+        sendRequest.perform(click());
+    }
 
     @Test
     public void testRemoveFriend(){
@@ -204,6 +227,7 @@ public class TestFriendInteraction {
         private User user;
         private Activity activity;
         private String userEmail;
+
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
@@ -345,7 +369,6 @@ public class TestFriendInteraction {
         @Override
         public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
         }
-
     }
 
 }

@@ -2,7 +2,8 @@ package com.android.personalbest;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
+import android.support.test.espresso.ViewInteraction;
+import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,39 +18,64 @@ import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
 import com.android.personalbest.time.MockTime;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.android.controller.ActivityController;
-import org.robolectric.shadows.ShadowToast;
 
-import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class TestMessageFriend {
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+
+public class TestSevenDayChart {
     Intent intent;
     TestFitService testFitService;
     MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
-    @Test
-    public void test(){
+    Map<String, Boolean> pendingFriends=new HashMap<>();
+    List<String> friends = new ArrayList<>();
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
+            ,true,
+            false);
+
+    @Before
+    public void setUp() {
         intent=new Intent();
         intent.putExtra("key", "test");
         intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
-                return new TestFirestore(activity, userEmail);
+                return new TestSevenDayChart.TestFirestore(activity, userEmail);
             }
         });
         mockTime = new MockTime();
         mockTime.setTime("2018-03-18 21:00:00");
-        //MainActivity activity=Robolectric.setupActivity(MainActivity.class);
-        //MainActivity activity= Robolectric.buildActivity(MainActivity.class, intent).create().get();
-        //activity.loadFragment(new FriendsUI());
-//
+        testFitService=new TestFitService(mActivityTestRule.getActivity());
 
+    }
+
+    @Test
+    public void testChart(){
+        mActivityTestRule.launchActivity(intent);
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_history)));
+        bottomNavigationItemView.perform(click());
+
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.intentionalStepsCount)));
+        textView.check(matches(withText("100")));
     }
 
     public class TestFirestore implements IFirestore {
@@ -115,7 +141,9 @@ public class TestMessageFriend {
             user.setGoal(2000);
             user.setHeightFt(3);
             user.setHeightIn(6);
-
+            Map<String, Integer> intentionalSteps=new HashMap<>();
+            intentionalSteps.put(Long.toString(100), 100);
+            user.setIntentionalSteps(intentionalSteps);
             MainActivity.setCurrentUser(user);
             mainActivity.loadFragment(homeUI);
 

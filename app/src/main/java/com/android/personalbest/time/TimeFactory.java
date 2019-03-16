@@ -9,7 +9,7 @@ public class TimeFactory
      */
     public static ITime create(String i)
     {
-        if(i.equals("test"))
+        if(i!=null&&i.equals("test"))
         {
             return new MockTime();
         }else

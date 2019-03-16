@@ -17,6 +17,7 @@ import com.android.personalbest.R;
 import com.android.personalbest.User;
 import com.android.personalbest.fitness.FitServiceFactory;
 import com.android.personalbest.fitness.IFitService;
+import com.android.personalbest.time.ITime;
 import com.github.mikephil.charting.charts.BarChart;
 
 import java.util.Calendar;
@@ -31,12 +32,12 @@ public class HistoryFragment extends Fragment{
     private int[] incidental_steps;
     private int goal;
     User user;
-
+    ITime time;
     private TextView stepGoalView;
     private TextView intentionalStepsCountView;
     IFitService gFit;
     public static int[] TOTAL_STEPS = new int[7];
-
+    String fitnessServiceKey;
     private final String IS_FRIEND_CHART_KEY = "IS_FRIEND_CHART_KEY";
     private final String MONTH_TOTAL_STEPS_KEY = "MONTH_TOTAL_STEPS";
     private final String MONTH_INTENTIONAL_STEPS_KEY = "MONTH_INTENTIONAL_STEPS";
@@ -49,7 +50,9 @@ public class HistoryFragment extends Fragment{
         super.onCreate(savedInstanceState);
 //        intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
         user=MainActivity.getCurrentUser();
-
+        time=MainActivity.getITime();
+        Bundle args = getArguments();
+        fitnessServiceKey = args.getString("key");
         Map<String, Integer> intentionalSteps = user.getIntentionalSteps();
         long curDayInMilliseconds = getTodayInMilliseconds();
         intentional_steps = new int[NUM_DAYS_IN_WEEK];
@@ -81,7 +84,7 @@ public class HistoryFragment extends Fragment{
         displayIntentionalSteps();
 
 //        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
-        gFit = FitServiceFactory.create("real", this.getActivity());
+        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.subscribeForWeeklySteps();
 
         Button month_chart = getView().findViewById(R.id.monthly_chart);
@@ -101,13 +104,7 @@ public class HistoryFragment extends Fragment{
 
     // Retrieves the timestamp of the current day at 12:00am in milliseconds
     private long getTodayInMilliseconds() {
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
+        return time.getTodayInMilliseconds();
     }
 
 

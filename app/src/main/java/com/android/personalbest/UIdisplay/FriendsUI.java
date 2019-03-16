@@ -59,7 +59,6 @@ public class FriendsUI extends Fragment {
 
         myDialog = new Dialog(this.getActivity());
         activity = this.getActivity();
-        Toast.makeText(activity, "test", Toast.LENGTH_LONG);
         // Get instance of Firestore from MainActivity and get the current logged in user
         firestore = MainActivity.getFirestore();
         user = MainActivity.getCurrentUser();

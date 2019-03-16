@@ -2,7 +2,6 @@ package com.android.personalbest;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,11 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.robolectric.util.FragmentTestUtil.startFragment;
-
 
 @RunWith(RobolectricTestRunner.class)
-public class DisplayMessagesFirestoreTest {
+public class SendMessageFirestoreTest {
 
     private static final String TEST_SERVICE = "TEST_SERVICE";
     private static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
@@ -58,16 +55,18 @@ public class DisplayMessagesFirestoreTest {
 
 
     @Test
-    public void testMessagesInCorrectOrder() {
-        String expectedOrder = "user1email:\nthis is a test message\n---\nuser2email:\nthis is a test reply\n---\n";
-        assertEquals(expectedOrder, ((TextView) messagesUI.findViewById(R.id.chat)).getText().toString());
-    }
+    public void testSendMessage() {
+        String expectedStartChat = "";
+        assertEquals(expectedStartChat, ((TextView) messagesUI.findViewById(R.id.chat)).getText().toString());
 
+        ((EditText) messagesUI.findViewById(R.id.input_msg)).setText("Hello!");
+        messagesUI.findViewById(R.id.btn_send).performClick();
 
-    @Test
-    public void testFriendEmailHeader() {
-        Toolbar header = messagesUI.findViewById(R.id.header);
-        assertEquals(header.getTitle(), "user2email");
+        // Simulate chat updating by calling init again
+        MainActivity.firestore.initMessageUpdateListener(messagesUI.findViewById(R.id.chat), "user2email");
+
+        String expectedSentMessage = "user1email:\nHello!\n---\n";
+        assertEquals(expectedSentMessage, ((TextView) messagesUI.findViewById(R.id.chat)).getText().toString());
     }
 
 
@@ -77,6 +76,7 @@ public class DisplayMessagesFirestoreTest {
         private Activity activity;
         private String userEmail;
         private User user;
+        StringBuilder sb = new StringBuilder();
 
 
         public TestFirestore(Activity activity, String userEmail) {
@@ -87,7 +87,7 @@ public class DisplayMessagesFirestoreTest {
 
         @Override
         public void setName(String name) {
-            Log.d(TAG, "Setting name " + name + " to database");
+
         }
 
         @Override
@@ -107,24 +107,12 @@ public class DisplayMessagesFirestoreTest {
 
         @Override
         public void initMessageUpdateListener(TextView chatView, String otherUserEmail) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("user1email");
-            sb.append(":\n");
-            sb.append("this is a test message");
-            sb.append("\n");
-            sb.append("---\n");
-
-            sb.append("user2email");
-            sb.append(":\n");
-            sb.append("this is a test reply");
-            sb.append("\n");
-            sb.append("---\n");
-            chatView.append(sb.toString());
+            chatView.setText(sb.toString());
         }
 
         @Override
         public void addSentMessageToDatabase(EditText editText, String otherUserEmail) {
-            Log.d(TAG, "Adding message to database");
+            sb.append("user1email:\n" + editText.getText().toString() + "\n---\n");
         }
 
         @Override
