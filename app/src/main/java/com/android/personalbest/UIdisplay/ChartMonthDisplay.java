@@ -55,7 +55,7 @@ public class ChartMonthDisplay extends AppCompatActivity {
         setContentView(R.layout.chart_month);
 
         //Creates a time object that represents the current time.
-        time = TimeFactory.create(0);
+        time = TimeFactory.create("test");
 
         // Get instance of Firestore from MainActivity and get the current logged in user
         firestore = MainActivity.getFirestore();

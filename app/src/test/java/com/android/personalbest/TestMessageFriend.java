@@ -2,7 +2,7 @@ package com.android.personalbest;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,70 +14,50 @@ import com.android.personalbest.UIdisplay.LoginUI;
 import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
+import com.android.personalbest.fitness.TestFitService;
+import com.android.personalbest.time.MockTime;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowToast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.robolectric.util.FragmentTestUtil.startFragment;
-
+import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
-public class DisplayMessagesFirestoreTest {
-
+public class TestMessageFriend {
+    Intent intent;
+    TestFitService testFitService;
+    MockTime mockTime;
     private static final String TEST_SERVICE = "TEST_SERVICE";
-    private static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
-    private MainActivity activity;
-    private MessagesUI messagesUI;
-
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    public void test(){
+        intent=new Intent();
+        intent.putExtra("key", "test");
+        intent.putExtra(MainActivity.FIRESTORE_SERVICE_KEY, "TEST_SERVICE");
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
                 return new TestFirestore(activity, userEmail);
             }
         });
+        mockTime = new MockTime();
+        mockTime.setTime("2018-03-18 21:00:00");
+        //MainActivity activity=Robolectric.setupActivity(MainActivity.class);
+        //MainActivity activity= Robolectric.buildActivity(MainActivity.class, intent).create().get();
+        //activity.loadFragment(new FriendsUI());
+//
 
-        Intent intent = new Intent(RuntimeEnvironment.application, MainActivity.class);
-        intent.putExtra(FIRESTORE_SERVICE_KEY, TEST_SERVICE);
-        intent.putExtra("key", "test");
-        activity = Robolectric.buildActivity(MainActivity.class, intent).create().get();
-
-        Intent messagesIntent = new Intent(RuntimeEnvironment.application, MessagesUI.class);
-        messagesIntent.putExtra("friend_id", "user2email");
-        messagesUI = Robolectric.buildActivity(MessagesUI.class, messagesIntent).create().get();
     }
 
-
-    @Test
-    public void testMessagesInCorrectOrder() {
-        String expectedOrder = "user1email:\nthis is a test message\n---\nuser2email:\nthis is a test reply\n---\n";
-        assertEquals(expectedOrder, ((TextView) messagesUI.findViewById(R.id.chat)).getText().toString());
-    }
-
-
-    @Test
-    public void testFriendEmailHeader() {
-        Toolbar header = messagesUI.findViewById(R.id.header);
-        assertEquals(header.getTitle(), "user2email");
-    }
-
-
-    private class TestFirestore implements IFirestore {
+    public class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
+        private User user;
         private Activity activity;
         private String userEmail;
-        private User user;
-
 
         public TestFirestore(Activity activity, String userEmail) {
             this.activity = activity;
@@ -108,13 +88,13 @@ public class DisplayMessagesFirestoreTest {
         @Override
         public void initMessageUpdateListener(TextView chatView, String otherUserEmail) {
             StringBuilder sb = new StringBuilder();
-            sb.append("user1email");
+            sb.append("user1");
             sb.append(":\n");
             sb.append("this is a test message");
             sb.append("\n");
             sb.append("---\n");
 
-            sb.append("user2email");
+            sb.append("user2");
             sb.append(":\n");
             sb.append("this is a test reply");
             sb.append("\n");
@@ -130,17 +110,15 @@ public class DisplayMessagesFirestoreTest {
         @Override
         public void initMainActivity(MainActivity mainActivity, HomeUI homeUI) {
             this.user=new User();
-            List<String> friendsList = new ArrayList<>();
-            friendsList.add("user2email");
-            user.setName("user1");
-            user.setEmail("user1email");
+            user.setName("testuser");
+            user.setEmail("testemail");
             user.setGoal(2000);
             user.setHeightFt(3);
             user.setHeightIn(6);
-            user.setFriends(friendsList);
 
             MainActivity.setCurrentUser(user);
             mainActivity.loadFragment(homeUI);
+
         }
 
         @Override
@@ -212,5 +190,6 @@ public class DisplayMessagesFirestoreTest {
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
 
         }
+
     }
 }

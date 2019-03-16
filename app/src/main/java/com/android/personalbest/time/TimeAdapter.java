@@ -60,6 +60,16 @@ public class TimeAdapter implements ITime
         cal.add(Calendar.DAY_OF_YEAR, -27);
         return cal.getTimeInMillis();
     }
+    public Date getTime(){
+        return Calendar.getInstance().getTime();
+    }
+
+    @Override
+    public void setTime(String date) {
+    }
+
+    @Override
+    public void setMockTime(Long mockTime){}
 
     /**
      * @return start time of some day

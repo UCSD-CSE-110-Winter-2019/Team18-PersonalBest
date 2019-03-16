@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestMockTime
 {
+
     ITime mtime;
     long mockedTime = 1548759600;
 
@@ -23,7 +24,8 @@ public class TestMockTime
     @Before
     public void setup()
     {
-        this. mtime = TimeFactory.create(mockedTime * 1000);
+        this. mtime = TimeFactory.create("test");
+        mtime.setMockTime(mockedTime * 1000);
     }
 
     @Test

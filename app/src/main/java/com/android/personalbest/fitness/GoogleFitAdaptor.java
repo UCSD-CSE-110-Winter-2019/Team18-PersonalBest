@@ -49,10 +49,10 @@ public class GoogleFitAdaptor implements IFitService{
     public boolean changeTime = false;
 
 
-    public GoogleFitAdaptor(Activity activity, long time)
+    public GoogleFitAdaptor(Activity activity, String key)
     {
         this.activity = activity;
-        this.time = TimeFactory.create(time);
+        this.time = TimeFactory.create(key);
     }
 
 
