@@ -2,28 +2,20 @@ package com.android.personalbest;
 
 import android.app.Activity;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.HistoryFragment;
-import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreAdaptor;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
@@ -38,19 +30,6 @@ import com.google.firebase.FirebaseApp;
 
 import com.android.personalbest.UIdisplay.HomeUI;
 import com.android.personalbest.UIdisplay.ProfileUI;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.MetadataChanges;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.util.Calendar;
-import java.util.List;
 
 import java.util.List;
 
@@ -92,12 +71,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        // Uncomment and run once to log out manually and then create a new account so that SharedPref
-        // works correctly with the right associations
-//        String TAG = HomeUI.class.getName();
-//        GoogleFitAdaptor gSignInAndOut = new GoogleFitAdaptor(this, TAG);
-//        gSignInAndOut.signOut();
-
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
         String key=getIntent().getStringExtra("key");
@@ -131,7 +104,6 @@ public class MainActivity extends AppCompatActivity
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
 
-//        loadFragment(homeUI);
 
 
 
@@ -187,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     public void setUpGoalNot() {
         User user = getCurrentUser();
         messaging = MessagingFactory.create(
-                "SERVICE", getActivity(), "goal", user.getEmail().replace("@", ""), "");
+                "SERVICE", this, "goal", user.getEmail().replace("@", ""), "");
         messaging.setup();
         messaging.subscribeToNotificationsTopic();
     }
@@ -196,7 +168,6 @@ public class MainActivity extends AppCompatActivity
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
         }

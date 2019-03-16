@@ -81,8 +81,6 @@ public class ChartMonthDisplay extends AppCompatActivity {
         }
 
 
-        //Initialize gFit
-//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit = FitServiceFactory.create("real", this);
 
 

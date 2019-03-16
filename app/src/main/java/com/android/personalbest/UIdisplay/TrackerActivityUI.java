@@ -164,17 +164,8 @@ public class TrackerActivityUI extends AppCompatActivity {
                     publishProgress(Integer.toString(curr_time));
 
                     curr_step = gFit.getTotalDailySteps();
-//                    if(gFit.getIsTimeChanged())
-//                    {
-//                        gFit.readWeeklyStepData();
-//                        curr_step = GoogleFitAdaptor.weekSteps[6];
-//                    }else {
-//                        curr_step = gFit.getTotalDailySteps();
-//                    }
 
                     if(curr_step > 0) {
-                        Log.wtf("TESTING curr_step", "  " + curr_step);
-                        Log.wtf("TESTING start_step", "  " + start_step);
                         difference = curr_step - start_step;
                     }
 

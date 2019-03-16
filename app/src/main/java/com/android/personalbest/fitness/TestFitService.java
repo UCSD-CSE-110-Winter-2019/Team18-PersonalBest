@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.Task;
 import java.util.Map;
 
 public class TestFitService implements IFitService {
-    private static final String TAG = "[TestFitService]: ";
     private Activity activity;
     private static long TotalDailySteps;
     public TestFitService(Activity activity) {
