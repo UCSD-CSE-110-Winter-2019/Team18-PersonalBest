@@ -25,14 +25,12 @@ import java.util.Map;
 
 
 public class ChartMonthDisplay extends AppCompatActivity {
-    private final static int NUM_DAYS_IN_WEEK = 7;
     private final static int NUM_MILLISECONDS_IN_DAY = 86400000;
     private final static int NUM_DAYS_IN_MONTH = 28;
 
-    private int[] total_steps;
-    private int[] intentional_steps;
-    private int[] incidental_steps;
-    private int goal;
+    public int[] intentional_steps;
+    public int[] incidental_steps;
+    public int goal;
 
     IFirestore firestore;
     User user;
