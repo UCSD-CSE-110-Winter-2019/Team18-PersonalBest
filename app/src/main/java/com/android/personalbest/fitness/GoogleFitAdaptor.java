@@ -136,12 +136,7 @@ public class GoogleFitAdaptor implements IFitService{
                             }
                         })
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("readDailyStepData", "There was a problem getting the step count.", e);
-                            }
-                        });
+                        e -> Log.w("readDailyStepData", "There was a problem getting the step count.", e));
     }
 
     /**
@@ -315,7 +310,7 @@ public class GoogleFitAdaptor implements IFitService{
             Log.e("dumpWeekSteps", "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
                 Log.i("dumpWeekSteps", "\tField: " + field.getName() + " Number of recent steps " + dp.getValue(field));
-                this.weekSteps[counter] = (dp.getValue(field)).asInt();
+                weekSteps[counter] = (dp.getValue(field)).asInt();
             }
         }
     }
@@ -503,15 +498,12 @@ public class GoogleFitAdaptor implements IFitService{
         return Fitness.getHistoryClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                 .insertData(dataSet)
                 .addOnCompleteListener(
-                        new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // At this point, the data has been inserted and can be read.
-                                    Log.wtf(TAG, "Data insert was successful!");
-                                } else {
-                                    Log.wtf(TAG, "There was a problem inserting the dataset.", task.getException());
-                                }
+                        task -> {
+                            if (task.isSuccessful()) {
+                                // At this point, the data has been inserted and can be read.
+                                Log.wtf(TAG, "Data insert was successful!");
+                            } else {
+                                Log.wtf(TAG, "There was a problem inserting the dataset.", task.getException());
                             }
                         });
     }

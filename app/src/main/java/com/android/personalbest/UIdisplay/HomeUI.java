@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
-import com.android.personalbest.SharedPrefData;
 import com.android.personalbest.User;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.FitServiceFactory;
@@ -36,7 +34,6 @@ public class HomeUI extends Fragment {
     static User user;
     static TextView display_goal;
     static TextView display_steps;
-    private  int dsteps;
     private static int goal;
     static long curr_steps;
     static AsyncTaskRunner runner;
@@ -65,7 +62,24 @@ public class HomeUI extends Fragment {
         gFit.setup();
 
         firestore=MainActivity.getFirestore();
-        user=MainActivity.getCurrentUser();
+
+        user= MainActivity.getCurrentUser();
+
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(task -> {
+//                    if (!task.isSuccessful()) {
+//                        Log.w(TAG, "getInstanceId failed", task.getException());
+//                        return;
+//                    }
+//
+//                    // Get new Instance ID token
+//                    String token = task.getResult().getToken();
+//
+//                    // Log and toast
+//                    String msg = getString(R.string.msg_token_fmt, token);
+//                    Log.d(TAG, msg);
+//                });
+
 
         super.onCreate(savedInstanceState);
         return inflater.inflate(R.layout.fragment_home, null);
@@ -74,23 +88,26 @@ public class HomeUI extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
-        gFit.setup();
+//
+//        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
+//        gFit.setup();
         ct=getContext();
         activity=getActivity();
+
         time = TimeFactory.create("test");
         display_goal = getView().findViewById(R.id.goal);
-        display_steps = ((TextView)getView().findViewById(R.id.display));
+        display_steps = getView().findViewById(R.id.display);
 
 
         if(first){
             runner = new AsyncTaskRunner();
             first=false;
         }
+
         //goal = SharedPrefData.getGoal(getContext());
 //        curr_steps = gFit.getTotalDailySteps();
         curr_steps = gFit.getMonthSteps()[27];
+
         goal = user.getGoal();
         //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         //((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
@@ -107,7 +124,6 @@ public class HomeUI extends Fragment {
 
     @Override
     public void onPause(){
-
         Log.d("msg:", "pause");
         Log.d("status",runner.getStatus().toString());
         super.onPause();
@@ -133,7 +149,6 @@ public class HomeUI extends Fragment {
     }
 
     public static void async(){
-
         goal=user.getGoal();
         runner.execute("0");
     }
@@ -141,6 +156,7 @@ public class HomeUI extends Fragment {
     public void show(){
         runner.cancel(true);
         runner=new AsyncTaskRunner();
+
 
         Encouragement e =new Encouragement(activity);
         e.showChangeGoal(user);
@@ -159,6 +175,7 @@ public class HomeUI extends Fragment {
         if(!runner.isCancelled())
             runner.cancel(true);
     }
+
     public void testkillRunner(){
         if(!runner.isCancelled())
             runner.cancel(true);
@@ -168,13 +185,13 @@ public class HomeUI extends Fragment {
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
         long updated_steps = gFit.getTotalDailySteps();
         int numStepsOver = 0;
+        Boolean hasShown = false;
 
         @Override
         protected String doInBackground(String... params) {
-            int i=0;
+
             //MainActivity.getResource().increment();
             while(true) {
-                i++;
                 Encouragement en=new Encouragement(getActivity());
                 if(en.getTime().equals("23:59:59")){
                     Encouragement.first_pg=true;
@@ -186,6 +203,8 @@ public class HomeUI extends Fragment {
                 gFit.readMonthlyStepData();
                 gFit.getYesterdaySteps();
 
+                Log.wtf("!!!!!!!!", Long.toString(updated_steps));
+
                 user.setTotalSteps(gFit.getMonthMap());
                 firestore.setTotalSteps(user);
 
@@ -194,10 +213,28 @@ public class HomeUI extends Fragment {
 //                    firestore.setTotalSteps(user);
 //                }
 
+
                 try {
                     publishProgress();
+
+//                    firestore.getUser();
+//                    Log.wtf("wait 5 sec", "wait 5 sec");
                     Thread.sleep(1000);
+//
                     goal = user.getGoal();
+//                    Log.wtf("GOOOOOOOAL", Integer.toString(goal));
+//
+//                    Thread.sleep(50000);
+//                    Log.wtf("finish wait 50 sec", "wait 50 sec");
+//
+//                    if (updated_steps == user.getGoal() && !hasShown) {
+//                        Log.wtf("yes", "yes");
+//
+//                        firestore.addGoalToDatabase();
+//                        hasShown = true;
+//                    }
+
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -217,6 +254,7 @@ public class HomeUI extends Fragment {
                 if(fitnessServiceKey.equals("test"))
                     break;
             }
+
             return ("10");
         }
 
@@ -236,6 +274,7 @@ public class HomeUI extends Fragment {
 
         @Override
         protected void onPreExecute() {
+
             gFit.subscribeForWeeklySteps();
         }
 

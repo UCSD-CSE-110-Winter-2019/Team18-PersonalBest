@@ -77,22 +77,16 @@ public class Encouragement {
          TextView currentGoalView = myDialog.findViewById(R.id.current_goal);
          currentGoalView.setText(Integer.toString(user.getGoal()));
 
-         incGoal.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 myDialog.dismiss();
-                 int cur_goal=500+user.getGoal();
-                 user.setGoal(cur_goal);
-                 MainActivity.getFirestore().setGoal(cur_goal);
-                 HomeUI.async();
-             }
+         incGoal.setOnClickListener(v -> {
+             myDialog.dismiss();
+             int cur_goal=500+user.getGoal();
+             user.setGoal(cur_goal);
+             MainActivity.getFirestore().setGoal(cur_goal);
+             HomeUI.async();
          });
-         back.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 myDialog.dismiss();
-                 HomeUI.async();
-             }
+         back.setOnClickListener(v -> {
+             myDialog.dismiss();
+             HomeUI.async();
          });
 
      }

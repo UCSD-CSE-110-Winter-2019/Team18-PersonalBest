@@ -13,3 +13,103 @@ exports.addTimeStamp = functions.firestore
 
      return "snap was null or empty";
    });
+
+
+exports.sendChatNotifications = functions.firestore
+   .document('chats/{chatId}/messages/{messageId}')
+   .onCreate((snap, context) => {
+     // Get an object with the current document value.
+     // If the document does not exist, it has been deleted.
+     const document = snap.exists ? snap.data() : null;
+
+     if (document) {
+       var message = {
+         topic: context.params.chatId,
+         notification: {
+            title: document.from + ' sent you a message',
+            body: document.text
+         },
+         data: {
+            hello: "world"
+         }
+       };
+
+       return admin.messaging().send(message)
+         .then((response) => {
+           // Response is a message ID string.
+           console.log('Successfully sent message:', response);
+           return response;
+         })
+         .catch((error) => {
+           console.log('Error sending message:', error);
+           return error;
+         });
+     }
+
+     return "document was null or emtpy";
+   });
+
+
+
+exports.sendGoalNotificationsUpdate = functions.firestore
+   .document('goal/{user}')
+   .onUpdate((snap, context) => {
+     const document = snap.exists ? snap.data() : null;
+
+     if (document) {
+       var message = {
+         notification: {
+           title: 'Congratulations',
+           body: 'You have reached your goal'
+         },
+         topic: context.params.user
+       };
+
+       return admin.messaging().send(message)
+         .then((response) => {
+           // Response is a message ID string.
+           console.log('Successfully sent message:', response);
+           return response;
+         })
+         .catch((error) => {
+           console.log('Error sending message:', error);
+           return error;
+         });
+     }
+
+     return "document was null or emtpy";
+   });
+
+
+exports.sendGoalNotificationsCreate = functions.firestore
+   .document('goal/{user}')
+   .onCreate((snap, context) => {
+     // Get an object with the current document value.
+     // If the document does not exist, it has been deleted.
+     const document = snap.exists ? snap.data() : null;
+
+     if (document) {
+       var message = {
+         notification: {
+           title: 'Congratulations',
+           body: 'You have reached your goal'
+         },
+         topic: context.params.user
+       };
+
+       return admin.messaging().send(message)
+         .then((response) => {
+           // Response is a message ID string.
+           console.log('Successfully sent message:', response);
+           return response;
+         })
+         .catch((error) => {
+           console.log('Error sending message:', error);
+           return error;
+         });
+     }
+
+     return "document was null or emtpy";
+   });
+
+

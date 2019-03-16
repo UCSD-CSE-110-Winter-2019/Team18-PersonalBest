@@ -346,6 +346,13 @@ public class TestFriendInteraction {
         public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
         }
 
+        @Override
+        public void addGoalToDatabase() {}
+
+        @Override
+        public String getChatID(String otherUserEmail) {
+            return "";
+        }
     }
 
 }
