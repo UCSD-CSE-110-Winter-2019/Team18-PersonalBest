@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,12 +62,12 @@ public class TrackerActivityUI extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        start_step = HomeUI.curr_steps;
+        //start_step = HomeUI.curr_steps;
         gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this);
         gFit.setup();
 
         gFit.readWeeklyStepData();
-        start_step = GoogleFitAdaptor.weekSteps[6];
+        start_step = gFit.getWeekSteps()[6];
 
         firestore = MainActivity.getFirestore();
         user = MainActivity.getCurrentUser();
@@ -162,15 +163,18 @@ public class TrackerActivityUI extends AppCompatActivity {
                 try {
                     publishProgress(Integer.toString(curr_time));
 
-                    if(gFit.getIsTimeChanged())
-                    {
-                        gFit.readWeeklyStepData();
-                        curr_step = GoogleFitAdaptor.weekSteps[6];
-                    }else {
-                        curr_step = gFit.getTotalDailySteps();
-                    }
+                    curr_step = gFit.getTotalDailySteps();
+//                    if(gFit.getIsTimeChanged())
+//                    {
+//                        gFit.readWeeklyStepData();
+//                        curr_step = GoogleFitAdaptor.weekSteps[6];
+//                    }else {
+//                        curr_step = gFit.getTotalDailySteps();
+//                    }
 
                     if(curr_step > 0) {
+                        Log.wtf("TESTING curr_step", "  " + curr_step);
+                        Log.wtf("TESTING start_step", "  " + start_step);
                         difference = curr_step - start_step;
                     }
 

@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     public static final String FIRESTORE_SERVICE_KEY = "FIRESTORE_SERVICE_KEY";
     public static final String FIRESTORE_ADAPTOR_KEY = "FIRESTORE_ADAPTOR";
     String COLLECTION_KEY = "chats";
-    String DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
     String MESSAGES_KEY = "messages";
     public static MainActivity activity;
     public static ITime time;
