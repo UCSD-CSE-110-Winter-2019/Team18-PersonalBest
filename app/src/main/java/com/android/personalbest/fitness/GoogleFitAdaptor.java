@@ -189,20 +189,6 @@ public class GoogleFitAdaptor implements IFitService{
 
     /** Returns a {@link DataReadRequest} for all step count changes starting from the past Sunday */
     public DataReadRequest queryWeekFitnessData() {
-//        Calendar cal = Calendar.getInstance();
-//        Date now = new Date();
-//        if(this.changeTime)
-//        {
-//            cal.setTimeInMillis(ProfileUI.desiredTime);
-//        }else {
-//            cal.setTime(now);
-//        }
-//        long endTime = cal.getTimeInMillis();
-//        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//        cal.set(Calendar.HOUR_OF_DAY, 0);
-//        cal.set(Calendar.MINUTE, 0);
-//        cal.set(Calendar.SECOND, 0);
-//        long startTime = cal.getTimeInMillis();
         long startTime = time.timeOneWeekAgo();
         long endTime = time.timeNow();
 
@@ -221,20 +207,6 @@ public class GoogleFitAdaptor implements IFitService{
 
     /** Returns a {@link DataReadRequest} for all step count changes starting from the past 28 days */
     public DataReadRequest queryMonthFitnessData() {
-//        Calendar cal = Calendar.getInstance();
-//        Date now = new Date();
-//        if(this.changeTime)
-//        {
-//            cal.setTimeInMillis(ProfileUI.desiredTime);
-//        }else {
-//            cal.setTime(now);
-//        }
-//        long endTime = cal.getTimeInMillis();
-//        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//        cal.set(Calendar.HOUR_OF_DAY, 0);
-//        cal.set(Calendar.MINUTE, 0);
-//        cal.set(Calendar.SECOND, 0);
-//        long startTime = cal.getTimeInMillis();
         long startTime = time.timeOneMonthAgo();
         long endTime = time.timeNow();
 
@@ -455,15 +427,6 @@ public class GoogleFitAdaptor implements IFitService{
     private DataSet updateFitnessData() {
         Log.i("updateFitnessData", "Creating a new data update request.");
 
-//        Calendar testCal = Calendar.getInstance();
-//        Date now = new Date();
-//        testCal.setTime(now);
-//        long endTime = testCal.getTimeInMillis();
-//        testCal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//        testCal.set(Calendar.HOUR_OF_DAY, 0);
-//        testCal.set(Calendar.MINUTE, 0);
-//        testCal.set(Calendar.SECOND, 0);
-//        long startTime = testCal.getTimeInMillis();
         long startTime = time.timeOneWeekAgo();
         long endTime = time.timeNow();
 
@@ -520,7 +483,6 @@ public class GoogleFitAdaptor implements IFitService{
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        //cal.add(Calendar.HOUR_OF_DAY, -1);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
