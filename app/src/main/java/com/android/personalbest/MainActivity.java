@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity
 
 
     String COLLECTION_KEY = "chats";
-    String DOCUMENT_KEY = "s8leiucsd.eduxul078ucsd.edu";
     String MESSAGES_KEY = "messages";
     public static MainActivity activity;
     public static ITime time;

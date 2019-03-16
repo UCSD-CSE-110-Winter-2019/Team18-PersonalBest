@@ -179,6 +179,7 @@ public class ProfileUI extends Fragment {
             public void onClick(View view)
             {
                 gFit.updateToday();
+                gFit.readWeeklyStepData();
                 //gFit.printRecentSteps();
             }
         });
