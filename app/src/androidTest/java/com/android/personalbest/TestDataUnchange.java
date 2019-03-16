@@ -1,9 +1,7 @@
 package com.android.personalbest;
 
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -28,23 +26,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityEspressoTest {
+public class TestDataUnchange {
     Intent intent;
     TestFitService testFitService;
     MockTime mockTime;
@@ -63,7 +57,7 @@ public class MainActivityEspressoTest {
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
-                return new TestFirestore(activity, userEmail);
+                return new TestDataUnchange.TestFirestore(activity, userEmail);
             }
         });
         testFitService=new TestFitService(mActivityTestRule.getActivity());
@@ -72,8 +66,10 @@ public class MainActivityEspressoTest {
         mockTime.setTime("2018-03-18 21:00:00");
 
     }
+
     @Test
-    public void testDisplay(){
+    public void testReloginDataUnchange(){
+
         mActivityTestRule.launchActivity(intent);
         ViewInteraction homegoal = onView(
                 allOf(withId(R.id.goal),
@@ -103,85 +99,36 @@ public class MainActivityEspressoTest {
         ViewInteraction heightin = onView(
                 allOf(withId(R.id.current_in),isDisplayed()));
         heightin.check(matches(withText("6")));
-
-    }
-
-    @Test
-    public void testChangeSynched(){
+        mActivityTestRule.finishActivity();
         mActivityTestRule.launchActivity(intent);
-        ViewInteraction homegoal = onView(
+        homegoal = onView(
                 allOf(withId(R.id.goal),
                         isDisplayed()));
         homegoal.check(matches(withText("2000")));
 
-        ViewInteraction totalStep = onView(
+        totalStep = onView(
                 allOf(withId(R.id.display),isDisplayed()));
         totalStep.check(matches(withText("200")));
-
-        ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
-        bottomNavigationItemView.perform(click());
-
-        ViewInteraction name = onView(
-                allOf(withId(R.id.user_txt), isDisplayed()));
-        name.check(matches(withText("testuser")));
-
-        ViewInteraction profilegoal = onView(
-                allOf(withId(R.id.current_goal),isDisplayed()));
-        profilegoal.check(matches(withText("2000")));
-
-        ViewInteraction heightft = onView(
-                allOf(withId(R.id.current_ft),isDisplayed()));
-        heightft.check(matches(withText("3")));
-
-        ViewInteraction heightin = onView(
-                allOf(withId(R.id.current_in),isDisplayed()));
-        heightin.check(matches(withText("6")));
-
-        ViewInteraction edit_goal_btn = onView(
-                allOf(withId(R.id.edit_goal_btn)));
-        edit_goal_btn.perform(click());
-
-        ViewInteraction goal_edit = onView(
-                allOf(withId(R.id.goal_edit)));
-        goal_edit.perform(replaceText("3000"));
-
-        edit_goal_btn.perform(click());
 
         bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_home)));
+                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
         bottomNavigationItemView.perform(click());
 
-        homegoal.check(matches(withText("3000")));
-    }
+        name = onView(
+                allOf(withId(R.id.user_txt), isDisplayed()));
+        name.check(matches(withText("testuser")));
 
-    @Test
-    public void testReachGoalPopup(){
+        profilegoal = onView(
+                allOf(withId(R.id.current_goal),isDisplayed()));
+        profilegoal.check(matches(withText("2000")));
 
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction homegoal = onView(
-                allOf(withId(R.id.goal),
-                        isDisplayed()));
-        homegoal.check(matches(withText("2000")));
+        heightft = onView(
+                allOf(withId(R.id.current_ft),isDisplayed()));
+        heightft.check(matches(withText("3")));
 
-        ViewInteraction totalStep = onView(
-                allOf(withId(R.id.display),isDisplayed()));
-        totalStep.check(matches(withText("200")));
-        testFitService.setTotalDailySteps(2000);
-        HomeUI.async();
-
-        ViewInteraction popup = onView(
-                allOf(withId(R.id.summary_title)));
-        popup.check(matches(withText("CONGRATULATIONS!")));
-
-
-        ViewInteraction inc_goal = onView(
-                allOf(withId(R.id.inc_goal_btn)));
-        inc_goal.perform(click());
-
-        ViewInteraction current_goal = onView(
-                allOf(withId(R.id.goal)));
-        current_goal.check(matches(withText("2500")));
+        heightin = onView(
+                allOf(withId(R.id.current_in),isDisplayed()));
+        heightin.check(matches(withText("6")));
 
     }
     public class TestFirestore implements IFirestore {
@@ -324,8 +271,4 @@ public class MainActivityEspressoTest {
         }
 
     }
-
-
 }
-
-

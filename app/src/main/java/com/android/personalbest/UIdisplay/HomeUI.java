@@ -79,9 +79,7 @@ public class HomeUI extends Fragment {
         gFit.setup();
         ct=getContext();
         activity=getActivity();
-        time = TimeFactory.create(0);
-
-
+        time = TimeFactory.create("test");
         display_goal = getView().findViewById(R.id.goal);
         display_steps = ((TextView)getView().findViewById(R.id.display));
 
@@ -209,7 +207,7 @@ public class HomeUI extends Fragment {
                     return("5");
                 }
 
-                Log.d("time", en.getTime());
+                Log.wtf("time", en.getTime());
 
                 // Checks for displaying encouragement at 8pm every night
                 numStepsOver = calculateImprovementInterval((int) updated_steps, GoogleFitAdaptor.weekSteps[5]);

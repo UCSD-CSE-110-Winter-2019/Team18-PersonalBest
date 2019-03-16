@@ -14,6 +14,7 @@ import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.User;
 import com.android.personalbest.fitness.GoogleFitAdaptor;
+import com.android.personalbest.time.ITime;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,7 +35,7 @@ public class Encouragement {
     }
 
     public String getTime() {
-        Calendar cal = Calendar.getInstance();
+        ITime cal = MainActivity.getMainActivity().getITime();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         time = sdf.format(cal.getTime());
         Log.wtf("time", time);
