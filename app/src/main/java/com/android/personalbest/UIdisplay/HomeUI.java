@@ -35,6 +35,7 @@ public class HomeUI extends Fragment {
     static TextView display_goal;
     static TextView display_steps;
     private static int goal;
+    private int ticks;
     static long curr_steps;
     static AsyncTaskRunner runner;
     Activity activity;
@@ -76,6 +77,7 @@ public class HomeUI extends Fragment {
         ct=getContext();
         activity=getActivity();
 
+        ticks = 0;
         time = TimeFactory.create("test");
         display_goal = getView().findViewById(R.id.goal);
         display_steps = getView().findViewById(R.id.display);
@@ -181,7 +183,15 @@ public class HomeUI extends Fragment {
                 gFit.getYesterdaySteps();
 
                 user.setTotalSteps(gFit.getMonthMap());
-                firestore.setTotalSteps(user);
+
+                if(ticks > 10)
+                {
+                    ticks = 0;
+                    firestore.setTotalSteps(user);
+                }else
+                {
+                    ticks++;
+                }
 
 
 
