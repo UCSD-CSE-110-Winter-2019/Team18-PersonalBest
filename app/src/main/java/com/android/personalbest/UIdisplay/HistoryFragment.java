@@ -20,7 +20,6 @@ import com.android.personalbest.fitness.IFitService;
 import com.android.personalbest.time.ITime;
 import com.github.mikephil.charting.charts.BarChart;
 
-import java.util.Calendar;
 import java.util.Map;
 
 public class HistoryFragment extends Fragment{
@@ -48,7 +47,6 @@ public class HistoryFragment extends Fragment{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        intentional_steps = SharedPrefData.getIntentionalSteps(this.getActivity());
         user=MainActivity.getCurrentUser();
         time=MainActivity.getITime();
         Bundle args = getArguments();
@@ -56,6 +54,8 @@ public class HistoryFragment extends Fragment{
         Map<String, Integer> intentionalSteps = user.getIntentionalSteps();
         long curDayInMilliseconds = getTodayInMilliseconds();
         intentional_steps = new int[NUM_DAYS_IN_WEEK];
+
+        // get the intentional steps for the week
         for (int i = NUM_DAYS_IN_WEEK - 1; i >= 0; i--) {
             if (intentionalSteps.containsKey(Long.toString(curDayInMilliseconds))) {
                 intentional_steps[i] = intentionalSteps.get(Long.toString(curDayInMilliseconds));
@@ -66,6 +66,8 @@ public class HistoryFragment extends Fragment{
         }
 
         goal = user.getGoal();
+
+        // get the incidental steps for the week
         incidental_steps = new int[NUM_DAYS_IN_WEEK];
         calculateIncidentalSteps();
         return inflater.inflate(R.layout.fragment_history, null);
@@ -77,17 +79,19 @@ public class HistoryFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
         BarChart stepChart = getView().findViewById(R.id.chart);
 
+        // create a chart and get steps
         Chart chart = new Chart("week", intentional_steps, incidental_steps, goal, stepChart);
         chart.createChart();
 
         displayStepGoal();
         displayIntentionalSteps();
 
-//        gFit = FitServiceFactory.create(MainActivity.fitness_indicator, this.getActivity());
         gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
         gFit.subscribeForWeeklySteps();
 
         Button month_chart = getView().findViewById(R.id.monthly_chart);
+
+        // go to the monthly chart page when clicking on the button
         month_chart.setOnClickListener(view1 -> {
             Intent intent = new Intent(getActivity(), ChartMonthDisplay.class);
             // TODO: PASS USER ID

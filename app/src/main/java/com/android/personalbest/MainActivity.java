@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
-import android.widget.Toast;
 
 
 import com.android.personalbest.UIdisplay.FriendsUI;
@@ -72,12 +71,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        // Uncomment and run once to log out manually and then create a new account so that SharedPref
-        // works correctly with the right associations
-//        String TAG = HomeUI.class.getName();
-//        GoogleFitAdaptor gSignInAndOut = new GoogleFitAdaptor(this, TAG);
-//        gSignInAndOut.signOut();
-        Toast.makeText(this, "test", Toast.LENGTH_LONG);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
         String key=getIntent().getStringExtra("key");
@@ -111,7 +104,6 @@ public class MainActivity extends AppCompatActivity
         // Launches UI from initMainActivity to wait for User object to be initialized
         firestore.initMainActivity(this, homeUI);
 
-//        loadFragment(homeUI);
 
 
 
@@ -167,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     public void setUpGoalNot() {
         User user = getCurrentUser();
         messaging = MessagingFactory.create(
-                "SERVICE", getActivity(), "goal", user.getEmail().replace("@", ""), "");
+                "SERVICE", this, "goal", user.getEmail().replace("@", ""), "");
         messaging.setup();
         messaging.subscribeToNotificationsTopic();
     }
@@ -176,7 +168,6 @@ public class MainActivity extends AppCompatActivity
 
     public boolean loadFragment(Fragment fragment) {
         if(fragment != null) {
-            Log.wtf("MAINACTIVTY", "USER:" + this.currentUser);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment).commit();
         }

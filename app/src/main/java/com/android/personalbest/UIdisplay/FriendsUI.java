@@ -145,14 +145,8 @@ public class FriendsUI extends Fragment {
                 friendRequest.setText(entry.getKey() + " ( Request Sent )");
             }
 
-            //set id of button (to user id)
-            //friendRequest.setId(i);
-
-            // add the button to the linearlayout
             myLinearLayout.addView(friendRequest);
 
-            // save a reference to the textview for later
-            //myFriendRequests[i] = friendRequest;
         }
     }
 

@@ -65,20 +65,6 @@ public class HomeUI extends Fragment {
 
         user= MainActivity.getCurrentUser();
 
-//        FirebaseInstanceId.getInstance().getInstanceId()
-//                .addOnCompleteListener(task -> {
-//                    if (!task.isSuccessful()) {
-//                        Log.w(TAG, "getInstanceId failed", task.getException());
-//                        return;
-//                    }
-//
-//                    // Get new Instance ID token
-//                    String token = task.getResult().getToken();
-//
-//                    // Log and toast
-//                    String msg = getString(R.string.msg_token_fmt, token);
-//                    Log.d(TAG, msg);
-//                });
 
 
         super.onCreate(savedInstanceState);
@@ -88,9 +74,7 @@ public class HomeUI extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//
-//        gFit = FitServiceFactory.create(fitnessServiceKey, this.getActivity());
-//        gFit.setup();
+
         ct=getContext();
         activity=getActivity();
 
@@ -104,13 +88,9 @@ public class HomeUI extends Fragment {
             first=false;
         }
 
-        //goal = SharedPrefData.getGoal(getContext());
-//        curr_steps = gFit.getTotalDailySteps();
         curr_steps = gFit.getMonthSteps()[27];
 
         goal = user.getGoal();
-        //((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
-        //((TextView)getView().findViewById(R.id.display)).setText(Long.toString( gFit.getTotalDailySteps()));
         ((TextView)getView().findViewById(R.id.goal)).setText(Integer.toString(goal));
         ((TextView)getView().findViewById(R.id.display)).setText(Long.toString( curr_steps));
 
@@ -190,7 +170,6 @@ public class HomeUI extends Fragment {
         @Override
         protected String doInBackground(String... params) {
 
-            //MainActivity.getResource().increment();
             while(true) {
                 Encouragement en=new Encouragement(getActivity());
                 if(en.getTime().equals("23:59:59")){
@@ -203,36 +182,19 @@ public class HomeUI extends Fragment {
                 gFit.readMonthlyStepData();
                 gFit.getYesterdaySteps();
 
-                Log.wtf("!!!!!!!!", Long.toString(updated_steps));
 
                 user.setTotalSteps(gFit.getMonthMap());
                 firestore.setTotalSteps(user);
 
-//                if( user.getTotalSteps().get(time.timeStartToday()) != gFit.getMonthMap().get(time.timeStartToday()) ) {
-//                    user.setTotalSteps(gFit.getMonthMap());
-//                    firestore.setTotalSteps(user);
-//                }
 
 
                 try {
                     publishProgress();
 
-//                    firestore.getUser();
-//                    Log.wtf("wait 5 sec", "wait 5 sec");
                     Thread.sleep(1000);
-//
+
                     goal = user.getGoal();
-//                    Log.wtf("GOOOOOOOAL", Integer.toString(goal));
-//
-//                    Thread.sleep(50000);
-//                    Log.wtf("finish wait 50 sec", "wait 50 sec");
-//
-//                    if (updated_steps == user.getGoal() && !hasShown) {
-//                        Log.wtf("yes", "yes");
-//
 //                        firestore.addGoalToDatabase();
-//                        hasShown = true;
-//                    }
 
 
                 } catch (InterruptedException e) {

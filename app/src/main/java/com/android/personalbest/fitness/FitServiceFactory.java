@@ -8,7 +8,7 @@ import java.util.Map;
 public class FitServiceFactory {
 
     public static IFitService create(String i, Activity activity) {
-        if (i.equals("test")) {
+        if (i!=null&&i.equals("test")) {
             return new TestFitService(activity);
         }
         else {
