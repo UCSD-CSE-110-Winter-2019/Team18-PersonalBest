@@ -339,6 +339,7 @@ public class FirestoreAdaptor implements IFirestore {
 
     @Override
     public void setTotalSteps(User user) {
+        Log.wtf(TAG, "CALLING SETTOTALSTEPS");
         Map<String, Integer> currentTotalSteps = user.getTotalSteps();
 
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(user.getEmail());

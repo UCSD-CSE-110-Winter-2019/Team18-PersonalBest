@@ -1,7 +1,6 @@
 package com.android.personalbest.UIdisplay;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,7 +66,6 @@ public class GetToKnowYouUI extends AppCompatActivity {
         }
 
         Button finish=(Button) findViewById(R.id.finish_btn);
-        final Context context = GetToKnowYouUI.this;
 
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +92,6 @@ public class GetToKnowYouUI extends AppCompatActivity {
 
                     User user = new User(userName, email, goal, ft, in, intentionalSteps, totalSteps, friends, pendingFriends);
                     firestore.addUserToFirestore(user, GetToKnowYouUI.this);
-
                 }
             }
 
@@ -119,7 +116,6 @@ public class GetToKnowYouUI extends AppCompatActivity {
             if ( gSignInAndOut.handleSignInResult(task) == true )
             {
                 firestore.getToKnowYouCheckIfUserExists(GoogleSignIn.getLastSignedInAccount(getApplicationContext()).getEmail(), this);
-
 
             }
         }
