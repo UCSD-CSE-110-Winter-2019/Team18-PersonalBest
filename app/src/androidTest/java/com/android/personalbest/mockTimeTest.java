@@ -1,9 +1,9 @@
 package com.android.personalbest;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.personalbest.UIdisplay.Encouragement;
 import com.android.personalbest.UIdisplay.FriendsUI;
 import com.android.personalbest.UIdisplay.GetToKnowYouUI;
 import com.android.personalbest.UIdisplay.HomeUI;
@@ -20,31 +21,35 @@ import com.android.personalbest.UIdisplay.MessagesUI;
 import com.android.personalbest.firestore.FirestoreFactory;
 import com.android.personalbest.firestore.IFirestore;
 import com.android.personalbest.fitness.TestFitService;
+import com.android.personalbest.time.ITime;
 import com.android.personalbest.time.MockTime;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityEspressoTest {
+public class mockTimeTest {
     Intent intent;
     TestFitService testFitService;
     MockTime mockTime;
@@ -54,7 +59,6 @@ public class MainActivityEspressoTest {
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class
             ,true,
             false);
-
     @Before
     public void setUp() {
         intent=new Intent();
@@ -63,128 +67,57 @@ public class MainActivityEspressoTest {
         FirestoreFactory.put(TEST_SERVICE, new FirestoreFactory.BluePrint() {
             @Override
             public IFirestore create(Activity activity, String userEmail) {
-                return new TestFirestore(activity, userEmail);
+                return new mockTimeTest.TestFirestore(activity, userEmail);
             }
         });
         testFitService=new TestFitService(mActivityTestRule.getActivity());
-        testFitService.setTotalDailySteps(200);
+        testFitService.setTotalDailySteps(500);
         mockTime = new MockTime();
-        mockTime.setTime("2018-03-18 21:00:00");
-
-    }
-    @Test
-    public void testDisplay(){
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction homegoal = onView(
-                allOf(withId(R.id.goal),
-                        isDisplayed()));
-        homegoal.check(matches(withText("2000")));
-
-        ViewInteraction totalStep = onView(
-                allOf(withId(R.id.display),isDisplayed()));
-        totalStep.check(matches(withText("200")));
-
-        ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
-        bottomNavigationItemView.perform(click());
-
-        ViewInteraction name = onView(
-                allOf(withId(R.id.user_txt), isDisplayed()));
-        name.check(matches(withText("testuser")));
-
-        ViewInteraction profilegoal = onView(
-                allOf(withId(R.id.current_goal),isDisplayed()));
-        profilegoal.check(matches(withText("2000")));
-
-        ViewInteraction heightft = onView(
-                allOf(withId(R.id.current_ft),isDisplayed()));
-        heightft.check(matches(withText("3")));
-
-        ViewInteraction heightin = onView(
-                allOf(withId(R.id.current_in),isDisplayed()));
-        heightin.check(matches(withText("6")));
-
+        mockTime.setTime("2018-03-18 20:00:00");
     }
 
     @Test
-    public void testChangeSynched(){
+    public void testTime(){
         mActivityTestRule.launchActivity(intent);
-        ViewInteraction homegoal = onView(
-                allOf(withId(R.id.goal),
-                        isDisplayed()));
-        homegoal.check(matches(withText("2000")));
-
-        ViewInteraction totalStep = onView(
-                allOf(withId(R.id.display),isDisplayed()));
-        totalStep.check(matches(withText("200")));
-
-        ViewInteraction bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_profile), withContentDescription("Profile"),isDisplayed()));
-        bottomNavigationItemView.perform(click());
-
-        ViewInteraction name = onView(
-                allOf(withId(R.id.user_txt), isDisplayed()));
-        name.check(matches(withText("testuser")));
-
-        ViewInteraction profilegoal = onView(
-                allOf(withId(R.id.current_goal),isDisplayed()));
-        profilegoal.check(matches(withText("2000")));
-
-        ViewInteraction heightft = onView(
-                allOf(withId(R.id.current_ft),isDisplayed()));
-        heightft.check(matches(withText("3")));
-
-        ViewInteraction heightin = onView(
-                allOf(withId(R.id.current_in),isDisplayed()));
-        heightin.check(matches(withText("6")));
-
-        ViewInteraction edit_goal_btn = onView(
-                allOf(withId(R.id.edit_goal_btn)));
-        edit_goal_btn.perform(click());
-
-        ViewInteraction goal_edit = onView(
-                allOf(withId(R.id.goal_edit)));
-        goal_edit.perform(replaceText("3000"));
-
-        edit_goal_btn.perform(click());
-
-        bottomNavigationItemView = onView(
-                allOf(withId(R.id.navigation_home)));
-        bottomNavigationItemView.perform(click());
-
-        homegoal.check(matches(withText("3000")));
-    }
-
-    @Test
-    public void testReachGoalPopup(){
-
-        mActivityTestRule.launchActivity(intent);
-        ViewInteraction homegoal = onView(
-                allOf(withId(R.id.goal),
-                        isDisplayed()));
-        homegoal.check(matches(withText("2000")));
-
-        ViewInteraction totalStep = onView(
-                allOf(withId(R.id.display),isDisplayed()));
-        totalStep.check(matches(withText("200")));
-        testFitService.setTotalDailySteps(2000);
-        HomeUI.async();
-
+//        mockCal=Mockito.mock(Calendar.class);
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        Date d=new Date();
+//        try {
+//            d = sf.parse("2018-03-18 20:00:00");
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        Mockito.when(mockCal.getTime()).thenReturn(d);
+//        long a=2;
+//        Mockito.when(mockCal.getTimeInMillis()).thenReturn(a);
+//        mActivityTestRule.getActivity().setCalendar(mockCal);
+        Encouragement encouragement=new Encouragement(mActivityTestRule.getActivity());
+        assertTrue(encouragement.getTime().equals("20:00:00"));
         ViewInteraction popup = onView(
-                allOf(withId(R.id.summary_title)));
-        popup.check(matches(withText("CONGRATULATIONS!")));
-
-
-        ViewInteraction inc_goal = onView(
-                allOf(withId(R.id.inc_goal_btn)));
-        inc_goal.perform(click());
-
-        ViewInteraction current_goal = onView(
-                allOf(withId(R.id.goal)));
-        current_goal.check(matches(withText("2500")));
-
+                allOf(withId(R.id.title)));
+        popup.check(matches(withText("BRAVO!")));
     }
-    public class TestFirestore implements IFirestore {
+//    public class TestMainActivity extends MainActivity{
+//        @Mock
+//        Calendar mockCal;
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        public TestMainActivity(){
+//
+//        }
+//        public Calendar getCalendar(){
+//            mockCal=Mockito.mock(Calendar.class);
+//            Date d=new Date();
+//            try {
+//                d = sf.parse("2018-03-18 20:00:00");
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//            Mockito.when(mockCal.getTime()).thenReturn(d);
+//            return mockCal;
+//        }
+//    }
+
+    private class TestFirestore implements IFirestore {
 
         private static final String TAG = "[TestFirestore]: ";
         private User user;
@@ -274,11 +207,6 @@ public class MainActivityEspressoTest {
         }
 
         @Override
-        public void setTotalSteps(User user) {
-
-        }
-
-        @Override
         public void sendFriendRequest(User user, String friendEmail, FriendsUI friendsUI) {
 
         }
@@ -309,11 +237,6 @@ public class MainActivityEspressoTest {
         }
 
         @Override
-        public void initMessagesUI(MessagesUI messagesUI, String friendEmail) {
-
-        }
-
-        @Override
         public void removeUserFromFriendsList(String user, String emailToRemove) {
 
         }
@@ -322,10 +245,10 @@ public class MainActivityEspressoTest {
         public void removeFriend(User user, String emailToRemove, FriendsUI friendsUI) {
 
         }
+        @Override
+        public void initMessagesUI(MessagesUI messagesUI, String friendEmail){}
 
+        @Override
+        public void setTotalSteps(User user){}
     }
-
-
 }
-
-

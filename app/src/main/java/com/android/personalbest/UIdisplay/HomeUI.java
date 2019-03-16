@@ -93,8 +93,8 @@ public class HomeUI extends Fragment {
 //        gFit.setup();
         ct=getContext();
         activity=getActivity();
-        time = TimeFactory.create(0);
 
+        time = TimeFactory.create("test");
         display_goal = getView().findViewById(R.id.goal);
         display_steps = getView().findViewById(R.id.display);
 
@@ -218,7 +218,7 @@ public class HomeUI extends Fragment {
 
 //                    firestore.getUser();
 //                    Log.wtf("wait 5 sec", "wait 5 sec");
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
 //
                     goal = user.getGoal();
 //                    Log.wtf("GOOOOOOOAL", Integer.toString(goal));
@@ -243,7 +243,7 @@ public class HomeUI extends Fragment {
                     return("5");
                 }
 
-                Log.d("time", en.getTime());
+                Log.wtf("time", en.getTime());
 
                 // Checks for displaying encouragement at 8pm every night
                 numStepsOver = calculateImprovementInterval((int) updated_steps, GoogleFitAdaptor.weekSteps[5]);

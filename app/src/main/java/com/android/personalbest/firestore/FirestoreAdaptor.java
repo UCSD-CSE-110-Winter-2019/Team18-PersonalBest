@@ -224,7 +224,7 @@ public class FirestoreAdaptor implements IFirestore {
                     User user = document.toObject(User.class);
                     MainActivity.setCurrentUser(user);
                     mainActivity.setUpMessagingNot();
-                    mainActivity.setUpGoalNot();
+//                    mainActivity.setUpGoalNot();
 //                    mainActivity.setUpService();
                     mainActivity.loadFragment(homeUI);
                 } else {
@@ -236,7 +236,7 @@ public class FirestoreAdaptor implements IFirestore {
         });
     }
 
-    @Override
+
     public void getUser() {
         DocumentReference userRef = fs.collection(USERS_COLLECTION_KEY).document(userEmail);
 

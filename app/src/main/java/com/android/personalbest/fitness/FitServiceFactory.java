@@ -12,7 +12,7 @@ public class FitServiceFactory {
             return new TestFitService(activity);
         }
         else {
-            return new GoogleFitAdaptor(activity, 0);
+            return new GoogleFitAdaptor(activity, i);
         }
     }
 }

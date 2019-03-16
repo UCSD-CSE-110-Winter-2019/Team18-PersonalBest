@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.android.personalbest.MainActivity;
 import com.android.personalbest.R;
 import com.android.personalbest.User;
@@ -36,7 +39,6 @@ public class MessagesUI extends AppCompatActivity {
 
         Intent iin= getIntent();
         Bundle b = iin.getExtras();
-
         if(b!=null) {
             id =(String) b.get("friend_id");
             header.setTitle(id);
@@ -65,7 +67,14 @@ public class MessagesUI extends AppCompatActivity {
         });
 
         firestore.initMessageUpdateListener(findViewById(R.id.chat), id);
-        findViewById(R.id.btn_send).setOnClickListener(view -> firestore.addSentMessageToDatabase(findViewById(R.id.input_msg), id));
+
+        EditText text=findViewById(R.id.input_msg);
+        Log.wtf("text", text.getText().toString());
+        findViewById(R.id.btn_send).setOnClickListener(view -> {
+            Toast.makeText(this, "\""+text.getText().toString()+"\" sent", Toast.LENGTH_LONG).show();
+            firestore.addSentMessageToDatabase(findViewById(R.id.input_msg), id);
+
+        });
     }
 
     public static void setCurrentFriend(User friend) {

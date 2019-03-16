@@ -1,5 +1,7 @@
 package com.android.personalbest.time;
 
+import java.util.Date;
+
 public interface ITime
 {
     int SECONDS_IN_DAY = 86400000;
@@ -23,6 +25,9 @@ public interface ITime
      */
     long timeOneMonthAgo();
 
+    Date getTime();
+    void setTime(String date);
+    void setMockTime(Long mockTime);
     /**
      * @return start time of some day
      */
